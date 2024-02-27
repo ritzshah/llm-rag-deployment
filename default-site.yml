@@ -1,0 +1,22 @@
+site:
+  title: "Generative AI with OpenShift AI"
+  url: https://redhat-scholars.github.io/course-template
+  start_page: modules::index.adoc
+
+ui:
+  bundle:
+    url: ./content/docs-ui/ui-bundle.zip
+  supplemental_files: ./content/supplemental-ui
+
+content:
+https://github.com/ritzshah/llm-rag-deployment.git
+  edit_url: 'https://github.com/rh-aiservices-bu/insurance-claim-processing/edit/dev/{path}'
+  sources:
+    - url: ./
+      start_path: content
+
+output:
+  dir: ./content/www
+
+runtime:
+  cache_dir: ./content/.cache/antora

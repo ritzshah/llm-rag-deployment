@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: ic-shared-llm
+
+resources:
+# wave 0
+- namespace.yaml
+- fix-odf-config.yaml
+# wave 1
+- pvc.yaml
+- deployment.yaml
+- service.yaml
+- route.yaml
+- deployment-flant5.yaml
+- service-flant5.yaml
+# wave 2

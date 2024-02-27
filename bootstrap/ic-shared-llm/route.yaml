@@ -1,0 +1,17 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: llm-route
+  namespace: ic-shared-llm
+  labels:
+    app: llm
+spec:
+  to:
+    kind: Service
+    name: llm
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+  wildcardPolicy: None

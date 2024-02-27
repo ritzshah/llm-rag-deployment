@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: ic-shared-llm
+
+resources:
+# wave 0
+# wave 1
+- 01-db_secret.yaml
+- 02-pvc.yaml
+- 03-deployment.yaml
+- 04-service.yaml
+# wave 2
+- 05-extend-pg-db.yaml

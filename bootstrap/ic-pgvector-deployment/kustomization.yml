@@ -8,7 +8,7 @@ commonLabels:
 resources:
 # wave 0
 # wave 1
-- 01-db_secret.yaml
+- 01-db-secret.yaml
 - 02-pvc.yaml
 - 03-deployment.yaml
 - 04-service.yaml

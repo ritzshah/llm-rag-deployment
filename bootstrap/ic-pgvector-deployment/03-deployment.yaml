@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: postgresql
   namespace: ic-shared-llm
-  labels:
-    app: ic-shared-llm
 spec:
   strategy:
     type: Recreate
@@ -15,11 +13,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ic-shared-llm
+      app: postgresql
   template:
     metadata:
       labels:
-        app: ic-shared-llm
+        app: postgresql
     spec:
       volumes:
         - name: postgresql-data

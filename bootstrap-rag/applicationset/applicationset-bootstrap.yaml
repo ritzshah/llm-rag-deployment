@@ -37,11 +37,6 @@ spec:
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ds-rag-pipeline
-      - cluster: in-cluster
-        name: ic-rhoai-rag-configuration
-        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
-        targetRevision: main
-        path: bootstrap-rag/ic-rhoai-rag-configuration
   template:
     metadata:
       name: '{{name}}'

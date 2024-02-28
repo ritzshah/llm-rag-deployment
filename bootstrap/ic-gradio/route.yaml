@@ -1,14 +1,14 @@
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: ic-pgvector-llm-route
+  name: gradio-route
   namespace: ic-shared-llm
   labels:
-    app: ic-shared-llm
+    app: gradio
 spec:
   to:
     kind: Service
-    name: postgresql-service
+    name: gradio-service
     weight: 100
   port:
     targetPort: http

@@ -4,7 +4,7 @@ metadata:
   name: postgresql
   namespace: ic-shared-llm
   labels:
-    app: ic-shared-llm
+    app: postgresql
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:

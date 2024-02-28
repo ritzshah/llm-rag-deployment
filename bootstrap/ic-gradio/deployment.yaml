@@ -4,17 +4,17 @@ metadata:
   name: gradio-llm-rag-pgvector
   namespace: ic-shared-llm
   labels:
-    app: ic-shared-llm
+    app: gradio
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ic-shared-llm
+      app: gradio
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: ic-shared-llm
+        app: gradio
     spec:
       restartPolicy: Always
       schedulerName: default-scheduler

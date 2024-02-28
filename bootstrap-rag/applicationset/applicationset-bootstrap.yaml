@@ -8,12 +8,12 @@ spec:
   - list:
       elements:
       - cluster: in-cluster
-        name: ic-shared-minio-app
+        name: ic-shared-rag-minio-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ic-shared-minio
       - cluster: in-cluster
-        name: ic-shared-database-app
+        name: ic-shared-rag-database-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ic-shared-database
@@ -23,22 +23,22 @@ spec:
         targetRevision: main
         path: bootstrap-rag/ic-shared-rag-llm
       - cluster: in-cluster
-        name: ic-gradio-app
+        name: ic-gradio-rag-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ic-gradio
       - cluster: in-cluster
-        name: ic-pgvector-deployment-app
+        name: ic-pgvector-rag-deployment-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ic-pgvector-deployment
       - cluster: in-cluster
-        name: ds-pipeline
+        name: ds-rag-pipeline
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ds-pipeline
       - cluster: in-cluster
-        name: ic-rhoai-configuration
+        name: ic-rhoai-rag-configuration
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ic-rhoai-configuration

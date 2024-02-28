@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: bootstrap-rag
+  namespace: openshift-gitops
+spec:
+  generators:
+  - list:
+      elements:
+      - cluster: in-cluster
+        name: ic-shared-minio-app
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/ic-shared-minio
+      - cluster: in-cluster
+        name: ic-shared-database-app
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/ic-shared-database
+      - cluster: in-cluster
+        name: ic-shared-rag-llm-app
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/ic-shared-rag-llm
+      - cluster: in-cluster
+        name: ic-gradio-app
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/ic-gradio
+      - cluster: in-cluster
+        name: ic-pgvector-deployment-app
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/ic-pgvector-deployment
+      - cluster: in-cluster
+        name: ds-pipeline
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/ds-pipeline
+      - cluster: in-cluster
+        name: ic-rhoai-configuration
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/ic-rhoai-configuration
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: openshift-gitops
+      labels:
+        component: bootstrap-rag
+        purpose: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{repoURL}}'
+        targetRevision: '{{targetRevision}}'
+        path: '{{path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - RespectIgnoreDifferences=true

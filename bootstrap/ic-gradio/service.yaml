@@ -1,10 +1,10 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: postgresql-service
+  name: gradio-service
   namespace: ic-shared-llm
   labels:
-    app: ic-shared-llm
+    app: gradio
 spec:
   clusterIP: None
   ipFamilies:
@@ -18,4 +18,4 @@ spec:
   ipFamilyPolicy: SingleStack
   sessionAffinity: None
   selector:
-    app: ic-shared-llm
+    app: gradio

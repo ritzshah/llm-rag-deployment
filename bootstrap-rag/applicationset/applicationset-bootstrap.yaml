@@ -36,7 +36,7 @@ spec:
         name: ds-rag-pipeline
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap-rag/ds-pipeline
+        path: bootstrap-rag/ds-rag-pipeline
       - cluster: in-cluster
         name: ic-rhoai-rag-configuration
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git

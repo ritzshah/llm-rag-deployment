@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- object-detection-yolov5-pvc.yaml
+- role.yaml
+- role-binding.yaml
+- notebook.yaml

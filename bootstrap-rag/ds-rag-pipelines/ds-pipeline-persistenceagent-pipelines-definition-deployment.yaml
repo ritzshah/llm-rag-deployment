@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ds-pipeline-persistenceagent-pipelines-definition
+    component: data-science-pipelines
+    dspa: pipelines-definition
+  name: ds-pipeline-persistenceagent-pipelines-definition
+  uid: 6b21bd0e-bc53-4d64-af29-8cc16c96ee3a    
+  namespace: ic-shared-rag-llm
+  ownerReferences:
+  - apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DataSciencePipelinesApplication
+    name: pipelines-definition
+    uid: 0efbdb68-d928-425c-a2f2-93e5e1d7a293      
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ds-pipeline-persistenceagent-pipelines-definition
+      component: data-science-pipelines
+      dspa: pipelines-definition
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      creationTimestamp: null
+      labels:
+        app: ds-pipeline-persistenceagent-pipelines-definition
+        component: data-science-pipelines
+        dspa: pipelines-definition
+    spec:
+      containers:
+      - command:
+        - persistence_agent
+        - --logtostderr=true
+        - --ttlSecondsAfterWorkflowFinish=86400
+        - --numWorker=2
+        - --mlPipelineAPIServerName=ds-pipeline-pipelines-definition
+        - --namespace=ic-shared-rag-llm
+        - --mlPipelineServiceHttpPort=8888
+        - --mlPipelineServiceGRPCPort=8887
+        env:
+        - name: NAMESPACE
+          value: ic-shared-rag-llm
+        image: registry.redhat.io/rhods/odh-ml-pipelines-persistenceagent-rhel8@sha256:e87c4aab19435d4d3ded11acf53506a586127a4ec670db65bd25c72ed66c3537
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - test
+            - -x
+            - persistence_agent
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
+        name: ds-pipeline-persistenceagent
+        readinessProbe:
+          exec:
+            command:
+            - test
+            - -x
+            - persistence_agent
+          failureThreshold: 3
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 120m
+            memory: 500Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: ds-pipeline-persistenceagent-pipelines-definition
+      serviceAccountName: ds-pipeline-persistenceagent-pipelines-definition
+      terminationGracePeriodSeconds: 30

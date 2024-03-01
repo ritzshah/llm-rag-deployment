@@ -55,7 +55,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'Langchain-PgVector-Ingest-d5987501-0e79-454e-a0c6-9f774031cc6c.tar.gz' --file 'llm-on-openshift/examples/notebooks/langchain/Langchain-PgVector-Ingest.ipynb' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'Langchain-PgVector-Ingest-d5987501-0e79-454e-a0c6-9f774031cc6c.tar.gz' --file 'llm-on-openshift/examples/notebooks/langchain/Langchain-PgVector-Ingest.ipynb' "
           command:
           - sh
           - -c
@@ -111,7 +111,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'Langchain-PgVector-Query-632d6fd1-dff9-46e0-9daf-b480026c1e4b.tar.gz' --file 'llm-on-openshift/examples/notebooks/langchain/Langchain-PgVector-Query.ipynb' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'Langchain-PgVector-Query-632d6fd1-dff9-46e0-9daf-b480026c1e4b.tar.gz' --file 'llm-on-openshift/examples/notebooks/langchain/Langchain-PgVector-Query.ipynb' "
           command:
           - sh
           - -c
@@ -169,7 +169,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'test_response_quality-d0510f0c-fc50-42fc-a598-97e26b34ed88.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/test_response_quality.py' --outputs 'quality_result.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'test_response_quality-d0510f0c-fc50-42fc-a598-97e26b34ed88.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/test_response_quality.py' --outputs 'quality_result.json' "
           command:
           - sh
           - -c
@@ -227,7 +227,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'test_responsetime-c50bb14f-a036-4af1-b5dc-21e48eb80f7f.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/test_responsetime.py' --outputs 'responsetime_result.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'test_responsetime-c50bb14f-a036-4af1-b5dc-21e48eb80f7f.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/test_responsetime.py' --outputs 'responsetime_result.json' "
           command:
           - sh
           - -c
@@ -285,7 +285,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'test_security-eedde707-830a-469c-b754-adf6156c34bd.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/test_security.py' --outputs 'security_result.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'test_security-eedde707-830a-469c-b754-adf6156c34bd.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/test_security.py' --outputs 'security_result.json' "
           command:
           - sh
           - -c
@@ -343,7 +343,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'summarize_results-6b99ceae-d124-4758-904a-03e1a49fe56d.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/summarize_results.py' --inputs 'security_result.json;quality_result.json;responsetime_result.json' --outputs 'results.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000/' --cos-bucket 'user1' --cos-directory 'data_sanity_check-0223100824' --cos-dependencies-archive 'summarize_results-6b99ceae-d124-4758-904a-03e1a49fe56d.tar.gz' --file 'insurance-claim-processing/lab-materials/03/06/summarize_results.py' --inputs 'security_result.json;quality_result.json;responsetime_result.json' --outputs 'results.json' "
           command:
           - sh
           - -c

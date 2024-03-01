@@ -6,3 +6,5 @@ resources:
   - db-creds.yaml
   - storage-creds.yaml
   - ui-configmap.yaml
+  - workbench-for-llm.yaml
+  - sanity_check.yaml

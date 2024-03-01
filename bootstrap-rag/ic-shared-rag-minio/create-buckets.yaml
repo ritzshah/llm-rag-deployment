@@ -28,7 +28,7 @@ spec:
           done
           echo "Minio pod is running in ic-shared-rag-minio namespace"
       containers:
-      - name: add-model
+      - name: add-pipeline-code
         image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:1.2
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash"]
@@ -60,6 +60,16 @@ spec:
           filename = "accident_detect.onnx"
           with open(filename, "rb") as f:
               s3.upload_fileobj(f, "models", f'accident/{filename}')
+
+          # Create the models bucket
+          pipeline_bucket_name = "pipeline"
+          if models_bucket_name not in [bu["Name"] for bu in s3.list_buckets()["Buckets"]]:
+              s3.create_bucket(Bucket=pipeline_bucket_name)
+
+          # uploading to minio
+          filename = "accident_detect.onnx"
+          with open(filename, "rb") as f:
+              s3.upload_fileobj(f, "pipeline", f'pipeline-code/{filename}')
 
           EOF
         envFrom:

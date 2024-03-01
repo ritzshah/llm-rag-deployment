@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: ic-shared-rag-llm
-  name: ic-shared-rag-llm
+  namespace: ic-shared-rag-db
+  name: ic-shared-rag-db
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   selector:
     matchLabels:
-      app: ic-shared-rag-llm
+      app: ic-shared-rag-db
   replicas: 1
   template:
     metadata:
       labels:
-        app: ic-shared-rag-llm
+        app: ic-shared-rag-db
     spec:
       containers:
         - name: postgresql

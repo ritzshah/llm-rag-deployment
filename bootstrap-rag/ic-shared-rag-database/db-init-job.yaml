@@ -34,7 +34,7 @@ spec:
                 name: claimdb
                 key: database-password
           - name: POSTGRESQL_DATABASE_HOST
-            value: claimdb.ic-shared-rag-llmshared-rag-db.svc.cluster.local
+            value: claimdb.ic-shared-rag-db.svc.cluster.local
         command: ["/bin/bash", "-c"]
         args:
         - |

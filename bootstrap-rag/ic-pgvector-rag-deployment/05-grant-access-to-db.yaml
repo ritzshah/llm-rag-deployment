@@ -8,7 +8,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: postgres-service-role
-  namespace: ic-shared-llm
+  namespace: ic-shared-rag-llm
 rules:
 - apiGroups: [""]
   resources: ["*"]
@@ -18,7 +18,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: postgres-service-role-binding
-  namespace: ic-shared-llm
+  namespace: ic-shared-rag-llm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -26,4 +26,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: postgres-service-account
-  namespace: ic-shared-llm
+  namespace: ic-shared-rag-llm

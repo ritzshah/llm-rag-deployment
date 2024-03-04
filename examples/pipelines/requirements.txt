@@ -4,3 +4,4 @@ sentence_transformers==2.2.2
 pgvector
 pypdf
 psycopg
+bs4

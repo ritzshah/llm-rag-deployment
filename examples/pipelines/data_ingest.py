@@ -204,9 +204,4 @@ for doc, score in docs_with_score:
     print(doc.page_content)
     print("-" * 80)
 
-
 # In[ ]:
-
-
-
-

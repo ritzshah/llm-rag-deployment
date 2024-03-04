@@ -10,7 +10,7 @@ metadata:
   name: postgres-service-role
   namespace: ic-shared-rag-llm
 rules:
-- apiGroups: [""]
+- apiGroups: ["*"]
   resources: ["*"]
   verbs: ["*"]
 ---

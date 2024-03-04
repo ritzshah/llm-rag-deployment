@@ -6,10 +6,6 @@ metadata:
 spec:
   strategy:
     type: Recreate
-    recreateParams:
-      timeoutSeconds: 600
-    resources: {}
-    activeDeadlineSeconds: 21600
   replicas: 1
   selector:
     matchLabels:

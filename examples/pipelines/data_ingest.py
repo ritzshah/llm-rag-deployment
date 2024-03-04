@@ -18,7 +18,7 @@
 # In[1]:
 
 
-get_ipython().system('pip install pgvector pypdf psycopg')
+#get_ipython().system('pip install pgvector pypdf psycopg')
 
 
 # ### Base parameters, the PostgreSQL info

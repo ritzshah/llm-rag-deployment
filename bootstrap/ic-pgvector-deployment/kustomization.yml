@@ -12,5 +12,6 @@ resources:
 - 02-pvc.yaml
 - 03-deployment.yaml
 - 04-services.yaml
+- 05-grant-access-to-db.yaml
 # wave 2
-- 05-extend-pg-db.yaml
+- 06-extend-pg-db.yaml

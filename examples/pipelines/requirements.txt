@@ -1,3 +1,6 @@
 langchain==0.0.340
 text_generation==0.6.1
 sentence_transformers==2.2.2
+pgvector
+pypdf
+psycopg

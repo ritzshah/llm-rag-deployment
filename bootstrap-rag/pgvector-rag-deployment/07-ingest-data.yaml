@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-ingest-rag-job
+  namespace: ic-shared-rag-llm
+  annotations:
+    executed: "false"  # Flag to indicate whether the job has been executed
+spec:
+  template:
+    metadata:
+      name: data-ingest-rag-pod
+    spec:
+      serviceAccountName: postgres-service-account
+      containers:
+      - name: data-ingest
+        image: quay.io/openshift/origin-cli:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            if [[ "$(kubectl get job data-ingest-rag-job -n ic-shared-rag-llm -o jsonpath='{.metadata.annotations.executed}')" != "true" ]]; then
+              apt-get update && apt-get install -y git  # Install git if necessary
+              git clone https://github.com/ritzshah/llm-rag-deployment.git /app  # Clone the repository
+              cd /app/examples/pipelines
+              pip install -r requirements.txt  # Install required dependencies
+              python data_ingest.py  # Run the Python file
+              kubectl annotate job data-ingest-rag-job -n ic-shared-rag-llm executed="true" --overwrite
+            fi
+      restartPolicy: Never

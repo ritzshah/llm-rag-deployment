@@ -8,45 +8,45 @@ spec:
   - list:
       elements:
       - cluster: in-cluster
-        name: ic-shared-minio-app
+        name: shared-minio-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap/ic-shared-minio
+        path: bootstrap/shared-minio
       - cluster: in-cluster
-        name: ic-shared-database-app
+        name: shared-database-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap/ic-shared-database
+        path: bootstrap/shared-database
       - cluster: in-cluster
-        name: ic-shared-llm-app
+        name: shared-llm-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap/ic-shared-llm
+        path: bootstrap/shared-llm
       - cluster: in-cluster
-        name: ic-gradio-app
+        name: gradio-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap/ic-gradio
+        path: bootstrap/gradio
       - cluster: in-cluster
-        name: ic-pgvector-deployment-app
+        name: pgvector-deployment-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap/ic-pgvector-deployment
+        path: bootstrap/pgvector-deployment
       - cluster: in-cluster
-        name: ds-pipeline
+        name: pipeline
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap/ds-pipeline
       - cluster: in-cluster
-        name: ic-shared-img-det
+        name: shared-img-det
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap/ic-shared-img-det
+        path: bootstrap/shared-img-det
       - cluster: in-cluster
-        name: ic-rhoai-configuration
+        name: rhoai-configuration
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap/ic-rhoai-configuration
+        path: bootstrap/rhoai-configuration
   template:
     metadata:
       name: '{{name}}'

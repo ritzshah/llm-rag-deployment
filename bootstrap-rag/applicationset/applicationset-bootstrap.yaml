@@ -8,30 +8,30 @@ spec:
   - list:
       elements:
       - cluster: in-cluster
-        name: ic-shared-rag-minio-app
+        name: shared-rag-minio-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap-rag/ic-shared-rag-minio
+        path: bootstrap-rag/shared-rag-minio
       - cluster: in-cluster
-        name: ic-shared-rag-database-app
+        name: shared-rag-database-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap-rag/ic-shared-rag-database
+        path: bootstrap-rag/shared-rag-database
       - cluster: in-cluster
-        name: ic-shared-rag-llm-app
+        name: shared-rag-llm-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap-rag/ic-shared-rag-llm
+        path: bootstrap-rag/shared-rag-llm
       - cluster: in-cluster
-        name: ic-gradio-rag-app
+        name: gradio-rag-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap-rag/ic-gradio-rag
+        path: bootstrap-rag/gradio-rag
       - cluster: in-cluster
-        name: ic-pgvector-rag-deployment-app
+        name: pgvector-rag-deployment-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap-rag/ic-pgvector-rag-deployment
+        path: bootstrap-rag/pgvector-rag-deployment
       - cluster: in-cluster
         name: ds-rag-pipeline
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git

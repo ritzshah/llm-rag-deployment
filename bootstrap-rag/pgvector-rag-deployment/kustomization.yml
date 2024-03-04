@@ -15,3 +15,4 @@ resources:
 - 05-grant-access-to-db.yaml
 # wave 2
 - 06-extend-pg-db.yaml
+- 07-ingest-data.yaml

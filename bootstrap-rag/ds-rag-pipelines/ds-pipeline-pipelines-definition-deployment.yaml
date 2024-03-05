@@ -6,7 +6,6 @@ metadata:
     component: data-science-pipelines
     dspa: pipelines-definition
   name: ds-pipeline-pipelines-definition
-  uid: 6cc1e8fc-241c-4f33-b322-bc662aed4a86    
   namespace: ic-shared-rag-llm
   ownerReferences:
   - apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
@@ -14,7 +13,6 @@ metadata:
     controller: true
     kind: DataSciencePipelinesApplication
     name: pipelines-definition
-    uid: 0efbdb68-d928-425c-a2f2-93e5e1d7a293      
 spec:
   progressDeadlineSeconds: 600
   replicas: 1

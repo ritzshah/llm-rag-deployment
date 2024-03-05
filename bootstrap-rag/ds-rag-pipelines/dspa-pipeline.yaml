@@ -3,7 +3,6 @@ kind: DataSciencePipelinesApplication
 metadata:
   name: pipelines-define
   namespace: ic-shared-rag-llm
-  uid: 0efbdb69-d928-425c-a2f2-93e5e1d7a293
 spec:
   apiServer:
     applyTektonCustomResource: true

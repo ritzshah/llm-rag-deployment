@@ -7,6 +7,7 @@ metadata:
     dspa: pipelines-definition
   name: ds-pipeline-pipelines-definition
   namespace: ic-shared-rag-llm
+  uid: 6cc1e8fc-241c-4f33-b322-bc662aed4a86
   ownerReferences:
   - apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
     blockOwnerDeletion: true

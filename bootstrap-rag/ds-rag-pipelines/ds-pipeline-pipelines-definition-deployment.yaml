@@ -14,6 +14,7 @@ metadata:
     controller: true
     kind: DataSciencePipelinesApplication
     name: pipelines-definition
+    uid: 0efbdb68-d928-425c-a2f2-93e5e1d7a293
 spec:
   progressDeadlineSeconds: 600
   replicas: 1

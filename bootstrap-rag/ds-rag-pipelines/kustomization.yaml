@@ -1,7 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - ds-pipeline-persistenceagent-pipelines-definition-deployment.yaml
   - ds-pipeline-pipelines-definition-deployment.yaml
+  - ds-pipeline-scheduledworkflow-pipelines-definition-deployment.yaml
   - dspa-pipeline.yaml
   - db-creds.yaml
   - storage-creds.yaml

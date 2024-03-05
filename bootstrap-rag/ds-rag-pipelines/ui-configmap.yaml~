@@ -8,5 +8,4 @@ data:
     }
 kind: ConfigMap
 metadata:
-  name: custom-ui-configmaps
-  namespace: ic-shared-rag-llm
+  name: custom-ui-configmap

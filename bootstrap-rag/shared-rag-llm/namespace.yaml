@@ -7,5 +7,5 @@ metadata:
     app: ic-shared-rag-llm
     argocd.argoproj.io/managed-by: openshift-gitops
   annotations:
-    openshift.io/display-name: "Shared LLM"
+    openshift.io/display-name: "Shared LLM with RAG"
     argocd.argoproj.io/sync-wave: "0"

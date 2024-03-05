@@ -36,7 +36,7 @@ spec:
         name: ds-rag-pipeline
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
-        path: bootstrap-rag/ds-rag-pipeline
+        path: bootstrap-rag/ds-rag-pipelines
   template:
     metadata:
       name: '{{name}}'

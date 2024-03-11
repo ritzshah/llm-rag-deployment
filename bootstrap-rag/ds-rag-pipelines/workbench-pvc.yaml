@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: models-cache
+  name: workbench-for-llm
   namespace: ic-shared-rag-llm
   labels:
     app: ic-shared-rag-llm

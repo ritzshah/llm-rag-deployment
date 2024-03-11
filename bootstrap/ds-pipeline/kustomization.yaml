@@ -4,6 +4,7 @@ resources:
   - storage-creds.yaml
   - ui-configmap.yaml
   - db-creds.yaml
+  - workbench-sa.yaml
   - dspa.yaml
   - setup-secret-job.yaml
   - workbench-for-llm.yaml

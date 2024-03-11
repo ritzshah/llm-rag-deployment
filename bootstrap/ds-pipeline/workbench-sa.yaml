@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workbench-for-llm
+  namespace: ic-shared-llm
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: workbench-cluster-role
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: workbench-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: workbench-for-llm
+  namespace: ic-shared-llm
+roleRef:
+  kind: ClusterRole
+  name: workbench-cluster-role
+  apiGroup: rbac.authorization.k8s.io

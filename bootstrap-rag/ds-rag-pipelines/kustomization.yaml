@@ -7,4 +7,3 @@ resources:
   - dspa-pipeline.yaml
   - setup-secret-job.yaml
   - workbench-for-llm.yaml
-  - sanity_check.yaml

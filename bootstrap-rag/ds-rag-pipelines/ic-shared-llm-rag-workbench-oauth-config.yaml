@@ -1,0 +1,10 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: ic-shared-rag-llm-workbench-oauth-config
+  namespace: ic-shared-rag-llm
+  labels:
+    notebook-name: ic-shared-llm-rag-workbench
+data:
+  cookie_secret: TkdScmRtSXhaVkEzVlZWbVZXcFVaRlIwU1ZOS1p6MDk=
+type: Opaque

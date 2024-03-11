@@ -1,0 +1,12 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: aws-shared-connection
+  namespace: ic-sahred-llm
+data:
+  AWS_ACCESS_KEY_ID: bWluaW8=
+  AWS_DEFAULT_REGION: dXM=
+  AWS_S3_BUCKET: cGlwZWxpbmU=
+  AWS_S3_ENDPOINT: aHR0cDovL21pbmlvLmljLXNoYXJlZC1taW5pby5zdmM6OTAwMA==
+  AWS_SECRET_ACCESS_KEY: bWluaW8xMjM=
+type: Opaque

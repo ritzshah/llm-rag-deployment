@@ -1,0 +1,11 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: testdbsecret
+  namespace: ic-shared-llm
+  labels:
+    app: mariadb-sample
+    component: data-science-pipelines
+stringData:
+  password: "testingpassword"
+type: Opaque

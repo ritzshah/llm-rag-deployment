@@ -1,20 +1,20 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: mlpipeline-minio-artifact
+  name: aws-shared-rag-connection
   namespace: ic-shared-rag-llm
   labels:
     opendatahub.io/dashboard: 'true'
     opendatahub.io/managed: 'true'
   annotations:
     opendatahub.io/connection-type: s3
-    openshift.io/display-name: Minio Data Connection
+    openshift.io/display-name: S3 Data Connection
 data:
   AWS_ACCESS_KEY_ID: bWluaW8=
   AWS_DEFAULT_REGION: dXM=
   AWS_S3_BUCKET: cGlwZWxpbmU=
   AWS_S3_ENDPOINT: aHR0cDovL21pbmlvLmljLXNoYXJlZC1yYWctbWluaW8uc3ZjOjkwMDA=
-  AWS_SECRET_ACCESS_KEY: bWluaW8xMjM=  
+  AWS_SECRET_ACCESS_KEY: bWluaW8xMjM=
   # The following keys are needed while https://github.com/kubeflow/pipelines/issues/9689 is open
   accesskey: bWluaW8=
   secretkey: bWluaW8xMjM=

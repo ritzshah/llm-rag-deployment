@@ -79,5 +79,5 @@ spec:
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID
         secretKey: AWS_SECRET_ACCESS_KEY
-        secretName: aws-connection-minio-connection
+        secretName: aws-shared-rag-connection
       scheme: http

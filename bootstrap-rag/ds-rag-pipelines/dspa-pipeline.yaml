@@ -4,28 +4,73 @@ metadata:
   name: pipelines-define
   namespace: ic-shared-rag-llm
 spec:
+  dspVersion: v2
   apiServer:
-    applyTektonCustomResource: true
-    archiveLogs: false
-    autoUpdatePipelineDefaultVersion: true
-    collectMetrics: true
-    dbConfigConMaxLifetimeSec: 120
     deploy: true
-    enableOauth: true
-    enableSamplePipeline: false
-    injectDefaultScript: true
+    image: gcr.io/ml-pipeline/api-server:2.0.2
     stripEOF: true
     terminateStatus: Cancelled
     trackArtifacts: true
+    dbConfigConMaxLifetimeSec: 120
+    collectMetrics: true
+    autoUpdatePipelineDefaultVersion: true
+    resources:
+      requests:
+        cpu: 250m
+        memory: 500Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+  persistenceAgent:
+    deploy: true
+    image: gcr.io/ml-pipeline/persistenceagent:2.0.2
+    numWorkers: 2
+    resources:
+      requests:
+        cpu: 120m
+        memory: 500Mi
+      limits:
+        cpu: 250m
+        memory: 1Gi
+  scheduledWorkflow:
+    deploy: true
+    image: gcr.io/ml-pipeline/scheduledworkflow:2.0.2
+    cronScheduleTimezone: UTC
+    resources:
+      requests:
+        cpu: 120m
+        memory: 100Mi
+      limits:
+        cpu: 250m
+        memory: 250Mi
+  mlpipelineUI:
+    deploy: true
+    image: gcr.io/ml-pipeline/frontend:2.0.2
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    configMap: custom-ui-configmap
   database:
-    disableHealthCheck: false
     mariaDB:
       deploy: true
-      pipelineDBName: mlpipeline
-      pvcSize: 10Gi
+      image: registry.redhat.io/rhel8/mariadb-103:1-188
       username: mlpipeline
-  mlmd:
-    deploy: false
+      pipelineDBName: randomDBName
+      pvcSize: 10Gi
+      resources:
+        requests:
+          cpu: 300m
+          memory: 800Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+      passwordSecret:
+        name: testdbsecret
+        key: password
   objectStorage:
     disableHealthCheck: false
     externalStorage:
@@ -35,11 +80,5 @@ spec:
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID
         secretKey: AWS_SECRET_ACCESS_KEY
-        secretName: aws-connection-minio-connection
+        secretName: aws-shared-rag-connection
       scheme: http
-  persistenceAgent:
-    deploy: true
-    numWorkers: 2
-  scheduledWorkflow:
-    cronScheduleTimezone: UTC
-    deploy: true

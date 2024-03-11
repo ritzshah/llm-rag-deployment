@@ -30,12 +30,12 @@ spec:
     disableHealthCheck: false
     externalStorage:
       bucket: pipeline
-      host: minio.ic-shared-rag-minio.svc:9000
+      host: minio.ic-shared-minio.svc:9000
       port: ""
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID
         secretKey: AWS_SECRET_ACCESS_KEY
-        secretName: aws-shared-rag-connection
+        secretName: aws-shared-connection
       scheme: http
   persistenceAgent:
     deploy: true

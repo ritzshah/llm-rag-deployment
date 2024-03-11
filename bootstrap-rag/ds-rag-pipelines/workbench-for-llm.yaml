@@ -3,14 +3,6 @@ apiVersion: apps/v1
 metadata:
   name: workbench-for-llm
   namespace: ic-shared-rag-llm
-  uid: 90f83e36-7a6f-4211-af2c-be2e6092b1d5
-  ownerReferences:
-    - apiVersion: kubeflow.org/v1beta1
-      kind: Notebook
-      name: workbench-for-llm
-      uid: 2bbc13d2-8d50-4790-a487-8adb073f5841
-      controller: true
-      blockOwnerDeletion: true
 spec:
   replicas: 1
   selector:
@@ -72,7 +64,7 @@ spec:
                                   --ServerApp.password=''
                                   --ServerApp.base_url=/notebook/ic-shared-rag-llm/workbench-for-llm
                                   --ServerApp.quit_button=False
-                                  --ServerApp.tornado_settings={"user":"admin","hub_host":"https://rhods-dashboard-redhat-ods-applications.apps.cluster-vvxjx.sandbox3055.opentlc.com","hub_prefix":"/projects/ic-shared-rag-llm"}
+                                  --ServerApp.tornado_settings={"user":"admin","hub_host":"https://rhods-dashboard-redhat-ods-applications.apps.cluster-{{ GUID }}.{{ SANDBOX }}","hub_prefix":"/projects/ic-shared-rag-llm"}
             - name: JUPYTER_IMAGE
               value: >-
                 image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/ic-workbench:1.2
@@ -93,7 +85,7 @@ spec:
           terminationMessagePolicy: File
           envFrom:
             - secretRef:
-                name: aws-connection-aws-s3-rag-bucket
+                name: aws-shared-rag-connection
           image: >-
             image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/ic-workbench:1.2
           workingDir: /opt/app-root/src
@@ -161,7 +153,7 @@ spec:
             - >-
               --openshift-sar={"verb":"get","resource":"notebooks","resourceAPIGroup":"kubeflow.org","resourceName":"workbench-for-llm","namespace":"$(NAMESPACE)"}
             - >-
-              --logout-url=https://rhods-dashboard-redhat-ods-applications.apps.cluster-vvxjx.sandbox3055.opentlc.com/projects/ic-shared-rag-llm?notebookLogout=workbench-for-llm
+              --logout-url=https://rhods-dashboard-redhat-ods-applications.apps.cluster-{{ GUID }}.{{ SANDBOX }}/projects/ic-shared-rag-llm?notebookLogout=workbench-for-llm
       serviceAccount: workbench-for-llm
       volumes:
         - name: workbench-for-llm
@@ -190,13 +182,3 @@ spec:
     rollingUpdate:
       partition: 0
   revisionHistoryLimit: 10
-status:
-  observedGeneration: 2
-  availableReplicas: 1
-  updateRevision: workbench-for-llm-688467d5d8
-  currentRevision: workbench-for-llm-688467d5d8
-  currentReplicas: 1
-  updatedReplicas: 1
-  replicas: 1
-  collisionCount: 0
-  readyReplicas: 1

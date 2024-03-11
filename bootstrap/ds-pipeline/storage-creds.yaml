@@ -2,7 +2,7 @@ kind: Secret
 apiVersion: v1
 metadata:
   name: aws-shared-connection
-  namespace: ic-sahred-llm
+  namespace: ic-shared-llm
 data:
   AWS_ACCESS_KEY_ID: bWluaW8=
   AWS_DEFAULT_REGION: dXM=

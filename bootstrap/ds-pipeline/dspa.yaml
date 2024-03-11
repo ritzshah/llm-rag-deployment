@@ -2,7 +2,7 @@ apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
 kind: DataSciencePipelinesApplication
 metadata:
   name: pipelines-definition
-  namespace: ic-shared-rag-llm
+  namespace: ic-shared-llm
 spec:
   apiServer:
     applyTektonCustomResource: true

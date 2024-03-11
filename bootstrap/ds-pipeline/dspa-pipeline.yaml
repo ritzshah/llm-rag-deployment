@@ -2,7 +2,7 @@ apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
 kind: DataSciencePipelinesApplication
 metadata:
   name: pipelines-define
-  namespace: ic-shared-rag-llm
+  namespace: ic-shared-llm
 spec:
   dspVersion: v2
   apiServer:

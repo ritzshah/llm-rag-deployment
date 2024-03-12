@@ -36,6 +36,8 @@ spec:
         - -ec
         - |-
           curl -LO https://rhods-public.s3.amazonaws.com/demo-models/ic-models/accident/accident_detect.onnx
+          #curl -LO https://github.com/ritzshah/llm-rag-deployment/blob/main/examples/pipelines/data_ingest.py
+          wget -LO https://github.com/ritzshah/llm-rag-deployment/blob/main/examples/pipelines/*
 
           cat << 'EOF' | python3
           import boto3, os
@@ -67,7 +69,7 @@ spec:
               s3.create_bucket(Bucket=pipeline_bucket_name)
 
           # uploading to minio
-          filename = "accident_detect.onnx"
+          filename = "*"
           with open(filename, "rb") as f:
               s3.upload_fileobj(f, "pipeline", f'pipeline-code/{filename}')
 

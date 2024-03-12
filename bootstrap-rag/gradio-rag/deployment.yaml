@@ -55,7 +55,7 @@ spec:
             - name: INFERENCE_SERVER_URL
               value: 'http://llm.ic-shared-rag-llm.svc.cluster.local:3000/'
             - name: DB_CONNECTION_STRING
-              value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb'
+              value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb' # notsecret
             - name: DB_COLLECTION_NAME
               value: 'documents_test'
             - name: MAX_NEW_TOKENS

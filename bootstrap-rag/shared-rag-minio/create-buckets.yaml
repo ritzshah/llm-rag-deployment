@@ -42,6 +42,7 @@ spec:
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/data_verify.py
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/test_response_quality.py
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/test_responsetime.py
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/test_security.py
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/sanity_check.yaml
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/sanity_check.pipeline
 
@@ -69,17 +70,29 @@ spec:
           with open(filename, "rb") as f:
               s3.upload_fileobj(f, "models", f'accident/{filename}')
 
-          rm accident_detect.onnx
+          # Specify the file path
+          file_path = "accident_detect.onnx"
+
+          if os.path.exists(file_path):
+            # Delete the file
+            os.remove(file_path)
 
           # Create the models bucket
           pipeline_bucket_name = "pipeline"
           if pipeline_bucket_name not in [bu["Name"] for bu in s3.list_buckets()["Buckets"]]:
               s3.create_bucket(Bucket=pipeline_bucket_name)
 
-          # uploading to minio
-          filename = "*"
-          with open(filename, "rb") as f:
+          # Specify the directory path
+          directory = "."  # Change this to your directory path
+
+          # List all files in the directory
+          files = [filename for filename in os.listdir(directory) if os.path.isfile(os.path.join(directory, filename))]
+
+          # Upload each file to S3 Bucket
+          for filename in files:
+            with open(os.path.join(directory, filename), "rb") as f:
               s3.upload_fileobj(f, "pipeline", f'pipeline-code/{filename}')
+              print(f"Uploaded {filename}")
 
           EOF
         envFrom:

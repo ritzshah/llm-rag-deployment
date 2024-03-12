@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: sanity-check
+  name: data-ingestion-response-check
   annotations:
     tekton.dev/output_artifacts: '{"run-a-file": [{"key": "artifacts/$PIPELINERUN/run-a-file/mlpipeline-metrics.tgz",
       "name": "mlpipeline-metrics", "path": "/tmp/mlpipeline-metrics.json"}, {"key":
@@ -30,7 +30,7 @@ metadata:
     sidecar.istio.io/inject: "false"
     tekton.dev/template: ''
     pipelines.kubeflow.org/big_data_passing_format: $(workspaces.$TASK_NAME.path)/artifacts/$ORIG_PR_NAME/$TASKRUN_NAME/$TASK_PARAM_NAME
-    pipelines.kubeflow.org/pipeline_spec: '{"name": "sanity_check"}'
+    pipelines.kubeflow.org/pipeline_spec: '{"name": "data_ingestion_response_check"}'
   labels:
     pipelines.kubeflow.org/pipelinename: ''
     pipelines.kubeflow.org/generation: ''
@@ -46,7 +46,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'Langchain-PgVector-Ingest.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Ingest.ipynb' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'Langchain-PgVector-Ingest-e5f75e8b-1ac2-4314-a4a3-5013fe5e8ddd.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Ingest.ipynb' "
           command:
           - sh
           - -c
@@ -82,17 +82,17 @@ spec:
         metadata:
           labels:
             elyra/node-type: notebook-script
-            elyra/pipeline-name: sanity_check
+            elyra/pipeline-name: data_ingestion_response_check
             elyra/pipeline-version: ''
             elyra/experiment-name: ''
             elyra/node-name: Langchain-PgVector-Ingest
             pipelines.kubeflow.org/cache_enabled: "true"
           annotations:
             elyra/node-file-name: llm-rag-deployment/examples/pipelines/Langchain-PgVector-Ingest.ipynb
-            elyra/pipeline-source: sanity_check.pipeline
+            elyra/pipeline-source: data_ingestion_response_check.pipeline
             pipelines.kubeflow.org/task_display_name: Langchain-PgVector-Ingest
             pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
-              "outputs": [], "version": "Run a file@sha256=4e3f2f0b7bcd57e7c236b63d7744bc50fab5b49d8a3cd6e7f9bdde5bb0c0c369"}'
+              "outputs": [], "version": "Run a file@sha256=d9b6d5fe046c6670791075954839ab4bd9ba3d6bce0ded1ef9690a5b8e91793b"}'
     - name: run-a-file-2
       taskSpec:
         steps:
@@ -102,7 +102,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'Langchain-PgVector-Query.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Query.ipynb' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'Langchain-PgVector-Query-5363c225-ec42-4bd3-be42-145d888b6855.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Query.ipynb' "
           command:
           - sh
           - -c
@@ -138,17 +138,17 @@ spec:
         metadata:
           labels:
             elyra/node-type: notebook-script
-            elyra/pipeline-name: sanity_check
+            elyra/pipeline-name: data_ingestion_response_check
             elyra/pipeline-version: ''
             elyra/experiment-name: ''
             elyra/node-name: Langchain-PgVector-Query
             pipelines.kubeflow.org/cache_enabled: "true"
           annotations:
             elyra/node-file-name: llm-rag-deployment/examples/pipelines/Langchain-PgVector-Query.ipynb
-            elyra/pipeline-source: sanity_check.pipeline
+            elyra/pipeline-source: data_ingestion_response_check.pipeline
             pipelines.kubeflow.org/task_display_name: Langchain-PgVector-Query
             pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
-              "outputs": [], "version": "Run a file@sha256=991239a316e693e7c7c1de1809455899fa78b0d41cbaef98555a019215fb1b3b"}'
+              "outputs": [], "version": "Run a file@sha256=5ec966990e0204aba21ebfa759e0b56cdc9adb8955de32ca3608e04fd97e29a3"}'
       runAfter:
       - run-a-file
     - name: run-a-file-3
@@ -160,7 +160,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'test_responsetime.tar.gz' --file 'llm-rag-deployment/examples/pipelines/test_responsetime.py' --outputs 'responsetime_result.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'test_responsetime-c50bb14f-a036-4af1-b5dc-21e48eb80f7f.tar.gz' --file 'llm-rag-deployment/examples/pipelines/test_responsetime.py' --outputs 'responsetime_result.json' "
           command:
           - sh
           - -c
@@ -196,17 +196,17 @@ spec:
         metadata:
           labels:
             elyra/node-type: notebook-script
-            elyra/pipeline-name: sanity_check
+            elyra/pipeline-name: data_ingestion_response_check
             elyra/pipeline-version: ''
             elyra/experiment-name: ''
             elyra/node-name: test_responsetime
             pipelines.kubeflow.org/cache_enabled: "true"
           annotations:
             elyra/node-file-name: llm-rag-deployment/examples/pipelines/test_responsetime.py
-            elyra/pipeline-source: sanity_check.pipeline
+            elyra/pipeline-source: data_ingestion_response_check.pipeline
             pipelines.kubeflow.org/task_display_name: test_responsetime
             pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
-              "outputs": [], "version": "Run a file@sha256=296080459a5c7ecc56474258d3eef698c928eb6bee0bb5836a7cd45d732bba28"}'
+              "outputs": [], "version": "Run a file@sha256=7d2a8292aa35579b420a4710d86ea05b2b52e632a00ea94fd82d122d5c2837d0"}'
       runAfter:
       - run-a-file-2
     - name: run-a-file-4
@@ -218,7 +218,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'sanity_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'summarize_results.tar.gz' --file 'llm-rag-deployment/examples/pipelines/summarize_results.py' --inputs 'responsetime_result.json' --outputs 'results.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'summarize_results-6b99ceae-d124-4758-904a-03e1a49fe56d.tar.gz' --file 'llm-rag-deployment/examples/pipelines/summarize_results.py' --inputs 'responsetime_result.json' --outputs 'results.json' "
           command:
           - sh
           - -c
@@ -254,16 +254,16 @@ spec:
         metadata:
           labels:
             elyra/node-type: notebook-script
-            elyra/pipeline-name: sanity_check
+            elyra/pipeline-name: data_ingestion_response_check
             elyra/pipeline-version: ''
             elyra/experiment-name: ''
             elyra/node-name: summarize_results
             pipelines.kubeflow.org/cache_enabled: "true"
           annotations:
             elyra/node-file-name: llm-rag-deployment/examples/pipelines/summarize_results.py
-            elyra/pipeline-source: sanity_check.pipeline
+            elyra/pipeline-source: data_ingestion_response_check.pipeline
             pipelines.kubeflow.org/task_display_name: summarize_results
             pipelines.kubeflow.org/component_spec_digest: '{"name": "Run a file",
-              "outputs": [], "version": "Run a file@sha256=3473ef0fd42a98e4c975caa206e1090972ef9ded0f8eb5cb0b481adfbf29157f"}'
+              "outputs": [], "version": "Run a file@sha256=5e22993cf3f6423195f5c23e83406664c0b3a60e5ac9970fa5ef468c3c8b05aa"}'
       runAfter:
       - run-a-file-3

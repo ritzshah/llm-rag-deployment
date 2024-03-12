@@ -46,7 +46,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'Langchain-PgVector-Ingest-e5f75e8b-1ac2-4314-a4a3-5013fe5e8ddd.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Ingest.ipynb' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'Langchain-PgVector-Ingest.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Ingest.ipynb' "
           command:
           - sh
           - -c
@@ -102,7 +102,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'Langchain-PgVector-Query-5363c225-ec42-4bd3-be42-145d888b6855.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Query.ipynb' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'Langchain-PgVector-Query.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Query.ipynb' "
           command:
           - sh
           - -c
@@ -160,7 +160,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'test_responsetime-c50bb14f-a036-4af1-b5dc-21e48eb80f7f.tar.gz' --file 'llm-rag-deployment/examples/pipelines/test_responsetime.py' --outputs 'responsetime_result.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'test_responsetime.tar.gz' --file 'llm-rag-deployment/examples/pipelines/test_responsetime.py' --outputs 'responsetime_result.json' "
           command:
           - sh
           - -c
@@ -218,7 +218,7 @@ spec:
             sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/bootstrapper.py' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/bootstrapper.py --output bootstrapper.py"
             sh -c "echo 'Downloading file:///opt/app-root/bin/utils/requirements-elyra.txt' && curl --fail -H 'Cache-Control: no-cache' -L file:///opt/app-root/bin/utils/requirements-elyra.txt --output requirements-elyra.txt"
-            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'data_ingestion_response_check-0312104818' --cos-dependencies-archive 'summarize_results-6b99ceae-d124-4758-904a-03e1a49fe56d.tar.gz' --file 'llm-rag-deployment/examples/pipelines/summarize_results.py' --inputs 'responsetime_result.json' --outputs 'results.json' "
+            sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'summarize_results.tar.gz' --file 'llm-rag-deployment/examples/pipelines/summarize_results.py' --inputs 'responsetime_result.json' --outputs 'results.json' "
           command:
           - sh
           - -c

@@ -36,8 +36,14 @@ spec:
         - -ec
         - |-
           curl -LO https://rhods-public.s3.amazonaws.com/demo-models/ic-models/accident/accident_detect.onnx
-          #curl -LO https://github.com/ritzshah/llm-rag-deployment/blob/main/examples/pipelines/data_ingest.py
-          wget -LO https://github.com/ritzshah/llm-rag-deployment/blob/main/examples/pipelines/*
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/Langchain-PgVector-Ingest.ipynb
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/Langchain-PgVector-Query.ipynb
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/data_ingest.py
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/data_verify.py
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/test_response_quality.py
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/test_responsetime.py
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/sanity_check.yaml
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/sanity_check.pipeline
 
           cat << 'EOF' | python3
           import boto3, os
@@ -62,6 +68,8 @@ spec:
           filename = "accident_detect.onnx"
           with open(filename, "rb") as f:
               s3.upload_fileobj(f, "models", f'accident/{filename}')
+
+          rm accident_detect.onnx
 
           # Create the models bucket
           pipeline_bucket_name = "pipeline"

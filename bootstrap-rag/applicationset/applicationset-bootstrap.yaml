@@ -37,6 +37,11 @@ spec:
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: main
         path: bootstrap-rag/ds-rag-pipelines
+      - cluster: in-cluster
+        name: workbench
+        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+        targetRevision: main
+        path: bootstrap-rag/notebook
   template:
     metadata:
       name: '{{name}}'

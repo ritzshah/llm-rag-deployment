@@ -3,12 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   annotations:
     openshift.io/description: ""
-    openshift.io/display-name: object-detection-yolov5
+    openshift.io/display-name: ic-shared-rag-llm-workbench-pvc
     argocd.argoproj.io/sync-wave: "1"    
   labels:
     opendatahub.io/dashboard: "true"
-  name: object-detection-yolov5-pvc
-  namespace: object-detection-yolov5
+  name: ic-shared-rag-llm-workbench-pvc
+  namespace: ic-shared-rag-llm
 spec:
   accessModes:
   - ReadWriteOnce

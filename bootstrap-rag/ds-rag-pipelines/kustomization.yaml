@@ -6,5 +6,6 @@ resources:
   - ui-configmap.yaml
   - db-creds.yaml
   - workbench-sa.yaml
+# sync wave 4
   - dspa.yaml
   - setup-secret-job.yaml

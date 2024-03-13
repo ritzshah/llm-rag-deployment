@@ -4,7 +4,7 @@ metadata:
   annotations:
     openshift.io/description: ""
     openshift.io/display-name: ic-shared-rag-llm-workbench-pvc
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "2"
   labels:
     opendatahub.io/dashboard: "true"
   name: ic-shared-rag-llm-workbench-pvc

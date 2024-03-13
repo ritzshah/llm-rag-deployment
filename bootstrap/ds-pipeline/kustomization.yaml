@@ -8,4 +8,3 @@ resources:
   - workbench-sa.yaml
   - dspa.yaml
   - setup-secret-job.yaml
-  - workbench-for-llm.yaml

@@ -7,6 +7,7 @@ metadata:
     app: ds-pipeline-pipelines-definition
     component: data-science-pipelines
   name: ds-pipeline-user-access-pipelines-definition
+  namespace: ic-shared-rag-llm
 rules:
 - apiGroups:
   - route.openshift.io

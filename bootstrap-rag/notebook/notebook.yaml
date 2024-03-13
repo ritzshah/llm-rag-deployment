@@ -10,7 +10,7 @@ metadata:
     opendatahub.io/image-display-name: CUSTOM - Gen AI Lab Workbench
     opendatahub.io/username: admin
     openshift.io/description: ""
-    openshift.io/display-name: Shared RAG LLM Workbench/
+    openshift.io/display-name: Shared RAG LLM Workbench
   labels:
     app: shared-rag-llm-workbench
     opendatahub.io/dashboard: "true"

@@ -73,7 +73,7 @@ spec:
             memory: 6Gi
         volumeMounts:
         - mountPath: /opt/app-root/src
-          name: shared-rag-llm-workbench
+          name: ic-shared-rag-llm-workbench-pvc
         - mountPath: /opt/app-root/runtimes
           name: elyra-dsp-details
         - mountPath: /dev/shm
@@ -141,9 +141,9 @@ spec:
       enableServiceLinks: false
       serviceAccountName: shared-rag-llm-workbench
       volumes:
-      - name: shared-rag-llm-workbench
+      - name: ic-shared-rag-llm-workbench-pvc
         persistentVolumeClaim:
-          claimName: shared-rag-llm-workbench
+          claimName: ic-shared-rag-llm-workbench-pvc
       - name: elyra-dsp-details
         secret:
           secretName: ds-pipeline-config

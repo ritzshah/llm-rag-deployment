@@ -8,4 +8,3 @@ resources:
   - workbench-sa.yaml
   - dspa.yaml
   - setup-secret-job.yaml
-  - data_ingestion_response_check-pipeline.yaml

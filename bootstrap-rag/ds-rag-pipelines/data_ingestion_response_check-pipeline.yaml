@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: data-ingestion-response-check
+  namespace: ic-shared-rag-llm  
   annotations:
     openshift.io/display-name: "Data Ingestion and Response Check Pipeline"
     argocd.argoproj.io/sync-wave: "4"

@@ -9,6 +9,7 @@ metadata:
   annotations:
     opendatahub.io/connection-type: s3
     openshift.io/display-name: S3 Data Connection
+    argocd.argoproj.io/sync-wave: "1"
 data:
   AWS_ACCESS_KEY_ID: bWluaW8=
   AWS_DEFAULT_REGION: dXM=

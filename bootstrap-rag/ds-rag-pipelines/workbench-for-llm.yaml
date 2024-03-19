@@ -3,6 +3,8 @@ apiVersion: apps/v1
 metadata:
   name: workbench-for-llm
   namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   replicas: 1
   selector:
@@ -10,7 +12,6 @@ spec:
       statefulset: workbench-for-llm
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: workbench-for-llm
         notebook-name: workbench-for-llm

@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: postgresql
   namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   strategy:
     type: Recreate

@@ -5,6 +5,8 @@ metadata:
   namespace: ic-shared-rag-llm
   labels:
     app: llm-flant5
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   clusterIP: None
   ipFamilies:

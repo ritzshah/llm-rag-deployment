@@ -6,6 +6,8 @@ metadata:
   labels:
     app: mariadb-sample
     component: data-science-pipelines
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 stringData:
   password: "testingpassword"
 type: Opaque

@@ -10,3 +10,5 @@ kind: ConfigMap
 metadata:
   name: custom-ui-configmaps
   namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"

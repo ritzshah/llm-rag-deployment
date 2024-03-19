@@ -23,7 +23,7 @@ metadata:
   name: workbench-cluster-role-binding
   annotations:
     argocd.argoproj.io/sync-wave: "1"
-ubjects:
+subjects:
 - kind: ServiceAccount
   name: workbench-for-llm
   namespace: ic-shared-rag-llm

@@ -31,7 +31,7 @@ spec:
   objectStorage:
     disableHealthCheck: false
     externalStorage:
-      bucket: pipeline
+      bucket: pipelines
       host: minio.ic-shared-rag-minio.svc:9000
       port: ""
       s3CredentialsSecret:

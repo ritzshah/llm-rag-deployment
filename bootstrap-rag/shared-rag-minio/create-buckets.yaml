@@ -83,7 +83,12 @@ spec:
             # Delete the file
             os.remove(file_path)
 
-          # Create the models bucket
+          # Create the pipeline bucket
+          pipeline_artifacts_bucket_name = "pipeline-artifacts"
+          if pipeline_artifacts_bucket_name not in [bu["Name"] for bu in s3.list_buckets()["Buckets"]]:
+              s3.create_bucket(Bucket=pipeline_artifacts_bucket_name)
+
+          # Create the pipeline bucket
           pipeline_bucket_name = "pipeline"
           if pipeline_bucket_name not in [bu["Name"] for bu in s3.list_buckets()["Buckets"]]:
               s3.create_bucket(Bucket=pipeline_bucket_name)

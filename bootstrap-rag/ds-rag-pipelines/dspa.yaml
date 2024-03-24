@@ -32,7 +32,7 @@ spec:
     disableHealthCheck: false
     externalStorage:
       bucket: pipeline-artifacts
-      host: minio.ic-shared-rag-minio.svc.cluster.local:9000
+      host: minio.ic-shared-rag-minio.svc:9000
       port: ""
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID

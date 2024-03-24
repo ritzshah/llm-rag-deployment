@@ -34,7 +34,7 @@ spec:
     disableHealthCheck: false
     externalStorage:
       bucket: pipeline
-      host: minio.ic-shared-minio.svc.cluster.local:9000
+      host: minio.ic-shared-minio.svc:9000
       port: ""
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID

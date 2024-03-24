@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
     argocd.argoproj.io/hook: Sync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation  
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
   apiServer:
     applyTektonCustomResource: true
@@ -34,7 +34,7 @@ spec:
     disableHealthCheck: false
     externalStorage:
       bucket: pipeline
-      host: minio.ic-shared-minio.svc:9000
+      host: minio.ic-shared-minio.svc.cluster.local:9000
       port: ""
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID

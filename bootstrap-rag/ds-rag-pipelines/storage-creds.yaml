@@ -14,7 +14,7 @@ data:
   AWS_ACCESS_KEY_ID: bWluaW8=
   AWS_DEFAULT_REGION: dXM=
   AWS_S3_BUCKET: cGlwZWxpbmU=
-  AWS_S3_ENDPOINT: aHR0cDovL21pbmlvLmljLXNoYXJlZC1yYWctbWluaW8uc3ZjOjkwMDA=
+  AWS_S3_ENDPOINT: aHR0cDovL21pbmlvLmljLXNoYXJlZC1yYWctbWluaW8uc3ZjLmNsdXN0ZXIubG9jYWw6OTAwMA==
   AWS_SECRET_ACCESS_KEY: bWluaW8xMjM=
   # The following keys are needed while https://github.com/kubeflow/pipelines/issues/9689 is open
   accesskey: bWluaW8=

@@ -3,6 +3,8 @@ apiVersion: apps/v1
 metadata:
   name: workbench-for-llm
   namespace: ic-shared-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   replicas: 1
   selector:

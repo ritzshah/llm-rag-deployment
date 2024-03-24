@@ -4,7 +4,7 @@ metadata:
   name: workbench-for-llm
   namespace: ic-shared-rag-llm
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   replicas: 1
   selector:

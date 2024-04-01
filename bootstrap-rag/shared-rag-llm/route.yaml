@@ -4,7 +4,7 @@ metadata:
   name: llm-route
   namespace: ic-shared-rag-llm
   labels:
-    app: llm
+    app: llm-rag
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:

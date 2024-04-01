@@ -1,7 +1,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: llm-rag
+  name: llm
   namespace: ic-shared-rag-llm
   labels:
     app: llm-rag

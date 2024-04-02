@@ -11,7 +11,7 @@ metadata:
     opendatahub.io/username: admin
     openshift.io/description: ""
     openshift.io/display-name: Shared RAG LLM Workbench
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "5"
   labels:
     app: shared-rag-llm-workbench
     opendatahub.io/dashboard: "true"

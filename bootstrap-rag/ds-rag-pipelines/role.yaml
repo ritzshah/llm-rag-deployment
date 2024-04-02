@@ -4,8 +4,6 @@ metadata:
   annotations:
     manifestival: new
     argocd.argoproj.io/sync-wave: "4"
-    argocd.argoproj.io/hook: Sync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
   labels:
     app: ds-pipeline-pipelines-definition
     component: data-science-pipelines

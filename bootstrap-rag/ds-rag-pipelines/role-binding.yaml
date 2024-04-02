@@ -5,8 +5,6 @@ metadata:
   namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "4"
-    argocd.argoproj.io/hook: Sync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
   labels:
     opendatahub.io/dashboard: 'true'
 subjects:

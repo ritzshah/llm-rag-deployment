@@ -8,3 +8,8 @@ resources:
   - workbench-sa.yaml
   - dspa.yaml
   - setup-secret-job.yaml
+#waves 4 for notebook setup
+  - ic-shared-rag-llm-workbench-pvc.yaml
+  - role.yaml
+  - role-binding.yaml
+  - notebook.yaml

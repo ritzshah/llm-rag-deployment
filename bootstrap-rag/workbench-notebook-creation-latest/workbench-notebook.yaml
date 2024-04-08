@@ -18,7 +18,6 @@ metadata:
     opendatahub.io/user: admin
   name: llm-rag-pipeline
   namespace: ic-shared-rag-llm
-  uid: 98ffb9b9-81bc-4470-9c59-e170f69c6129
 spec:
   template:
     spec:

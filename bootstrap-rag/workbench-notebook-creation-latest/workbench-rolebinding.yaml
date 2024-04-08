@@ -1,6 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
+  creationTimestamp: "2024-04-08T08:38:51Z"
   labels:
     opendatahub.io/dashboard: "true"
   name: elyra-pipelines-llm-rag-pipeline
@@ -9,8 +10,9 @@ metadata:
   - apiVersion: kubeflow.org/v1beta1
     kind: Notebook
     name: llm-rag-pipeline
-    uid: 98ffb9b9-81bc-4470-9c59-e170f69c6129
-  uid: 53d494b8-3e0b-4757-87ad-bdc5fbe0f19f
+    uid: 14ecbb95-87be-43fb-8d1b-ff87b50c7bb9
+  resourceVersion: "315061"
+  uid: 175b81b5-48c9-47fe-b8d1-33a7b678c80a
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

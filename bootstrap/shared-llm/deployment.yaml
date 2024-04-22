@@ -51,7 +51,7 @@ spec:
             failureThreshold: 3
           env:
             - name: MODEL_ID
-              value: mistralai/Mistral-7B-Instruct-v0.2
+              value: MaziyarPanahi/Mistral-7B-Instruct-v0.2
             - name: MAX_INPUT_LENGTH
               value: '4096'
             - name: MAX_TOTAL_TOKENS

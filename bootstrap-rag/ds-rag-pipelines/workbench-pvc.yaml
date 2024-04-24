@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ic-shared-llm-rag-workbench
+  name: ic-shared-rag-llm-workbench-pvc
   namespace: ic-shared-rag-llm
   labels:
-    app: ic-shared-llm-rag-workbench
+    app: ic-shared-rag-llm-workbench
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:

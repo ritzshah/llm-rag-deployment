@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: workbench-for-llm
+  name: shared-rag-llm-workbench
   namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -25,7 +25,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 subjects:
 - kind: ServiceAccount
-  name: workbench-for-llm
+  name: shared-rag-llm-workbench
   namespace: ic-shared-rag-llm
 roleRef:
   kind: ClusterRole

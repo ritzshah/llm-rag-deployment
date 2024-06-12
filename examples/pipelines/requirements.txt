@@ -5,3 +5,4 @@ pgvector
 pypdf
 psycopg
 bs4
+langchain-community

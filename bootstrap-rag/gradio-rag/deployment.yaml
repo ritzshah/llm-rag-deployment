@@ -95,7 +95,7 @@ spec:
             successThreshold: 1
             failureThreshold: 24
           terminationMessagePolicy: File
-          image: 'quay.io/redhat-gpte/gradio-hftgi-rag-pgvector:latest'
+          image: 'quay.io/redhat-gpte/gradio-hftgi-rag-pgvector:updated'
       dnsPolicy: ClusterFirst
   strategy:
     type: RollingUpdate

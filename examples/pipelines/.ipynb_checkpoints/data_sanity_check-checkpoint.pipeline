@@ -9,6 +9,76 @@
       "id": "primary",
       "nodes": [
         {
+          "id": "d0510f0c-fc50-42fc-a598-97e26b34ed88",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [
+                "llm_usage.py",
+                "summary_template.txt",
+                "example_text.txt"
+              ],
+              "include_subdirectories": false,
+              "outputs": [
+                "quality_result.json"
+              ],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "runtime_image": "quay.io/rh-aiservices-bu/rhoai-lab-insurance-claim-sanity-pipeline:1.0",
+              "filename": "test_response_quality.py"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "test_response_quality.py",
+              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "x_pos": 558,
+              "y_pos": 151,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "63c2f540-902d-48af-b820-d01dc04e7d15",
+                  "node_id_ref": "632d6fd1-dff9-46e0-9daf-b480026c1e4b",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
           "id": "c50bb14f-a036-4af1-b5dc-21e48eb80f7f",
           "type": "execution_node",
           "op": "execute-python-node",
@@ -31,9 +101,9 @@
             "label": "",
             "ui_data": {
               "label": "test_responsetime.py",
-              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/python.svg",
-              "x_pos": 602,
-              "y_pos": 297,
+              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "x_pos": 559,
+              "y_pos": 254,
               "description": "Run Python script"
             }
           },
@@ -51,8 +121,8 @@
               },
               "links": [
                 {
-                  "id": "6644cdf2-c57f-4435-b604-0ade70837a89",
-                  "node_id_ref": "5363c225-ec42-4bd3-be42-145d888b6855",
+                  "id": "646404b2-5488-4c17-ae83-c0dc717a5de5",
+                  "node_id_ref": "632d6fd1-dff9-46e0-9daf-b480026c1e4b",
                   "port_id_ref": "outPort"
                 }
               ]
@@ -96,9 +166,9 @@
             "label": "",
             "ui_data": {
               "label": "summarize_results.py",
-              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/python.svg",
-              "x_pos": 861,
-              "y_pos": 297,
+              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "x_pos": 895,
+              "y_pos": 252,
               "description": "Run Python script"
             }
           },
@@ -116,8 +186,18 @@
               },
               "links": [
                 {
+                  "id": "a2440b4e-785d-4963-b4e7-ef939be378c1",
+                  "node_id_ref": "d0510f0c-fc50-42fc-a598-97e26b34ed88",
+                  "port_id_ref": "outPort"
+                },
+                {
                   "id": "e896bb1d-ef18-4076-b038-b196f04809bf",
                   "node_id_ref": "c50bb14f-a036-4af1-b5dc-21e48eb80f7f",
+                  "port_id_ref": "outPort"
+                },
+                {
+                  "id": "e88bbbf7-3d69-4cff-863d-11d9cea2efcf",
+                  "node_id_ref": "eedde707-830a-469c-b754-adf6156c34bd",
                   "port_id_ref": "outPort"
                 }
               ]
@@ -139,7 +219,72 @@
           ]
         },
         {
-          "id": "5363c225-ec42-4bd3-be42-145d888b6855",
+          "id": "eedde707-830a-469c-b754-adf6156c34bd",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [
+                "security_result.json"
+              ],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "test_security.py"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "test_security.py",
+              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "x_pos": 560,
+              "y_pos": 363,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "79d33941-82d3-481c-a0ed-e64517f5a4cb",
+                  "node_id_ref": "632d6fd1-dff9-46e0-9daf-b480026c1e4b",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "632d6fd1-dff9-46e0-9daf-b480026c1e4b",
           "type": "execution_node",
           "op": "execute-notebook-node",
           "app_data": {
@@ -154,14 +299,14 @@
               "kubernetes_shared_mem_size": {},
               "kubernetes_tolerations": [],
               "mounted_volumes": [],
-              "filename": "Langchain-PgVector-Query.ipynb"
+              "filename": "../../../../llm-on-openshift/examples/notebooks/langchain/Langchain-PgVector-Query.ipynb"
             },
-            "label": "",
+            "label": "Data Verification",
             "ui_data": {
-              "label": "Langchain-PgVector-Query.ipynb",
-              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/notebook.svg",
-              "x_pos": 332,
-              "y_pos": 298,
+              "label": "Data Verification",
+              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/notebook.svg",
+              "x_pos": 238,
+              "y_pos": 236,
               "description": "Run notebook file"
             }
           },
@@ -179,8 +324,8 @@
               },
               "links": [
                 {
-                  "id": "026ba3d2-de01-44a1-aac7-b7ffaf065356",
-                  "node_id_ref": "e5f75e8b-1ac2-4314-a4a3-5013fe5e8ddd",
+                  "id": "f64d77f6-709c-49c6-8a61-b90e44f00e64",
+                  "node_id_ref": "d5987501-0e79-454e-a0c6-9f774031cc6c",
                   "port_id_ref": "outPort"
                 }
               ]
@@ -202,7 +347,7 @@
           ]
         },
         {
-          "id": "e5f75e8b-1ac2-4314-a4a3-5013fe5e8ddd",
+          "id": "d5987501-0e79-454e-a0c6-9f774031cc6c",
           "type": "execution_node",
           "op": "execute-notebook-node",
           "app_data": {
@@ -217,14 +362,14 @@
               "kubernetes_shared_mem_size": {},
               "kubernetes_tolerations": [],
               "mounted_volumes": [],
-              "filename": "Langchain-PgVector-Ingest.ipynb"
+              "filename": "../../../../llm-on-openshift/examples/notebooks/langchain/Langchain-PgVector-Ingest.ipynb"
             },
-            "label": "",
+            "label": "Data Ingestion",
             "ui_data": {
-              "label": "Langchain-PgVector-Ingest.ipynb",
-              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/notebook.svg",
-              "x_pos": 103,
-              "y_pos": 298,
+              "label": "Data Ingestion",
+              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/notebook.svg",
+              "x_pos": 24,
+              "y_pos": 233,
               "description": "Run notebook file"
             }
           },
@@ -265,18 +410,19 @@
         "version": 8,
         "runtime_type": "KUBEFLOW_PIPELINES",
         "properties": {
-          "name": "data_ingestion_response_check",
+          "name": "data_sanity_check",
           "runtime": "Data Science Pipelines",
           "pipeline_defaults": {
+            "kubernetes_tolerations": [],
+            "kubernetes_pod_annotations": [],
             "kubernetes_shared_mem_size": {},
             "kubernetes_pod_labels": [],
             "mounted_volumes": [],
-            "kubernetes_tolerations": [],
-            "kubernetes_pod_annotations": [],
             "kubernetes_secrets": [],
             "env_vars": [],
             "runtime_image": "quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b"
-          }
+          },
+          "pipeline_parameters": []
         }
       },
       "runtime_ref": ""

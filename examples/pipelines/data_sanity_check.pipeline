@@ -36,7 +36,7 @@
             "label": "",
             "ui_data": {
               "label": "test_response_quality.py",
-              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/python.svg",
               "x_pos": 558,
               "y_pos": 151,
               "description": "Run Python script"
@@ -101,7 +101,7 @@
             "label": "",
             "ui_data": {
               "label": "test_responsetime.py",
-              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/python.svg",
               "x_pos": 559,
               "y_pos": 254,
               "description": "Run Python script"
@@ -166,7 +166,7 @@
             "label": "",
             "ui_data": {
               "label": "summarize_results.py",
-              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/python.svg",
               "x_pos": 895,
               "y_pos": 252,
               "description": "Run Python script"
@@ -241,7 +241,7 @@
             "label": "",
             "ui_data": {
               "label": "test_security.py",
-              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/python.svg",
+              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/python.svg",
               "x_pos": 560,
               "y_pos": 363,
               "description": "Run Python script"
@@ -304,7 +304,7 @@
             "label": "Data Verification",
             "ui_data": {
               "label": "Data Verification",
-              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/notebook.svg",
+              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/notebook.svg",
               "x_pos": 238,
               "y_pos": 236,
               "description": "Run notebook file"
@@ -367,9 +367,9 @@
             "label": "Data Ingestion",
             "ui_data": {
               "label": "Data Ingestion",
-              "image": "/notebook/llm-chatbot/llm-chatbot/static/elyra/notebook.svg",
+              "image": "/notebook/ic-shared-rag-llm/llm/static/elyra/notebook.svg",
               "x_pos": 24,
-              "y_pos": 233,
+              "y_pos": 232,
               "description": "Run notebook file"
             }
           },

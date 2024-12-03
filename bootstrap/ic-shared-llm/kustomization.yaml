@@ -8,7 +8,7 @@ commonLabels:
 resources:
   # presync
   - presync-rhoai-ready.yaml
-  - presync-inferenceservice.yaml
+#  - presync-inferenceservice.yaml
   # wave 0
   - namespace.yaml
   # wave 1

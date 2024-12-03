@@ -8,6 +8,11 @@ spec:
     - list:
         elements:
           - cluster: in-cluster
+            name: ic-rhoai-installation
+            repoURL: https://github.com/rh-aiservices-bu/parasol-insurance.git
+            targetRevision: dev-rhoai-2.13
+            path: bootstrap/ic-rhoai-installation        
+          - cluster: in-cluster
             name: ic-rhoai-configuration
             repoURL: https://github.com/rh-aiservices-bu/parasol-insurance.git
             targetRevision: dev-rhoai-2.13

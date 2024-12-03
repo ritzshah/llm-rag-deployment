@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   # presync
-  - presync.yaml
+  #- presync.yaml
   # wave 1
-  - dsci.yaml
+  - rbac-presync-monitoring.yaml
+  #- dsci.yaml

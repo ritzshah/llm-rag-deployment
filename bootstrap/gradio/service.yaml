@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: gradio-service
-  namespace: ic-shared-llm
+  namespace: ic-shared-gradio
   labels:
     app: gradio
 spec:

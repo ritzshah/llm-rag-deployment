@@ -2,7 +2,7 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: gradio-route
-  namespace: ic-shared-llm
+  namespace: ic-shared-gradio
   labels:
     app: gradio
 spec:

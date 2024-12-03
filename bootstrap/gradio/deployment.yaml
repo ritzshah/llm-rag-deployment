@@ -2,7 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: gradio-llm-milvis
-  namespace: ic-shared-llm
+  namespace: ic-shared-gradio
   labels:
     app: gradio
 spec:

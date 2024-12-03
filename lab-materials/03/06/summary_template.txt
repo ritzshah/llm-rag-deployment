@@ -1,0 +1,7 @@
+<|system|>
+Summarize the below car insurance claim:
+<|user|>
+### TEXT:
+{car_claim}
+### ANSWER:
+<|assistant|>

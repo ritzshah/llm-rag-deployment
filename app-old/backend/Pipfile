@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+boto3 = "~=1.28.0"
+fastapi = "~=0.104.0"
+httpx = "~=0.25.2"
+python-dotenv = "~=1.0.0"
+psycopg2-binary = "~=2.9.9"
+uvicorn = "~=0.23.2"
+python-multipart = "*"
+
+[dev-packages]
+"watchdog[watchmedo]" = "~=3.0.0"
+
+[requires]
+python_version = "3.11"

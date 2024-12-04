@@ -1,6 +1,7 @@
 langchain==0.0.340
 text_generation==0.6.1
 sentence-transformers==2.2.2
+huggingface-hub==0.13.3  # Add this line with a compatible version
 pgvector
 pypdf
 psycopg

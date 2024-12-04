@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: project-creator
+  namespace: llm-hosting
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: project-creator-binding
+subjects:
+- kind: ServiceAccount
+  name: project-creator
+  namespace: llm-hosting
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: route-reader
+rules:
+- apiGroups: ["route.openshift.io"]
+  resources: ["routes"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch"]
+---

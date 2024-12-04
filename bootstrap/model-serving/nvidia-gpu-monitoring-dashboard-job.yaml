@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-nvidia-gpu-dashboard
+  namespace: llm-hosting
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      serviceAccount: project-creator
+      serviceAccountName: project-creator
+      containers:
+      - name: create-nvidia-gpu-dashboard
+        image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args:
+        - -ec
+        - |-
+          # Get dashboard json
+          # Check if the ConfigMap already exists
+          if oc get configmap nvidia-dcgm-exporter-dashboard -n openshift-config-managed; then
+            echo "ConfigMap nvidia-dcgm-exporter-dashboard already exists. Skipping creation."
+          else
+            # Get dashboard JSON
+            curl -LfO https://github.com/NVIDIA/dcgm-exporter/raw/main/grafana/dcgm-exporter-dashboard.json
+            
+            # Create ConfigMap
+            oc create configmap nvidia-dcgm-exporter-dashboard -n openshift-config-managed --from-file=dcgm-exporter-dashboard.json
+            
+            # Label the ConfigMap
+            oc label configmap nvidia-dcgm-exporter-dashboard -n openshift-config-managed "console.openshift.io/dashboard=true"
+            oc label configmap nvidia-dcgm-exporter-dashboard -n openshift-config-managed "console.openshift.io/odc-dashboard=true"
+            echo "ConfigMap nvidia-dcgm-exporter-dashboard created and labeled."
+          fi
+          oc -n openshift-config-managed get cm nvidia-dcgm-exporter-dashboard --show-labels
+      restartPolicy: Never

@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: llm-hosting
+  labels:
+    app: llm-hosting
+    argocd.argoproj.io/managed-by: openshift-gitops
+    opendatahub.io/dashboard: "true"
+    modelmesh-enabled: "false"
+  annotations:
+    openshift.io/display-name: "LLM Host"
+    argocd.argoproj.io/sync-wave: "-1"

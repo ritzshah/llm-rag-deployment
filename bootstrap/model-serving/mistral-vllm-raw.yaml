@@ -1,0 +1,38 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: Mistral-7B-Instruct-v0.3
+    serving.kserve.io/deploymentMode: RawDeployment
+  name: mistral-7b-instruct
+  namespace: llm-hosting  
+  labels:
+    opendatahub.io/dashboard: 'true'
+spec:
+  predictor:
+    maxReplicas: 1
+    minReplicas: 1
+    model:
+      args:
+        - '--max_model_len=4096'    
+      modelFormat:
+        name: vLLM
+      name: ''
+      resources:
+        limits:
+          cpu: '8'
+          memory: 24Gi
+          nvidia.com/gpu: '1'
+        requests:
+          cpu: 200m
+          memory: 16Gi
+          nvidia.com/gpu: '1'
+      runtime: vllm-2.14-6144
+      storage:
+        key: aws-connection-models
+        path: mistralai/mistral-7b-instruct-v03/
+    tolerations:
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        operator: Exists

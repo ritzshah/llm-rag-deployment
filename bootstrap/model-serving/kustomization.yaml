@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: aiworkshop
+
+resources:
+# wave 0
+- namespace.yaml
+- workbench-imagestream.yaml
+- odh-dashboard-config.yaml
+# wave 1
+- project-manager.yaml
+- secret-aws-connection-llm-hosting.yaml
+- create-odh-tec-workbench.yaml
+- granite-code-vllm-raw.yaml
+- mistral-vllm-raw.yaml
+- nvidia-gpu-monitoring-dashboard-job.yaml
+#- nomic-embed-raw.yaml

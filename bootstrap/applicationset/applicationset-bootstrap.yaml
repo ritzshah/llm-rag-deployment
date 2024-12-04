@@ -57,6 +57,11 @@ spec:
             repoURL: https://github.com/ritzshah/llm-rag-deployment.git
             targetRevision: dev-rhoai-2.13
             path: bootstrap/gradio
+          - cluster: in-cluster
+            name: model-serving
+            repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+            targetRevision: dev-rhoai-2.13
+            path: bootstrap/model-serving          
   template:
     metadata:
       name: "{{name}}"

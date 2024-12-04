@@ -1,0 +1,13 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: storage-config
+  namespace: llm-hosting
+  annotations:
+    argocd.argoproj.io/managed-by: openshift-gitops
+    argocd.argoproj.io/sync-wave: "0" 
+  labels:
+    opendatahub.io/managed: 'true'
+data:
+  aws-connection-models: eyJhY2Nlc3Nfa2V5X2lkIjoibWluaW8iLCJidWNrZXQiOiJtb2RlbHMiLCJkZWZhdWx0X2J1Y2tldCI6Im1vZGVscyIsImVuZHBvaW50X3VybCI6Imh0dHA6Ly9taW5pby5pYy1zaGFyZWQtbWluaW8uc3ZjOjkwMDAiLCJyZWdpb24iOiJ1cyIsInNlY3JldF9hY2Nlc3Nfa2V5IjoibWluaW8xMjMiLCJ0eXBlIjoiczMifQ==
+type: Opaque

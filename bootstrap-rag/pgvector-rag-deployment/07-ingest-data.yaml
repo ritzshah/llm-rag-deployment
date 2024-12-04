@@ -24,6 +24,7 @@ spec:
               curl -o /app/data_ingest.py https://raw.githubusercontent.com/ritzshah/llm-rag-deployment/main/examples/pipelines/data_ingest.py  # Download the Python file
               curl -o /app/requirements.txt https://raw.githubusercontent.com/ritzshah/llm-rag-deployment/main/examples/pipelines/requirements.txt  # Download the Python file
               cd /app
+              pip install --upgrade pip
               pip install -r requirements.txt  # Install required dependencies
               python data_ingest.py  # Run the Python file
       restartPolicy: Never

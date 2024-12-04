@@ -7,3 +7,4 @@ pypdf
 psycopg
 bs4
 langchain-community
+lxml_html_clean

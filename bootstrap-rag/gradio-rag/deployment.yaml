@@ -55,7 +55,7 @@ spec:
             - name: APP_TITLE
               value: 'Talk with your documentation'
             - name: INFERENCE_SERVER_URL
-              value: 'http://granite-7b-instruct-predictor.ic-shared-llm.svc.cluster.local:8080/'
+              value: 'http://granite-7b-instruct-predictor.ic-shared-llm.svc.cluster.local:8080/v1/completions'
             - name: DB_CONNECTION_STRING
               value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb' # notsecret
             - name: DB_COLLECTION_NAME

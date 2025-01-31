@@ -18,10 +18,12 @@ from langchain.vectorstores.pgvector import PGVector
 load_dotenv()
 
 # Parameters
+# curl -X POST http://granite-7b-instruct-predictor.ic-shared-llm.svc.cluster.local:8080/v1/completions -H "Content-Type: application/json" -d '{"model": "granite-7b-instruct", "prompt": "Hello world!", "max_tokens": 128}'
 
 APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')
 
 INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL')
+MODEL_NAME = os.getenv('MODEL_NAME')
 MAX_NEW_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))
 TOP_K = int(os.getenv('TOP_K', 10))
 TOP_P = float(os.getenv('TOP_P', 0.95))
@@ -101,6 +103,7 @@ store = PGVector(
 # LLM
 llm = HuggingFaceTextGenInference(
     inference_server_url=INFERENCE_SERVER_URL,
+    model_name=MODEL_NAME,
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,
     top_p=TOP_P,

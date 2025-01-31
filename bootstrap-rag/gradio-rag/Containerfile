@@ -18,4 +18,3 @@ COPY --chown=1001:0 assets/ ./assets/
 EXPOSE 7860
 
 CMD ["python", "app.py"]
-

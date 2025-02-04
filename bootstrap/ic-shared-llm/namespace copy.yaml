@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ic-shared-rag-llm
+  labels:
+    app: ic-shared-rag-llm
+    argocd.argoproj.io/managed-by: openshift-gitops
+    opendatahub.io/dashboard: 'true'    
+  annotations:
+    openshift.io/display-name: "Shared LLM with RAG"
+    argocd.argoproj.io/sync-wave: "0"

@@ -6,18 +6,14 @@ commonLabels:
   component: ic-shared-llm
 
 resources:
-  # presync
-  - presync-rhoai-ready.yaml
-  - presync-inferenceservice.yaml
-  # wave 0
-  - namespace.yaml
-  # wave 1
-  - serving-runtime-vllm-granite-modelcar.yaml
-  # wave 2
-  - inference-service-granite-modelcar.yaml
-  - pvc-hftgi.yaml
-  - deployment-hftgi.yaml
-  - service-hftgi.yaml
-
-transformers:
-  - namespace-transformer.yaml
+# wave 0
+- namespace.yaml
+#- fix-odf-config.yaml
+# wave 1
+- pvc.yaml
+- deployment.yaml
+- service.yaml
+- route.yaml
+- deployment-flant5.yaml
+- service-flant5.yaml
+# wave 2

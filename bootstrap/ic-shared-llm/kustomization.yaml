@@ -8,7 +8,7 @@ commonLabels:
 resources:
 # wave 0
 - namespace.yaml
-#- fix-odf-config.yaml
+- fix-odf-config.yaml
 # wave 1
 - pvc.yaml
 - deployment.yaml

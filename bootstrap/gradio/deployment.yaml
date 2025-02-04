@@ -14,7 +14,6 @@ spec:
       app: gradio
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: gradio
     spec:

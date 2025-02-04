@@ -12,7 +12,6 @@ spec:
       app: llm
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: llm
     spec:

@@ -55,7 +55,7 @@ spec:
             - name: APP_TITLE
               value: 'Talk with your documentation'
             - name: INFERENCE_SERVER_URL
-              value: 'http://llm.ic-shared-llm.svc.cluster.local:8080/v1/completions'
+              value: 'http://llm.ic-shared-llm.svc.cluster.local:3000/v1/completions'
             - name: MODEL_NAME
               value: 'granite-7b-instruct'    
             - name: DB_CONNECTION_STRING

@@ -5,8 +5,6 @@ metadata:
   namespace: ic-shared-llm
   labels:
     app: llm
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   replicas: 1
   selector:
@@ -14,6 +12,7 @@ spec:
       app: llm
   template:
     metadata:
+      creationTimestamp: null
       labels:
         app: llm
     spec:

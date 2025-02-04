@@ -7,13 +7,12 @@ commonLabels:
 
 resources:
 # wave 0
-- namespace.yaml
-#- fix-odf-config.yaml
 # wave 1
-- pvc.yaml
-#- deployment.yaml
-#- service.yaml
-#- route.yaml
-- deployment-flant5.yaml
-- service-flant5.yaml
+- 01-db-secret.yaml
+- 02-pvc.yaml
+- 03-deployment.yaml
+- 04-services.yaml
+- 05-grant-access-to-db.yaml
 # wave 2
+- 06-extend-pg-db.yaml
+- 07-ingest-data.yaml

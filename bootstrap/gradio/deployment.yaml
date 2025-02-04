@@ -2,7 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: gradio-llm-rag-pgvector
-  namespace: ic-shared-rag-llm
+  namespace: ic-shared-llm
   labels:
     app: gradio
   annotations:
@@ -59,7 +59,7 @@ spec:
             - name: MODEL_NAME
               value: 'granite-7b-instruct'    
             - name: DB_CONNECTION_STRING
-              value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb' # notsecret
+              value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb' # notsecret
             - name: DB_COLLECTION_NAME
               value: 'documents_test'
             - name: MAX_NEW_TOKENS
@@ -97,7 +97,7 @@ spec:
             successThreshold: 1
             failureThreshold: 24
           terminationMessagePolicy: File
-          image: 'quay.io/redhat-gpte/gradio-hftgi-rag-pgvector-model:latest'
+          image: 'quay.io/redhat-gpte/gradio-hftgi-rag-pgvector:latest'
       dnsPolicy: ClusterFirst
   strategy:
     type: RollingUpdate

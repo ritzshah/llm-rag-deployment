@@ -58,6 +58,11 @@ spec:
             targetRevision: update-for-2.15
             path: bootstrap/ic-shared-app
           - cluster: in-cluster
+            name: pg-vector-deployment
+            repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+            targetRevision: update-for-2.15
+            path: bootstrap/pgvector-deployment            
+          - cluster: in-cluster
             name: gradio
             repoURL: https://github.com/ritzshah/llm-rag-deployment.git
             targetRevision: update-for-2.15

@@ -6,7 +6,7 @@ metadata:
     opendatahub.io/notebook-image-creator: admin
     opendatahub.io/notebook-image-desc: >-
       Jupyter notebook image with all the libraries needed for the OpenShift AI Parasol Insurance Lab.
-    opendatahub.io/notebook-image-name: CUSTOM - Parasol Insurance Claim Processing Lab Workbench
+    opendatahub.io/notebook-image-name: CUSTOM - GenAI Lab Workbench
     opendatahub.io/notebook-image-order: "01"
     opendatahub.io/notebook-image-url: >-
       https://github.com/rh-aiservices-bu/parasol-insurance/tree/main/bootstrap/workbench-image
@@ -45,7 +45,7 @@ metadata:
     opendatahub.io/notebook-image-creator: admin
     opendatahub.io/notebook-image-desc: >-
       Code-server workbench image to use in the Parasol Insurance workshop.
-    opendatahub.io/notebook-image-name: CUSTOM - Code Server for Parasol Insurance Lab
+    opendatahub.io/notebook-image-name: CUSTOM - Code Server for GanAI Lab
     opendatahub.io/notebook-image-order: "02"
     opendatahub.io/notebook-image-url: >-
       https://github.com/red-hat-data-services/notebooks/tree/main/codeserver

@@ -1,24 +1,18 @@
-apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
+apiVersion: datasciencepipelinesapplications.opendatahub.io/v1
 kind: DataSciencePipelinesApplication
 metadata:
-  name: pipelines-definition
+  name: dspa
   namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   apiServer:
-    applyTektonCustomResource: true
-    archiveLogs: false
-    autoUpdatePipelineDefaultVersion: true
-    collectMetrics: true
-    dbConfigConMaxLifetimeSec: 120
+    artifactSignedURLExpirySeconds: 60
+    caBundleFileMountPath: ''
+    caBundleFileName: ''
     deploy: true
     enableOauth: true
     enableSamplePipeline: false
-    injectDefaultScript: true
-    stripEOF: true
-    terminateStatus: Cancelled
-    trackArtifacts: true
   database:
     disableHealthCheck: false
     mariaDB:
@@ -26,14 +20,16 @@ spec:
       pipelineDBName: mlpipeline
       pvcSize: 10Gi
       username: mlpipeline
-  mlmd:
-    deploy: false
+  dspVersion: v2
   objectStorage:
     disableHealthCheck: false
+    enableExternalRoute: false
     externalStorage:
+      basePath: ''
       bucket: pipeline-artifacts
-      host: minio.ic-shared-rag-minio.svc:9000
-      port: ""
+      host: 'minio.ic-shared-rag-minio.svc:9000'
+      port: ''
+      region: us-east-1
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID
         secretKey: AWS_SECRET_ACCESS_KEY
@@ -42,6 +38,7 @@ spec:
   persistenceAgent:
     deploy: true
     numWorkers: 2
+  podToPodTLS: true
   scheduledWorkflow:
     cronScheduleTimezone: UTC
     deploy: true

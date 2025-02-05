@@ -6,8 +6,8 @@ resources:
   - ui-configmap.yaml
   - db-creds.yaml
   - workbench-sa.yaml
-  - dspa.yaml3
-  - setup-secret-job.yaml
+  - dspa.yaml
+#  - setup-secret-job.yaml
 #waves 4 for notebook setup
   - ic-shared-rag-llm-workbench-pvc.yaml
   - role.yaml

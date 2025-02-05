@@ -38,7 +38,7 @@ spec:
   persistenceAgent:
     deploy: true
     numWorkers: 2
-  podToPodTLS: true
+  podToPodTLS: false
   scheduledWorkflow:
     cronScheduleTimezone: UTC
     deploy: true

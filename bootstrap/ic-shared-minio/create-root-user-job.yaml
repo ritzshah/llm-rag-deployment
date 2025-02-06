@@ -31,7 +31,7 @@ spec:
 
           # hard-code id and secret instead
           id="minio"
-          secret="minio-parasol"
+          secret="minio123"
 
           cat << EOF | oc apply -f-
           apiVersion: v1

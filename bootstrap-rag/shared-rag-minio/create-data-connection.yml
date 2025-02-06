@@ -29,6 +29,7 @@ spec:
           done; echo
           id=$(oc get secret -n ic-shared-rag-minio minio-root-user -ogo-template='{{.data.MINIO_ROOT_USER|base64decode}}')
           secret=$(oc get secret -n ic-shared-rag-minio minio-root-user -ogo-template='{{.data.MINIO_ROOT_PASSWORD|base64decode}}')
+          route=$(oc get route minio-s3 -n ic-shared-rag-minio -o jsonpath='{.spec.host}')
           echo "Minio Console : https://$(oc get route -n ic-shared-rag-minio minio-console -ojsonpath='{.status.ingress[0].host}')/ "
           echo "Minio user: ${id}"
           echo "Minio pass: ${secret}"
@@ -49,7 +50,7 @@ spec:
             AWS_ACCESS_KEY_ID: ${id}
             AWS_SECRET_ACCESS_KEY: ${secret}
             AWS_DEFAULT_REGION: us
-            AWS_S3_ENDPOINT: http://minio.ic-shared-rag-minio.svc:9000
+            AWS_S3_ENDPOINT: https://${route}
             AWS_S3_BUCKET: bucket-placeholder
           EOF
       restartPolicy: Never

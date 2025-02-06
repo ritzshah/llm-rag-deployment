@@ -36,7 +36,7 @@ spec:
         - -ec
         - |-
           curl -LO https://rhods-public.s3.amazonaws.com/demo-models/ic-models/accident/accident_detect.onnx
-          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/Langchain-PgVector-Ingest.ipynb
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/update-for-2.15/examples/pipelines/Langchain-PgVector-Ingest.ipynb
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/Langchain-PgVector-Query.ipynb
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/data_ingest.py
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/data_verify.py
@@ -45,7 +45,7 @@ spec:
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/test_security.py
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/sanity_check.yaml
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/sanity_check.pipeline
-          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/Langchain-PgVector-Ingest.tar.gz
+          curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/update-for-2.15/examples/pipelines/Langchain-PgVector-Ingest.tar.gz
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/Langchain-PgVector-Query.tar.gz
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/test_responsetime.tar.gz
           curl -LO https://github.com/ritzshah/llm-rag-deployment/raw/main/examples/pipelines/summarize_results.tar.gz

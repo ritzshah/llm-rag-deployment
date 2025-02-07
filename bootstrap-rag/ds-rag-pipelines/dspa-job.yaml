@@ -19,6 +19,8 @@ spec:
               set -e
               echo "Extracting AWS_S3_ENDPOINT from secret..."
               HOST=$(oc get secret aws-shared-rag-connection -n ic-shared-rag-llm -o jsonpath="{.data.AWS_S3_ENDPOINT}" | base64 --decode)
+              AccessKey1=$(oc get secret aws-shared-rag-connection -n ic-shared-rag-llm -o jsonpath="{.data.AWS_ACCESS_KEY_ID}" | base64 --decode)
+              SecretKey1=$(oc get secret aws-shared-rag-connection -n ic-shared-rag-llm -o jsonpath="{.data.AWS_SECRET_ACCESS_KEY}" | base64 --decode)
               echo "AWS_S3_ENDPOINT: $HOST"
               if [ -z "$HOST" ]; then
                 echo "Error: AWS_S3_ENDPOINT is empty!"
@@ -58,8 +60,8 @@ spec:
                     port: ''
                     region: us-east-1
                     s3CredentialsSecret:
-                      accessKey: AWS_ACCESS_KEY_ID
-                      secretKey: AWS_SECRET_ACCESS_KEY
+                      accessKey: $AccessKey1
+                      secretKey: $SecretKey1
                       secretName: aws-shared-rag-connection
                     scheme: https
                 persistenceAgent:

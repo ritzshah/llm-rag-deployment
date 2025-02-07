@@ -3,11 +3,11 @@ kind: Kustomization
 resources:
   - workbench-pvc.yaml
   - serviceaccount.yaml
-  - storage-creds-minio-path.yaml
+  - storage-creds-minio-path-job.yaml
   - ui-configmap.yaml
   - db-creds.yaml
   - workbench-sa.yaml
-  - dspa.yaml
+  - dspa-job.yaml
   - setup-secrets-for-dspa.yaml
 #waves 4 for notebook setup
   - ic-shared-rag-llm-workbench-pvc.yaml

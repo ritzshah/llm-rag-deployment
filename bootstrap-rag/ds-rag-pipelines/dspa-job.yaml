@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: a-dspa-config-job-7
+  name: a-dspa-config-job-8
   namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "2"  
@@ -10,7 +10,7 @@ spec:
     spec: 
       serviceAccountName: dspa-service-account    
       containers:
-        - name: dspa-config-container-7
+        - name: dspa-config-container-8
           image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
           command:
             - /bin/sh
@@ -58,7 +58,7 @@ spec:
                     bucket: pipeline-artifacts
                     host: $HOST
                     port: ''
-                    region: us-east-1
+                    region: us
                     s3CredentialsSecret:
                       accessKey: AWS_ACCESS_KEY_ID
                       secretKey: AWS_SECRET_ACCESS_KEY
@@ -67,7 +67,7 @@ spec:
                 persistenceAgent:
                   deploy: true
                   numWorkers: 2
-                podToPodTLS: false
+                podToPodTLS: true
                 scheduledWorkflow:
                   cronScheduleTimezone: UTC
                   deploy: true

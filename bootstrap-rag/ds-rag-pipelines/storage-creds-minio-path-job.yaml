@@ -52,7 +52,7 @@ spec:
             AWS_ACCESS_KEY_ID: ${id}
             AWS_SECRET_ACCESS_KEY: ${secret}
             AWS_DEFAULT_REGION: us
-            AWS_S3_ENDPOINT: https://${route}
+            AWS_S3_ENDPOINT: ${route}
             AWS_S3_BUCKET: bucket-placeholder
             # The following keys are needed while https://github.com/kubeflow/pipelines/issues/9689 is open
             accesskey: bWluaW8=

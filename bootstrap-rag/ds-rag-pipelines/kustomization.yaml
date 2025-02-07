@@ -12,4 +12,4 @@ resources:
   - ic-shared-rag-llm-workbench-pvc.yaml
   - role.yaml
   - role-binding.yaml
-  - notebook.yaml
+#  - notebook.yaml

@@ -15,7 +15,7 @@ spec:
             - |
               set -e
               echo "Extracting AWS_S3_ENDPOINT from secret..."
-              HOST=$(oc get secret aws-shared-rag-connection -o jsonpath="{.data.AWS_S3_ENDPOINT}" | base64 --decode)
+              HOST=$(oc get secret aws-shared-rag-connection -n ic-shared-rag-llm -o jsonpath="{.data.AWS_S3_ENDPOINT}" | base64 --decode)
               echo "AWS_S3_ENDPOINT: $HOST"
               if [ -z "$HOST" ]; then
                 echo "Error: AWS_S3_ENDPOINT is empty!"

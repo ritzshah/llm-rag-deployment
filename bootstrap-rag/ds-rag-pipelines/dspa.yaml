@@ -27,12 +27,12 @@ spec:
     externalStorage:
       basePath: ''
       bucket: pipeline-artifacts
-      host: 'minio.ic-shared-rag-minio.svc:9000'
       port: ''
       region: us-east-1
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID
         secretKey: AWS_SECRET_ACCESS_KEY
+        host: AWS_S3_ENDPOINT
         secretName: aws-shared-rag-connection
       scheme: http
   persistenceAgent:

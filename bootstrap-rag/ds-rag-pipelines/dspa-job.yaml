@@ -62,6 +62,7 @@ spec:
                     s3CredentialsSecret:
                       accessKey: $AccessKey1
                       secretKey: $SecretKey1
+                      secretName: aws-shared-rag-connection
                     scheme: https
                 persistenceAgent:
                   deploy: true

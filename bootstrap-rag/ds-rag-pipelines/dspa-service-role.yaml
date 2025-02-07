@@ -14,9 +14,12 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 rules:
-- apiGroups: ["*"]
-  resources: ["*"]
-  verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "delete", "get"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -28,7 +31,6 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: dspa-service-account
-    namespace: ic-shared-rag-llm
 roleRef:
   kind: Role
   name: secret-access-role

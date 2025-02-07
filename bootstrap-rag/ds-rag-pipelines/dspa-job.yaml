@@ -5,9 +5,7 @@ metadata:
   namespace: ic-shared-rag-llm
 spec:
   template:
-    spec:
-      serviceAccount: minio-manage
-      serviceAccountName: minio-manage    
+    spec: 
       containers:
         - name: dspa-configurator
           image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest

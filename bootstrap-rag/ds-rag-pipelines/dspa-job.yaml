@@ -50,7 +50,7 @@ spec:
                 dspVersion: v2
                 objectStorage:
                   disableHealthCheck: false
-                  enableExternalRoute: false
+                  enableExternalRoute: true
                   externalStorage:
                     basePath: ''
                     bucket: pipeline-artifacts

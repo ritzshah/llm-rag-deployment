@@ -61,7 +61,7 @@ spec:
                       accessKey: AWS_ACCESS_KEY_ID
                       secretKey: AWS_SECRET_ACCESS_KEY
                       secretName: aws-shared-rag-connection
-                    scheme: http
+                    scheme: https
                 persistenceAgent:
                   deploy: true
                   numWorkers: 2

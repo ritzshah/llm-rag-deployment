@@ -59,8 +59,9 @@ spec:
                     host: $HOST
                     port: ''
                     region: us-east-1
-                    accessKey: $AccessKey1
-                    secretKey: $SecretKey1
+                    s3CredentialsSecret:
+                      accessKey: $AccessKey1
+                      secretKey: $SecretKey1
                     scheme: https
                 persistenceAgent:
                   deploy: true

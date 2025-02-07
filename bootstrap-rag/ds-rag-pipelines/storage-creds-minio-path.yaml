@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-secret-connection
+  namespace: ic-shared-rag-llm
   # generateName: create-dc-
   annotations:
     argocd.argoproj.io/sync-wave: "2"

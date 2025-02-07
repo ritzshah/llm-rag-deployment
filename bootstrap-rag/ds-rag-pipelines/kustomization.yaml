@@ -6,6 +6,7 @@ resources:
   - storage-creds-minio-path-job.yaml
   - ui-configmap.yaml
   - db-creds.yaml
+  - dspa-service-role.yaml
   - workbench-sa.yaml
   - dspa-job.yaml
   - setup-secrets-for-dspa.yaml

@@ -3,9 +3,12 @@ kind: Job
 metadata:
   name: dspa-host-config-job
   namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"  
 spec:
   template:
     spec: 
+      serviceAccountName: dspa-service-account    
       containers:
         - name: dspa-configurator
           image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest

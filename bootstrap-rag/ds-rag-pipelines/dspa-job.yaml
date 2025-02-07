@@ -10,7 +10,7 @@ spec:
     spec: 
       serviceAccountName: dspa-service-account    
       containers:
-        - name: dspa-configurator-container
+        - name: dspa-config-container
           image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
           command:
             - /bin/sh

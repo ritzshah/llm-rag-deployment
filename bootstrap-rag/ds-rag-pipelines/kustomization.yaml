@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - workbench-pvc.yaml
   - serviceaccount.yaml
-  
   - storage-creds-minio-path.yaml
   - ui-configmap.yaml
   - db-creds.yaml

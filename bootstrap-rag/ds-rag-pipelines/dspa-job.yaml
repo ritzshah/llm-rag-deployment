@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: a-dspa-config-job-5
+  name: a-dspa-config-job-6
   namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "2"  
@@ -10,7 +10,7 @@ spec:
     spec: 
       serviceAccountName: dspa-service-account    
       containers:
-        - name: dspa-config-container-5
+        - name: dspa-config-container-6
           image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
           command:
             - /bin/sh
@@ -52,7 +52,7 @@ spec:
                 dspVersion: v2
                 objectStorage:
                   disableHealthCheck: false
-                  enableExternalRoute: true
+                  enableExternalRoute: false
                   externalStorage:
                     basePath: ''
                     bucket: pipeline-artifacts

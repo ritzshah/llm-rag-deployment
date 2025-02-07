@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: a-dspa-config-job
+  name: a-dspa-config-job-1
   namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "2"  
@@ -10,7 +10,7 @@ spec:
     spec: 
       serviceAccountName: dspa-service-account    
       containers:
-        - name: dspa-config-container
+        - name: dspa-config-container-1
           image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
           command:
             - /bin/sh

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: a-dspa-config-job-2
+  name: a-dspa-config-job-3
   namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "2"  
@@ -10,7 +10,7 @@ spec:
     spec: 
       serviceAccountName: dspa-service-account    
       containers:
-        - name: dspa-config-container-2
+        - name: dspa-config-container-3
           image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
           command:
             - /bin/sh
@@ -59,10 +59,8 @@ spec:
                     host: $HOST
                     port: ''
                     region: us-east-1
-                    s3CredentialsSecret:
-                      accessKey: $AccessKey1
-                      secretKey: $SecretKey1
-                      secretName: aws-shared-rag-connection
+                    accessKey: $AccessKey1
+                    secretKey: $SecretKey1
                     scheme: https
                 persistenceAgent:
                   deploy: true

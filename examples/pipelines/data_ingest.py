@@ -26,7 +26,7 @@
 # In[2]:
 
 
-product_version = "2-latest"
+product_version = "2.20"
 CONNECTION_STRING = "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb"
 COLLECTION_NAME = "documents_test"
 

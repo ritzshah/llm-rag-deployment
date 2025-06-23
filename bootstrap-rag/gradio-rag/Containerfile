@@ -6,7 +6,7 @@ USER 1001
 
 COPY --chown=1001:0 requirements.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt && \
+RUN pip install --no-cache-dir -r requirements-copy.txt && \
     rm -f requirements.txt && \
     # Fix permissions to support pip in Openshift environments \
     chmod -R g+w /opt/app-root/lib/python3.11/site-packages && \
@@ -17,4 +17,4 @@ COPY --chown=1001:0 assets/ ./assets/
 
 EXPOSE 7860
 
-CMD ["python", "app.py"]
+CMD ["python", "app-copy.py"]

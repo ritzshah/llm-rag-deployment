@@ -165,10 +165,6 @@ with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
     gr.ChatInterface(
         ask_llm,
         chatbot=chatbot,
-        clear_btn=None,
-        retry_btn=None,
-        undo_btn=None,
-        stop_btn=None,
         description=APP_TITLE
         )
 

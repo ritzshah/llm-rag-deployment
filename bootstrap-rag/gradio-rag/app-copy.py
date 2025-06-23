@@ -7,7 +7,7 @@ from threading import Thread
 from typing import Optional
 
 import gradio as gr
-from dotenv import load_dotenv
+from dotenv import load_dotenva
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.chains import RetrievalQA
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings

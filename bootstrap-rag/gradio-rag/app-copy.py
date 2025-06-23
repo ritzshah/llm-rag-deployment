@@ -116,7 +116,6 @@ store = PGVector(
 # LLM
 llm = HuggingFaceEndpoint(
     endpoint_url=INFERENCE_SERVER_URL,
-    model=MODEL_NAME,
     huggingfacehub_api_token=HUGGINGFACE_API_TOKEN,
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,

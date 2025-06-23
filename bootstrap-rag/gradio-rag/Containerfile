@@ -4,10 +4,10 @@ WORKDIR /opt/app-root/src
 
 USER 1001
 
-COPY --chown=1001:0 requirements.txt ./
+COPY --chown=1001:0 requirements-copy.txt ./
 
 RUN pip install --no-cache-dir -r requirements-copy.txt && \
-    rm -f requirements.txt && \
+    rm -f requirements-copy.txt && \
     # Fix permissions to support pip in Openshift environments \
     chmod -R g+w /opt/app-root/lib/python3.11/site-packages && \
     fix-permissions /opt/app-root -P

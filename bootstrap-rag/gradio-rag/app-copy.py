@@ -29,7 +29,7 @@ curl -X 'POST' 'https://granite-8b-code-instruct-maas-apicast-production.apps.ll
 
 or 
 
-curl -X 'POST' 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions' -H 'accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer 65fc80b0d55be557b1365687ddb771d6' -d '{"model": "granite-8b-code-instruct-128k","prompt": "San Francisco is a","max_tokens": 15,"temperature": 0}'
+curl -X 'POST' 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions' -H 'accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer CHANGEME' -d '{"model": "granite-8b-code-instruct-128k","prompt": "San Francisco is a","max_tokens": 15,"temperature": 0}'
 '''
 
 APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')

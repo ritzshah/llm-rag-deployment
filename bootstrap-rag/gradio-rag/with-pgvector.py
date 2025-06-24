@@ -22,8 +22,8 @@ TEMPERATURE = float(os.getenv('TEMPERATURE', 0.01))
 REPETITION_PENALTY = float(os.getenv('REPETITION_PENALTY', 1.03))
 
 # PGVector details
-#DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb')
-DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg2://vectordb:userpassword@localhost:5432/vectordb')
+DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb')
+#DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg2://vectordb:userpassword@localhost:5432/vectordb')
 DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME', 'docs')
 
 # Prompt template with context

@@ -91,7 +91,7 @@ def chat_with_rag(message, history):
 demo = gr.ChatInterface(
     fn=chat_with_rag,
     description="Talk with your documentation",
-    title="HatBot"
+    title="Talk with your documentation"
 )
 
 if __name__ == "__main__":

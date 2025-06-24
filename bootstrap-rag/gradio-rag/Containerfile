@@ -12,9 +12,9 @@ RUN pip install --no-cache-dir -r requirements-copy.txt && \
     chmod -R g+w /opt/app-root/lib/python3.11/site-packages && \
     fix-permissions /opt/app-root -P
 
-COPY --chown=1001:0 app-copy.py ./
+COPY --chown=1001:0 with-pgvector.py ./
 COPY --chown=1001:0 assets/ ./assets/
 
 EXPOSE 7860
 
-CMD ["python", "app-copy.py"]
+CMD ["python", "with-pgvector.py"]

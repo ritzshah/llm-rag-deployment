@@ -13,7 +13,7 @@ APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')
 
 API_URL = 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions'
 MODEL_NAME = 'granite-8b-code-instruct-128k'
-API_TOKEN = '65fc80b0d55be557b1365687ddb771d6'
+API_TOKEN = '65fc80b0d55be557b1365687ddb771d6' # notsecret
 MAX_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))
 TOP_K = int(os.getenv('TOP_K', 10))
 TOP_P = float(os.getenv('TOP_P', 0.95))

@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.chains import RetrievalQA
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from langchain.llms import HuggingFaceTextGenInference
+from langchain_huggingface import HuggingFaceEndpoint
 from langchain.prompts import PromptTemplate
 from langchain.vectorstores.pgvector import PGVector
 
@@ -104,9 +104,8 @@ store = PGVector(
     embedding_function=embeddings)
 
 # LLM with Bearer token authentication
-llm = HuggingFaceTextGenInference(
-    inference_server_url=INFERENCE_SERVER_URL,
-    model_name=MODEL_NAME,
+llm = HuggingFaceEndpoint(
+    endpoint_url=INFERENCE_SERVER_URL,
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,
     top_p=TOP_P,
@@ -116,11 +115,8 @@ llm = HuggingFaceTextGenInference(
     streaming=True,
     verbose=False,
     callbacks=[QueueCallback(q)],
-    server_kwargs={
-        "headers": {
-            "Authorization": f"Bearer {BEARER_TOKEN}"
-        }
-    }
+    huggingfacehub_api_token=BEARER_TOKEN,
+    task="text-generation"
 )
 
 # Prompt
@@ -155,15 +151,12 @@ with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
     chatbot = gr.Chatbot(
         show_label=False,
         avatar_images=(None,'assets/robot-head.svg'),
-        render=False
+        render=False,
+        type='messages'
         )
     gr.ChatInterface(
         ask_llm,
         chatbot=chatbot,
-        clear_btn=None,
-        retry_btn=None,
-        undo_btn=None,
-        stop_btn=None,
         description=APP_TITLE
         )
 

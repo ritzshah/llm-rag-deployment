@@ -39,7 +39,6 @@ langchain
 langchain-community
 langchain-core
 langchain-huggingface
-langchain_huggingface
 langchain-text-splitters
 langsmith
 lit

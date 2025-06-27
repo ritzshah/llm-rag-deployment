@@ -32,7 +32,7 @@ spec:
               memory: 1Gi
           readinessProbe:
             httpGet:
-              path: /queue/status
+              path: /
               port: http
               scheme: HTTP
             timeoutSeconds: 5
@@ -43,7 +43,7 @@ spec:
           name: server
           livenessProbe:
             httpGet:
-              path: /queue/status
+              path: /
               port: http
               scheme: HTTP
             timeoutSeconds: 8
@@ -90,7 +90,7 @@ spec:
           imagePullPolicy: IfNotPresent
           startupProbe:
             httpGet:
-              path: /queue/status
+              path: /
               port: http
               scheme: HTTP
             timeoutSeconds: 1

@@ -50,14 +50,30 @@ class CustomHuggingFaceLLM:
                 'Content-Type': 'application/json'
             }
             
-            payload = {
-                'prompt': prompt,
-                'max_tokens': self.max_new_tokens,
-                'temperature': self.temperature,
-                'top_p': self.top_p,
-                'repetition_penalty': self.repetition_penalty,
-                'stop': ['</s>', '[/INST]']
-            }
+            # Try different payload formats based on the endpoint type
+            if 'completions' in self.endpoint_url:
+                # For completions endpoint
+                payload = {
+                    'model': MODEL_NAME,
+                    'prompt': prompt,
+                    'max_tokens': self.max_new_tokens,
+                    'temperature': self.temperature,
+                    'top_p': self.top_p,
+                    'stop': ['[/INST]', '</s>']
+                }
+            else:
+                # For chat endpoint
+                payload = {
+                    'model': MODEL_NAME,
+                    'messages': [{'role': 'user', 'content': prompt}],
+                    'max_tokens': self.max_new_tokens,
+                    'temperature': self.temperature,
+                    'top_p': self.top_p,
+                    'stop': ['[/INST]', '</s>']
+                }
+            
+            print(f"Sending request to: {self.endpoint_url}")
+            print(f"Payload: {json.dumps(payload, indent=2)}")
             
             response = requests.post(
                 self.endpoint_url,
@@ -66,16 +82,21 @@ class CustomHuggingFaceLLM:
                 timeout=30
             )
             
+            print(f"Response status: {response.status_code}")
+            print(f"Response: {response.text}")
+            
             if response.status_code == 200:
                 result = response.json()
                 if 'choices' in result and len(result['choices']) > 0:
-                    return result['choices'][0].get('text', '').strip()
+                    text = result['choices'][0].get('text', result['choices'][0].get('message', {}).get('content', ''))
+                    return text.strip()
                 else:
                     return "No response generated"
             else:
                 return f"API Error: {response.status_code} - {response.text}"
                 
         except Exception as e:
+            print(f"Exception in LLM invoke: {str(e)}")
             return f"Error calling LLM: {str(e)}"
     
     def __call__(self, prompt):
@@ -105,14 +126,12 @@ except Exception as e:
     
     llm = MockLLM()
 
-# Prompt template
-template = """<s>[INST] <<SYS>>
+# Prompt template - Fixed format
+template = """[INST] <<SYS>>
 You are a helpful, respectful and honest assistant named HatBot answering questions about OpenShift Data Science, aka RHODS. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
 <</SYS>>
 
-Question: {question}
-[/INST]
-"""
+{question} [/INST]"""
 
 prompt = PromptTemplate.from_template(template)
 
@@ -152,27 +171,77 @@ def chat_fn(message, history):
     for response_chunk in stream_response(message):
         yield response_chunk
 
-# Modern Gradio interface with updated parameters
+# Modern Gradio interface with manual implementation to avoid ChatInterface issues
 with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
-    # Updated Chatbot with proper type parameter
-    chatbot = gr.Chatbot(
-        show_label=False,
-        type="messages",  # Updated to use modern message format
-        avatar_images=(None, 'assets/robot-head.svg') if os.path.exists('assets/robot-head.svg') else None,
-    )
+    gr.Markdown(f"# {APP_TITLE}")
+    gr.Markdown("Ask me anything about OpenShift Data Science (RHODS)!")
     
-    # Updated ChatInterface without deprecated parameters
-    chat_interface = gr.ChatInterface(
-        fn=chat_fn,
-        chatbot=chatbot,
-        description=APP_TITLE,
-        examples=[
-            "What is OpenShift Data Science?",
-            "How do I deploy a model in RHODS?",
-            "What are the key features of OpenShift Data Science?"
-        ],
-        title="HatBot - OpenShift Data Science Assistant"
-    )
+    with gr.Row():
+        with gr.Column(scale=4):
+            chatbot = gr.Chatbot(
+                show_label=False,
+                type="messages",
+                height=500,
+                avatar_images=(None, 'assets/robot-head.svg') if os.path.exists('assets/robot-head.svg') else None,
+            )
+            
+            with gr.Row():
+                msg = gr.Textbox(
+                    placeholder="Type your question here...",
+                    container=False,
+                    scale=4,
+                    lines=1
+                )
+                submit_btn = gr.Button("Send", scale=1, variant="primary")
+                clear_btn = gr.Button("Clear", scale=1)
+    
+    # Example questions
+    with gr.Row():
+        gr.Examples(
+            examples=[
+                "What is OpenShift Data Science?",
+                "How do I deploy a model in RHODS?",
+                "What are the key features of OpenShift Data Science?",
+                "How do I create a data science project in RHODS?"
+            ],
+            inputs=msg,
+            label="Example Questions"
+        )
+
+    def respond(message, history):
+        """Handle user message and generate bot response"""
+        if not message.strip():
+            return history, ""
+        
+        # Add user message to history
+        history.append({"role": "user", "content": message})
+        
+        # Generate bot response
+        try:
+            bot_response = ""
+            for response_chunk in stream_response(message):
+                bot_response = response_chunk
+                # Update history with partial response
+                current_history = history + [{"role": "assistant", "content": bot_response}]
+                yield current_history, ""
+            
+            # Final update with complete response
+            history.append({"role": "assistant", "content": bot_response})
+            yield history, ""
+            
+        except Exception as e:
+            error_msg = f"Sorry, I encountered an error: {str(e)}"
+            history.append({"role": "assistant", "content": error_msg})
+            yield history, ""
+
+    def clear_chat():
+        """Clear the chat history"""
+        return [], ""
+
+    # Connect the events
+    submit_btn.click(respond, [msg, chatbot], [chatbot, msg])
+    msg.submit(respond, [msg, chatbot], [chatbot, msg])
+    clear_btn.click(clear_chat, None, [chatbot, msg])
 
 if __name__ == "__main__":
     print("Starting HatBot...")

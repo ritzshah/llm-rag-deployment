@@ -64,6 +64,8 @@ def stream(input_text) -> Generator:
     # Create a function to call - this will run in a thread
     def task():
         resp = qa_chain({"query": input_text})
+        # Put the complete response in the queue
+        q.put(resp['result'])
         sources = remove_source_duplicates(resp['source_documents'])
         if len(sources) != 0:
             q.put("\n*Sources:* \n")
@@ -97,7 +99,7 @@ q = Queue()
 ############################
 
 # Document store: pgvector vector store
-embeddings = HuggingFaceEmbeddings()
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 store = PGVector(
     connection_string=DB_CONNECTION_STRING,
     collection_name=DB_COLLECTION_NAME,
@@ -109,16 +111,13 @@ llm = HuggingFaceEndpoint(
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,
     top_p=TOP_P,
+    typical_p=TYPICAL_P,
     temperature=TEMPERATURE,
     repetition_penalty=REPETITION_PENALTY,
-    streaming=True,
+    streaming=False,
     verbose=False,
-    callbacks=[QueueCallback(q)],
     huggingfacehub_api_token=BEARER_TOKEN,
-    task="text-generation",
-    model_kwargs={
-        "typical_p": TYPICAL_P
-    }
+    task="text-generation"
 )
 
 # Prompt

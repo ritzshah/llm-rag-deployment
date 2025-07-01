@@ -10,16 +10,14 @@ import gradio as gr
 from dotenv import load_dotenv
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.chains import RetrievalQA
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from langchain.llms import HuggingFaceTextGenInference
+# Updated imports for LangChain 0.2+
+from langchain_huggingface import HuggingFaceEmbeddings, HuggingFaceEndpoint
 from langchain.prompts import PromptTemplate
-from langchain.vectorstores.pgvector import PGVector
+from langchain_postgres import PGVector
 
 load_dotenv()
 
 # Parameters
-# curl -X POST http://granite-7b-instruct-predictor.ic-shared-llm.svc.cluster.local:8080/v1/completions -H "Content-Type: application/json" -d '{"model": "granite-7b-instruct", "prompt": "Hello world!", "max_tokens": 128}'
-
 APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')
 
 INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL')
@@ -96,17 +94,23 @@ q = Queue()
 # LLM chain implementation #
 ############################
 
-# Document store: pgvector vector store
-embeddings = HuggingFaceEmbeddings()
-store = PGVector(
-    connection_string=DB_CONNECTION_STRING,
-    collection_name=DB_COLLECTION_NAME,
-    embedding_function=embeddings)
+# Document store: Use default HuggingFace embeddings (384 dimensions)
+# Explicitly specify the default model to avoid deprecation warning
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"  # Default model, 384 dimensions
+)
 
-# LLM with Bearer Token authentication
-llm = HuggingFaceTextGenInference(
-    inference_server_url=INFERENCE_SERVER_URL,
-    model_name=MODEL_NAME,
+# Updated PGVector from langchain_postgres
+store = PGVector(
+    connection=DB_CONNECTION_STRING,
+    collection_name=DB_COLLECTION_NAME,
+    embeddings=embeddings,
+    use_jsonb=True  # Use JSONB for better performance as recommended
+)
+
+# LLM with Bearer Token authentication - Updated to use HuggingFaceEndpoint
+llm = HuggingFaceEndpoint(
+    endpoint_url=INFERENCE_SERVER_URL,
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,
     top_p=TOP_P,
@@ -114,13 +118,14 @@ llm = HuggingFaceTextGenInference(
     temperature=TEMPERATURE,
     repetition_penalty=REPETITION_PENALTY,
     streaming=True,
-    verbose=False,
     callbacks=[QueueCallback(q)],
     # Add Bearer Token to headers
-    server_kwargs={
-        "headers": {
-            "Authorization": f"Bearer {BEARER_TOKEN}"
-        }
+    additional_headers={
+        "Authorization": f"Bearer {BEARER_TOKEN}"
+    },
+    # Model name goes in model_kwargs for HuggingFaceEndpoint
+    model_kwargs={
+        "model": MODEL_NAME
     }
 )
 
@@ -142,10 +147,11 @@ qa_chain = RetrievalQA.from_chain_type(
     llm,
     retriever=store.as_retriever(
         search_type="similarity_score_threshold",
-        search_kwargs={"k": 4, "score_threshold": 0.2 }),
+        search_kwargs={"k": 4, "score_threshold": 0.2}
+    ),
     chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
     return_source_documents=True
-    )
+)
 
 # Gradio implementation
 def ask_llm(message, history):
@@ -153,24 +159,24 @@ def ask_llm(message, history):
         yield(content)
 
 with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
+    # Updated chatbot with type='messages' for modern Gradio
     chatbot = gr.Chatbot(
         show_label=False,
         avatar_images=(None,'assets/robot-head.svg'),
+        type='messages',  # Use modern message format
         render=False
-        )
+    )
+    
+    # Updated ChatInterface - removed deprecated parameters
     gr.ChatInterface(
         ask_llm,
         chatbot=chatbot,
-        clear_btn=None,
-        retry_btn=None,
-        undo_btn=None,
-        stop_btn=None,
         description=APP_TITLE
-        )
+    )
 
 if __name__ == "__main__":
     demo.queue().launch(
         server_name='0.0.0.0',
         share=False,
         favicon_path='./assets/robot-head.ico'
-        )
+    )

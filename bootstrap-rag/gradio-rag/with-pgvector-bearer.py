@@ -20,9 +20,9 @@ load_dotenv()
 
 APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')
 
-INFERENCE_SERVER_URL = 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions'
-MODEL_NAME = 'granite-7b-instruct'
-HUGGINGFACE_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN', 'CHANGEME')
+INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL')
+MODEL_NAME = os.getenv('MODEL_NAME', 'granite-8b-code-instruct-128k')
+HUGGINGFACE_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN')
 MAX_NEW_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))
 TOP_K = int(os.getenv('TOP_K', 10))
 TOP_P = float(os.getenv('TOP_P', 0.95))

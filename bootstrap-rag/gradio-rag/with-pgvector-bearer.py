@@ -63,7 +63,7 @@ def stream(input_text) -> Generator:
 
     # Create a function to call - this will run in a thread
     def task():
-        resp = qa_chain({"query": input_text})
+        resp = qa_chain.invoke({"query": input_text})
         # Put the complete response in the queue
         q.put(resp['result'])
         sources = remove_source_duplicates(resp['source_documents'])
@@ -99,7 +99,8 @@ q = Queue()
 ############################
 
 # Document store: pgvector vector store
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+# Using 768-dimension model to match existing database vectors
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 store = PGVector(
     connection_string=DB_CONNECTION_STRING,
     collection_name=DB_COLLECTION_NAME,

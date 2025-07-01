@@ -4,16 +4,17 @@ import time
 from collections.abc import Generator
 from queue import Empty, Queue
 from threading import Thread
-from typing import Optional
+from typing import Optional, Any
 
 import gradio as gr
 from dotenv import load_dotenv
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.chains import RetrievalQA
-# Updated imports for LangChain 0.2+
-from langchain_huggingface import HuggingFaceEmbeddings, HuggingFaceEndpoint
+# Updated imports for stable LangChain versions
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.llms import HuggingFaceEndpoint
 from langchain.prompts import PromptTemplate
-from langchain_postgres import PGVector
+from langchain.vectorstores.pgvector import PGVector
 
 load_dotenv()
 
@@ -35,6 +36,18 @@ BEARER_TOKEN = os.getenv('BEARER_TOKEN')
 DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING')
 DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME')
 
+# Validate required environment variables
+if not DB_CONNECTION_STRING:
+    raise ValueError("DB_CONNECTION_STRING environment variable is required")
+if not DB_COLLECTION_NAME:
+    raise ValueError("DB_COLLECTION_NAME environment variable is required")
+if not BEARER_TOKEN:
+    raise ValueError("BEARER_TOKEN environment variable is required")
+if not INFERENCE_SERVER_URL:
+    raise ValueError("INFERENCE_SERVER_URL environment variable is required")
+if not MODEL_NAME:
+    raise ValueError("MODEL_NAME environment variable is required")
+
 # Streaming implementation
 class QueueCallback(BaseCallbackHandler):
     """Callback handler for streaming LLM responses to a queue."""
@@ -42,10 +55,10 @@ class QueueCallback(BaseCallbackHandler):
     def __init__(self, q):
         self.q = q
 
-    def on_llm_new_token(self, token: str, **kwargs: any) -> None:
+    def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
         self.q.put(token)
 
-    def on_llm_end(self, *args, **kwargs: any) -> None:
+    def on_llm_end(self, *args, **kwargs: Any) -> None:
         return self.q.empty()
 
 def remove_source_duplicates(input_list):
@@ -96,37 +109,30 @@ q = Queue()
 
 # Document store: Use default HuggingFace embeddings (384 dimensions)
 # Explicitly specify the default model to avoid deprecation warning
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"  # Default model, 384 dimensions
-)
+embeddings = HuggingFaceEmbeddings()
 
-# Updated PGVector from langchain_postgres
+# Updated PGVector from langchain.vectorstores
 store = PGVector(
-    connection=DB_CONNECTION_STRING,
+    connection_string=DB_CONNECTION_STRING,
     collection_name=DB_COLLECTION_NAME,
-    embeddings=embeddings,
-    use_jsonb=True  # Use JSONB for better performance as recommended
+    embedding_function=embeddings,
 )
 
 # LLM with Bearer Token authentication - Updated to use HuggingFaceEndpoint
 llm = HuggingFaceEndpoint(
     endpoint_url=INFERENCE_SERVER_URL,
-    # Don't specify model when using endpoint_url - they are mutually exclusive
-    max_new_tokens=MAX_NEW_TOKENS,
-    top_k=TOP_K,
-    top_p=TOP_P,
-    typical_p=TYPICAL_P,
-    temperature=TEMPERATURE,
-    repetition_penalty=REPETITION_PENALTY,
-    streaming=True,
-    callbacks=[QueueCallback(q)],
-    # Bearer Token headers and model name in model_kwargs
     model_kwargs={
-        "model": MODEL_NAME,  # Model name goes here when using endpoint_url
-        "additional_headers": {
-            "Authorization": f"Bearer {BEARER_TOKEN}"
-        }
-    }
+        "max_new_tokens": MAX_NEW_TOKENS,
+        "top_k": TOP_K,
+        "top_p": TOP_P,
+        "typical_p": TYPICAL_P,
+        "temperature": TEMPERATURE,
+        "repetition_penalty": REPETITION_PENALTY,
+        "model": MODEL_NAME,
+    },
+    huggingfacehub_api_token=BEARER_TOKEN,  # Bearer token authentication
+    streaming=True,
+    callbacks=[QueueCallback(q)]
 )
 
 # Prompt

@@ -109,14 +109,16 @@ llm = HuggingFaceEndpoint(
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,
     top_p=TOP_P,
-    typical_p=TYPICAL_P,
     temperature=TEMPERATURE,
     repetition_penalty=REPETITION_PENALTY,
     streaming=True,
     verbose=False,
     callbacks=[QueueCallback(q)],
     huggingfacehub_api_token=BEARER_TOKEN,
-    task="text-generation"
+    task="text-generation",
+    model_kwargs={
+        "typical_p": TYPICAL_P
+    }
 )
 
 # Prompt
@@ -161,6 +163,11 @@ with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
         )
 
 if __name__ == "__main__":
+    # Add a custom health check route
+    @demo.app.get("/queue/status")
+    def health_check():
+        return {"status": "healthy"}
+    
     demo.queue().launch(
         server_name='0.0.0.0',
         share=False,

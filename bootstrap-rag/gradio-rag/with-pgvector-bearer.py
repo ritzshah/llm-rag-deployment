@@ -111,7 +111,7 @@ store = PGVector(
 # LLM with Bearer Token authentication - Updated to use HuggingFaceEndpoint
 llm = HuggingFaceEndpoint(
     endpoint_url=INFERENCE_SERVER_URL,
-    model=MODEL_NAME,  # Model parameter specified explicitly
+    # Don't specify model when using endpoint_url - they are mutually exclusive
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,
     top_p=TOP_P,
@@ -120,8 +120,9 @@ llm = HuggingFaceEndpoint(
     repetition_penalty=REPETITION_PENALTY,
     streaming=True,
     callbacks=[QueueCallback(q)],
-    # Bearer Token headers moved to model_kwargs
+    # Bearer Token headers and model name in model_kwargs
     model_kwargs={
+        "model": MODEL_NAME,  # Model name goes here when using endpoint_url
         "additional_headers": {
             "Authorization": f"Bearer {BEARER_TOKEN}"
         }

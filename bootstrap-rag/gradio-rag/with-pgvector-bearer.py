@@ -24,13 +24,15 @@ APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')
 
 INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL')
 MODEL_NAME = os.getenv('MODEL_NAME')
-HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")  # Load token from environment
 MAX_NEW_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))
 TOP_K = int(os.getenv('TOP_K', 10))
 TOP_P = float(os.getenv('TOP_P', 0.95))
 TYPICAL_P = float(os.getenv('TYPICAL_P', 0.95))
 TEMPERATURE = float(os.getenv('TEMPERATURE', 0.01))
 REPETITION_PENALTY = float(os.getenv('REPETITION_PENALTY', 1.03))
+
+# Add Bearer Token parameter
+BEARER_TOKEN = os.getenv('BEARER_TOKEN')
 
 DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING')
 DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME')
@@ -101,7 +103,7 @@ store = PGVector(
     collection_name=DB_COLLECTION_NAME,
     embedding_function=embeddings)
 
-# LLM
+# LLM with Bearer Token authentication
 llm = HuggingFaceTextGenInference(
     inference_server_url=INFERENCE_SERVER_URL,
     model_name=MODEL_NAME,
@@ -113,14 +115,14 @@ llm = HuggingFaceTextGenInference(
     repetition_penalty=REPETITION_PENALTY,
     streaming=True,
     verbose=False,
-    callbacks=[QueueCallback(q)]
+    callbacks=[QueueCallback(q)],
+    # Add Bearer Token to headers
+    server_kwargs={
+        "headers": {
+            "Authorization": f"Bearer {BEARER_TOKEN}"
+        }
+    }
 )
-
-# ADD AUTHENTICATION HEADER
-if HUGGINGFACE_API_TOKEN:
-    llm.client.headers = {"Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}"}
-else:
-    raise ValueError("Missing HUGGINGFACE_API_TOKEN environment variable")
 
 # Prompt
 template="""<s>[INST] <<SYS>>

@@ -9,10 +9,10 @@ from typing import Optional
 import gradio as gr
 from dotenv import load_dotenv
 from langchain.callbacks.base import BaseCallbackHandler
-from langchain.chains import RetrievalQA
+from langchain.chains import LLMChain
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
+from langchain_community.llms import HuggingFaceEndpoint
 from langchain_core.callbacks.manager import CallbackManager
 from langchain_core.callbacks import BaseCallbackHandler
 
@@ -35,66 +35,47 @@ class QueueCallback(BaseCallbackHandler):
     """Callback handler for streaming LLM responses to a queue."""
 
     def __init__(self, q):
-        super().__init__()  # Initialize parent class
+        super().__init__()
         self.q = q
 
     def on_llm_new_token(self, token: str, **kwargs: any) -> None:
         self.q.put(token)
 
     def on_llm_end(self, *args, **kwargs: any) -> None:
-        return self.q.empty()
-
-def stream(input_text) -> Generator:
-    # Create a Queue
-    job_done = object()
-
-    # Create a function to call - this will run in a thread
-    def task():
-        # Modified to bypass vector store
-        mock_response = "This is a mock response for debugging (PGVector disabled)"
-        q.put(mock_response)
-        q.put(job_done)
-
-    # Create a thread and start the function
-    t = Thread(target=task)
-    t.start()
-
-    content = ""
-
-    # Get each new token from the queue and yield for our generator
-    while True:
-        try:
-            next_token = q.get(True, timeout=1)
-            if next_token is job_done:
-                break
-            if isinstance(next_token, str):
-                content += next_token
-                yield next_token, content
-        except Empty:
-            continue
+        self.q.put(None)  # Signal end of stream
 
 # A Queue is needed for Streaming implementation
 q = Queue()
 
-# LLM - Fixed implementation
-llm_endpoint = HuggingFaceEndpoint(
-    endpoint_url=INFERENCE_SERVER_URL,
-    huggingfacehub_api_token=HUGGINGFACE_API_TOKEN,
-    max_new_tokens=MAX_NEW_TOKENS,
-    top_k=TOP_K,
-    top_p=TOP_P,
-    typical_p=TYPICAL_P,
-    temperature=TEMPERATURE,
-    repetition_penalty=REPETITION_PENALTY,
-    streaming=True,
-    verbose=False,
-)
-
-# Wrap the endpoint with ChatHuggingFace
-llm = ChatHuggingFace(
-    llm=llm_endpoint,
-    callbacks=CallbackManager([QueueCallback(q)]),
-)
+# LLM using langchain_community
+try:
+    llm = HuggingFaceEndpoint(
+        endpoint_url=INFERENCE_SERVER_URL,
+        huggingfacehub_api_token=HUGGINGFACE_API_TOKEN,
+        max_new_tokens=MAX_NEW_TOKENS,
+        top_k=TOP_K,
+        top_p=TOP_P,
+        typical_p=TYPICAL_P,
+        temperature=TEMPERATURE,
+        repetition_penalty=REPETITION_PENALTY,
+        streaming=True,
+        verbose=False,
+        callbacks=CallbackManager([QueueCallback(q)]),
+    )
+except Exception as e:
+    print(f"Error initializing HuggingFaceEndpoint: {e}")
+    # Fallback to a simple mock LLM for testing
+    class MockLLM:
+        def __init__(self):
+            self.callbacks = None
+            
+        def invoke(self, prompt):
+            return "This is a mock response for testing purposes."
+            
+        def __call__(self, prompt):
+            return self.invoke(prompt)
+    
+    llm = MockLLM()
 
 # Prompt
 template = """<s>[INST] <<SYS>>
@@ -106,31 +87,46 @@ Question: {question}
 """
 QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
 
-# Modified to work without vector store - Alternative approach
-def ask_llm_direct(message, history):
-    """Direct LLM call without RetrievalQA"""
+# Create LLMChain instead of RetrievalQA
+try:
+    qa_chain = LLMChain(
+        llm=llm,
+        prompt=QA_CHAIN_PROMPT,
+        verbose=False
+    )
+except Exception as e:
+    print(f"Error creating LLMChain: {e}")
+    # Fallback function
+    def qa_chain_run(question):
+        return f"Mock response to: {question}"
+    
+    class MockChain:
+        def run(self, question):
+            return qa_chain_run(question)
+    
+    qa_chain = MockChain()
+
+def stream_response(input_text) -> Generator:
+    """Generate streaming response"""
     try:
-        formatted_prompt = template.format(question=message)
-        # Use invoke instead of RetrievalQA
-        response = llm.invoke(formatted_prompt)
-        
-        if hasattr(response, 'content'):
-            return response.content
+        if hasattr(qa_chain, 'run'):
+            response = qa_chain.run(input_text)
         else:
-            return str(response)
+            response = qa_chain(input_text)
+        
+        # Simulate streaming
+        for i in range(0, len(response), 5):
+            chunk = response[:i+5]
+            yield chunk, chunk
+            time.sleep(0.02)
     except Exception as e:
-        return f"Error: {str(e)}"
+        error_msg = f"Error generating response: {str(e)}"
+        yield error_msg, error_msg
 
 # Gradio implementation
 def ask_llm(message, history):
-    # Use the direct approach instead of RetrievalQA
-    response = ask_llm_direct(message, history)
-    
-    # Simulate streaming for better UX
-    for i in range(0, len(response), 10):
-        chunk = response[:i+10]
-        yield chunk
-        time.sleep(0.05)  # Small delay for streaming effect
+    for chunk, full_content in stream_response(message):
+        yield full_content
 
 with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
     chatbot = gr.Chatbot(
@@ -152,6 +148,6 @@ if __name__ == "__main__":
     demo.queue().launch(
         server_name='0.0.0.0',
         share=False,
-        show_error=True,  # Added for debugging
+        show_error=True,
         favicon_path='./assets/robot-head.ico'
     )

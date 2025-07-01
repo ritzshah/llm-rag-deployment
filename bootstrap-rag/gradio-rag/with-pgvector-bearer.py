@@ -1,4 +1,5 @@
 import os
+import random
 import time
 from collections.abc import Generator
 from queue import Empty, Queue
@@ -7,22 +8,23 @@ from typing import Optional
 
 import gradio as gr
 from dotenv import load_dotenv
-from langchain_core.callbacks.base import BaseCallbackHandler
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_core.prompts import PromptTemplate
-from langchain_core.callbacks.manager import CallbackManager
-from langchain_core.runnables import RunnableLambda, RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-import requests
-import json
+from langchain.callbacks.base import BaseCallbackHandler
+from langchain.chains import RetrievalQA
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain.llms import HuggingFaceTextGenInference
+from langchain.prompts import PromptTemplate
+from langchain.vectorstores.pgvector import PGVector
 
 load_dotenv()
+
+# Parameters
+# curl -X POST http://granite-7b-instruct-predictor.ic-shared-llm.svc.cluster.local:8080/v1/completions -H "Content-Type: application/json" -d '{"model": "granite-7b-instruct", "prompt": "Hello world!", "max_tokens": 128}'
 
 APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')
 
 INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL')
-MODEL_NAME = os.getenv('MODEL_NAME', 'granite-8b-code-instruct-128k')
-HUGGINGFACE_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN')
+MODEL_NAME = os.getenv('MODEL_NAME')
+HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")  # Load token from environment
 MAX_NEW_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))
 TOP_K = int(os.getenv('TOP_K', 10))
 TOP_P = float(os.getenv('TOP_P', 0.95))
@@ -30,229 +32,143 @@ TYPICAL_P = float(os.getenv('TYPICAL_P', 0.95))
 TEMPERATURE = float(os.getenv('TEMPERATURE', 0.01))
 REPETITION_PENALTY = float(os.getenv('REPETITION_PENALTY', 1.03))
 
-# Custom LLM class that implements Runnable
-class CustomHuggingFaceLLM:
-    """Custom LLM implementation for HuggingFace endpoints"""
-    
-    def __init__(self, endpoint_url, api_token, **kwargs):
-        self.endpoint_url = endpoint_url
-        self.api_token = api_token
-        self.max_new_tokens = kwargs.get('max_new_tokens', 512)
-        self.temperature = kwargs.get('temperature', 0.01)
-        self.top_p = kwargs.get('top_p', 0.95)
-        self.repetition_penalty = kwargs.get('repetition_penalty', 1.03)
-        
-    def invoke(self, prompt):
-        """Invoke the LLM with a prompt"""
+DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING')
+DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME')
+
+# Streaming implementation
+class QueueCallback(BaseCallbackHandler):
+    """Callback handler for streaming LLM responses to a queue."""
+
+    def __init__(self, q):
+        self.q = q
+
+    def on_llm_new_token(self, token: str, **kwargs: any) -> None:
+        self.q.put(token)
+
+    def on_llm_end(self, *args, **kwargs: any) -> None:
+        return self.q.empty()
+
+def remove_source_duplicates(input_list):
+    unique_list = []
+    for item in input_list:
+        if item.metadata['source'] not in unique_list:
+            unique_list.append(item.metadata['source'])
+    return unique_list
+
+def stream(input_text) -> Generator:
+    # Create a Queue
+    job_done = object()
+
+    # Create a function to call - this will run in a thread
+    def task():
+        resp = qa_chain({"query": input_text})
+        sources = remove_source_duplicates(resp['source_documents'])
+        if len(sources) != 0:
+            q.put("\n*Sources:* \n")
+            for source in sources:
+                q.put("* " + str(source) + "\n")
+        q.put(job_done)
+
+    # Create a thread and start the function
+    t = Thread(target=task)
+    t.start()
+
+    content = ""
+
+    # Get each new token from the queue and yield for our generator
+    while True:
         try:
-            headers = {
-                'Authorization': f'Bearer {self.api_token}',
-                'Content-Type': 'application/json'
-            }
-            
-            # Try different payload formats based on the endpoint type
-            if 'completions' in self.endpoint_url:
-                # For completions endpoint
-                payload = {
-                    'model': MODEL_NAME,
-                    'prompt': prompt,
-                    'max_tokens': self.max_new_tokens,
-                    'temperature': self.temperature,
-                    'top_p': self.top_p,
-                    'stop': ['[/INST]', '</s>']
-                }
-            else:
-                # For chat endpoint
-                payload = {
-                    'model': MODEL_NAME,
-                    'messages': [{'role': 'user', 'content': prompt}],
-                    'max_tokens': self.max_new_tokens,
-                    'temperature': self.temperature,
-                    'top_p': self.top_p,
-                    'stop': ['[/INST]', '</s>']
-                }
-            
-            print(f"Sending request to: {self.endpoint_url}")
-            print(f"Payload: {json.dumps(payload, indent=2)}")
-            
-            response = requests.post(
-                self.endpoint_url,
-                headers=headers,
-                json=payload,
-                timeout=30
-            )
-            
-            print(f"Response status: {response.status_code}")
-            print(f"Response: {response.text}")
-            
-            if response.status_code == 200:
-                result = response.json()
-                if 'choices' in result and len(result['choices']) > 0:
-                    text = result['choices'][0].get('text', result['choices'][0].get('message', {}).get('content', ''))
-                    return text.strip()
-                else:
-                    return "No response generated"
-            else:
-                return f"API Error: {response.status_code} - {response.text}"
-                
-        except Exception as e:
-            print(f"Exception in LLM invoke: {str(e)}")
-            return f"Error calling LLM: {str(e)}"
-    
-    def __call__(self, prompt):
-        return self.invoke(prompt)
+            next_token = q.get(True, timeout=1)
+            if next_token is job_done:
+                break
+            if isinstance(next_token, str):
+                content += next_token
+                yield next_token, content
+        except Empty:
+            continue
 
-# Initialize LLM
-try:
-    llm = CustomHuggingFaceLLM(
-        endpoint_url=INFERENCE_SERVER_URL,
-        api_token=HUGGINGFACE_API_TOKEN,
-        max_new_tokens=MAX_NEW_TOKENS,
-        temperature=TEMPERATURE,
-        top_p=TOP_P,
-        repetition_penalty=REPETITION_PENALTY
-    )
-    print("LLM initialized successfully")
-except Exception as e:
-    print(f"Error initializing LLM: {e}")
-    
-    # Fallback mock LLM
-    class MockLLM:
-        def invoke(self, prompt):
-            return f"Mock response to your question. (Original LLM failed to initialize: {str(e)})"
-        
-        def __call__(self, prompt):
-            return self.invoke(prompt)
-    
-    llm = MockLLM()
+# A Queue is needed for Streaming implementation
+q = Queue()
 
-# Prompt template - Fixed format
-template = """[INST] <<SYS>>
-You are a helpful, respectful and honest assistant named HatBot answering questions about OpenShift Data Science, aka RHODS. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
+############################
+# LLM chain implementation #
+############################
+
+# Document store: pgvector vector store
+embeddings = HuggingFaceEmbeddings()
+store = PGVector(
+    connection_string=DB_CONNECTION_STRING,
+    collection_name=DB_COLLECTION_NAME,
+    embedding_function=embeddings)
+
+# LLM
+llm = HuggingFaceTextGenInference(
+    inference_server_url=INFERENCE_SERVER_URL,
+    model_name=MODEL_NAME,
+    max_new_tokens=MAX_NEW_TOKENS,
+    top_k=TOP_K,
+    top_p=TOP_P,
+    typical_p=TYPICAL_P,
+    temperature=TEMPERATURE,
+    repetition_penalty=REPETITION_PENALTY,
+    streaming=True,
+    verbose=False,
+    callbacks=[QueueCallback(q)]
+)
+
+# ADD AUTHENTICATION HEADER
+if HUGGINGFACE_API_TOKEN:
+    llm.client.headers = {"Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}"}
+else:
+    raise ValueError("Missing HUGGINGFACE_API_TOKEN environment variable")
+
+# Prompt
+template="""<s>[INST] <<SYS>>
+You are a helpful, respectful and honest assistant named HatBot answering questions about OpenShift Data Science, aka RHODS.
+You will be given a question you need to answer, and a context to provide you with information. You must answer the question based as much as possible on this context.
+Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
+
+If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
 <</SYS>>
 
-{question} [/INST]"""
+Question: {question}
+Context: {context} [/INST]
+"""
+QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
 
-prompt = PromptTemplate.from_template(template)
+qa_chain = RetrievalQA.from_chain_type(
+    llm,
+    retriever=store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": 4, "score_threshold": 0.2 }),
+    chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
+    return_source_documents=True
+    )
 
-# Create a modern chain using RunnableSequence (new LangChain pattern)
-def format_prompt(question):
-    return template.format(question=question)
+# Gradio implementation
+def ask_llm(message, history):
+    for next_token, content in stream(message):
+        yield(content)
 
-def generate_response(question):
-    """Generate response using the modern Runnable pattern"""
-    try:
-        formatted_prompt = format_prompt(question)
-        response = llm.invoke(formatted_prompt)
-        return response
-    except Exception as e:
-        return f"Error generating response: {str(e)}"
-
-def stream_response(message):
-    """Generate streaming response for better UX"""
-    try:
-        response = generate_response(message)
-        
-        # Simulate streaming by yielding chunks
-        words = response.split()
-        current_response = ""
-        
-        for word in words:
-            current_response += word + " "
-            yield current_response.strip()
-            time.sleep(0.05)  # Small delay for streaming effect
-            
-    except Exception as e:
-        yield f"Error: {str(e)}"
-
-def chat_fn(message, history):
-    """Chat function for Gradio ChatInterface"""
-    # Convert history to the expected format if needed
-    for response_chunk in stream_response(message):
-        yield response_chunk
-
-# Modern Gradio interface with manual implementation to avoid ChatInterface issues
 with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
-    gr.Markdown(f"# {APP_TITLE}")
-    gr.Markdown("Ask me anything about OpenShift Data Science (RHODS)!")
-    
-    with gr.Row():
-        with gr.Column(scale=4):
-            chatbot = gr.Chatbot(
-                show_label=False,
-                type="messages",
-                height=500,
-                avatar_images=(None, 'assets/robot-head.svg') if os.path.exists('assets/robot-head.svg') else None,
-            )
-            
-            with gr.Row():
-                msg = gr.Textbox(
-                    placeholder="Type your question here...",
-                    container=False,
-                    scale=4,
-                    lines=1
-                )
-                submit_btn = gr.Button("Send", scale=1, variant="primary")
-                clear_btn = gr.Button("Clear", scale=1)
-    
-    # Example questions
-    with gr.Row():
-        gr.Examples(
-            examples=[
-                "What is OpenShift Data Science?",
-                "How do I deploy a model in RHODS?",
-                "What are the key features of OpenShift Data Science?",
-                "How do I create a data science project in RHODS?"
-            ],
-            inputs=msg,
-            label="Example Questions"
+    chatbot = gr.Chatbot(
+        show_label=False,
+        avatar_images=(None,'assets/robot-head.svg'),
+        render=False
+        )
+    gr.ChatInterface(
+        ask_llm,
+        chatbot=chatbot,
+        clear_btn=None,
+        retry_btn=None,
+        undo_btn=None,
+        stop_btn=None,
+        description=APP_TITLE
         )
 
-    def respond(message, history):
-        """Handle user message and generate bot response"""
-        if not message.strip():
-            return history, ""
-        
-        # Add user message to history
-        history.append({"role": "user", "content": message})
-        
-        # Generate bot response
-        try:
-            bot_response = ""
-            for response_chunk in stream_response(message):
-                bot_response = response_chunk
-                # Update history with partial response
-                current_history = history + [{"role": "assistant", "content": bot_response}]
-                yield current_history, ""
-            
-            # Final update with complete response
-            history.append({"role": "assistant", "content": bot_response})
-            yield history, ""
-            
-        except Exception as e:
-            error_msg = f"Sorry, I encountered an error: {str(e)}"
-            history.append({"role": "assistant", "content": error_msg})
-            yield history, ""
-
-    def clear_chat():
-        """Clear the chat history"""
-        return [], ""
-
-    # Connect the events
-    submit_btn.click(respond, [msg, chatbot], [chatbot, msg])
-    msg.submit(respond, [msg, chatbot], [chatbot, msg])
-    clear_btn.click(clear_chat, None, [chatbot, msg])
-
 if __name__ == "__main__":
-    print("Starting HatBot...")
-    print(f"Using API endpoint: {INFERENCE_SERVER_URL}")
-    print(f"API Token configured: {'Yes' if HUGGINGFACE_API_TOKEN != 'CHANGEME' else 'No - Please set HUGGINGFACE_API_TOKEN'}")
-    
     demo.queue().launch(
         server_name='0.0.0.0',
         share=False,
-        show_error=True,
-        favicon_path='./assets/robot-head.ico' if os.path.exists('./assets/robot-head.ico') else None,
-        inbrowser=False,
-        server_port=7860
-    )
+        favicon_path='./assets/robot-head.ico'
+        )

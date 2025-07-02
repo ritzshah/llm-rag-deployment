@@ -71,6 +71,25 @@ def remove_source_duplicates(input_list):
             unique_list.append(item.metadata['source'])
     return unique_list
 
+def answer_general_question(question):
+    """Handle general questions without RAG context"""
+    general_template = """<s>[INST] <<SYS>>
+You are a helpful, respectful and honest assistant. Answer the question to the best of your ability using your general knowledge.
+Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
+
+If you don't know the answer to a question, please say so rather than making something up.
+<</SYS>>
+
+Question: {question} [/INST]
+"""
+    
+    prompt = general_template.format(question=question)
+    try:
+        response = llm._call(prompt)
+        return response
+    except Exception as e:
+        return f"I apologize, but I encountered an error while trying to answer your question: {str(e)}"
+
 def stream(input_text) -> Generator:
     # Create a Queue
     job_done = object()
@@ -79,17 +98,39 @@ def stream(input_text) -> Generator:
     def task():
         try:
             resp = qa_chain({"query": input_text})
+            
+            # First, put the actual answer from the LLM
+            if 'result' in resp and resp['result']:
+                # Split the response into tokens for streaming effect
+                answer = resp['result']
+                words = answer.split()
+                for word in words:
+                    q.put(word + " ")
+                    time.sleep(0.05)  # Small delay for streaming effect
+            
+            # Then add sources if available
             sources = remove_source_duplicates(resp['source_documents'])
             if len(sources) != 0:
-                q.put("\n*Sources:* \n")
+                q.put("\n\n*Sources:* \n")
                 for source in sources:
                     q.put("* " + str(source) + "\n")
             else:
-                q.put("\n*Note: No specific sources found for this query.*\n")
+                q.put("\n\n*Note: No specific sources found for this query.*\n")
+                
         except Exception as e:
             error_msg = str(e)
             if "No relevant docs were retrieved" in error_msg:
-                q.put("\n*Note: I couldn't find specific documentation for this query, but I'll try to help based on my general knowledge.*\n")
+                # If no docs retrieved, try to answer without RAG context
+                try:
+                    general_response = answer_general_question(input_text)
+                    if general_response:
+                        words = general_response.split()
+                        for word in words:
+                            q.put(word + " ")
+                            time.sleep(0.05)
+                    q.put("\n\n*Note: I couldn't find specific documentation for this query, so I answered based on my general knowledge.*\n")
+                except Exception as inner_e:
+                    q.put(f"\nError generating response: {str(inner_e)}\n")
             else:
                 q.put(f"\nError: {error_msg}\n")
         finally:
@@ -258,6 +299,8 @@ You will be given a question you need to answer, and a context to provide you wi
 Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
 
 If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+
+If the context is not relevant to the question, you can use your general knowledge to provide a helpful answer, but please indicate that the answer is based on general knowledge rather than the specific documentation.
 <</SYS>>
 
 Question: {question}
@@ -269,7 +312,7 @@ qa_chain = RetrievalQA.from_chain_type(
     llm,
     retriever=store.as_retriever(
         search_type="similarity_score_threshold",
-        search_kwargs={"k": 4, "score_threshold": 0.1}  # Lower threshold to get more results
+        search_kwargs={"k": 4, "score_threshold": 0.3}  # Higher threshold to filter out irrelevant results
     ),
     chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
     return_source_documents=True

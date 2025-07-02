@@ -74,7 +74,9 @@ spec:
             - name: REPETITION_PENALTY
               value: '1.03'
             - name: BEARER_TOKEN
-              value: 65fc80b0d55be557b1365687ddb771d6 # notsecret              
+              value: 65fc80b0d55be557b1365687ddb771d6 # notsecret
+            - name: ENABLE_DEBUG_UI
+              value: 'False'            
           securityContext:
             capabilities:
               drop:

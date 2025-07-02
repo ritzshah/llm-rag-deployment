@@ -34,7 +34,7 @@ TEMPERATURE = float(os.getenv('TEMPERATURE', 0.01))
 REPETITION_PENALTY = float(os.getenv('REPETITION_PENALTY', 1.03))
 
 # Add Bearer Token parameter
-BEARER_TOKEN = os.getenv('BEARER_TOKEN', '65fc80b0d55be557b1365687ddb771d6')
+BEARER_TOKEN = os.getenv('BEARER_TOKEN')
 
 DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg://vectordb:vectordb@localhost:5432/vectordb')
 DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME', 'langchain_pg_collection')

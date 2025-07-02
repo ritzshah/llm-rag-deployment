@@ -39,9 +39,10 @@ BEARER_TOKEN = os.getenv('BEARER_TOKEN')
 DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg://vectordb:vectordb@localhost:5432/vectordb')
 DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME', 'langchain_pg_collection')
 
-# Add debug flag
+# Add debug flags
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 SHOW_DEBUG_UI = os.getenv('SHOW_DEBUG_UI', 'False').lower() == 'true'
+ENABLE_DEBUG_UI = os.getenv('ENABLE_DEBUG_UI', 'True').lower() == 'true'  # Controls if debug UI is shown at all
 
 # Validate required environment variables
 if not DB_CONNECTION_STRING:
@@ -245,9 +246,28 @@ def stream(input_text) -> Generator:
                         print(f"\n=== ISSUE: Empty LLM response ===")
                     q.put("I found relevant information but the LLM didn't generate a response. This might be a model configuration issue. ")
             else:
+                # No context retrieved - fall back to general question answering
                 if DEBUG or SHOW_DEBUG_UI:
-                    print(f"\n=== ISSUE: No context retrieved ===")
-                q.put("I found relevant sources but couldn't extract meaningful context. ")
+                    print(f"\n=== ISSUE: No context retrieved - trying general question fallback ===")
+                
+                try:
+                    general_response = answer_general_question(input_text)
+                    if general_response and general_response.strip() and not general_response.startswith("ERROR:"):
+                        if DEBUG or SHOW_DEBUG_UI:
+                            print(f"\n=== SUCCESS: Got general response ===")
+                        words = general_response.strip().split()
+                        for word in words:
+                            q.put(word + " ")
+                            time.sleep(0.05)
+                        q.put("\n\n*Note: I couldn't find specific documentation for this query, so I answered based on my general knowledge.*\n")
+                    else:
+                        if DEBUG or SHOW_DEBUG_UI:
+                            print(f"\n=== ISSUE: General question also failed ===")
+                        q.put("I apologize, but I couldn't find relevant information in the documentation and was unable to provide a general answer. Please try rephrasing your question or asking about a different topic.")
+                except Exception as general_e:
+                    if DEBUG or SHOW_DEBUG_UI:
+                        print(f"DEBUG: Exception in general question fallback: {str(general_e)}")
+                    q.put("I apologize, but I couldn't find relevant information in the documentation and encountered an error trying to provide a general answer.")
             
             # Step 3: Also try the original QA chain for comparison
             if DEBUG or SHOW_DEBUG_UI:
@@ -698,139 +718,141 @@ with gr.Blocks(title="Red Hat Demo Platform ChatBot", css="footer {visibility: h
                     description=None
                 )
         
-        with gr.Column(scale=1):
-            gr.Markdown("### 🔧 Debug Controls")
-            
-            with gr.Group():
-                gr.Markdown("**Environment Variables:**")
-                debug_enabled = gr.Checkbox(
-                    label="Enable Console Debug Logs", 
-                    value=DEBUG,
-                    info="Shows detailed logs in server console"
-                )
-                show_debug_ui = gr.Checkbox(
-                    label="Show Debug Info in Chat", 
-                    value=SHOW_DEBUG_UI,
-                    info="Shows debug information in chat responses"
-                )
+        # Only show debug controls if ENABLE_DEBUG_UI is True
+        if ENABLE_DEBUG_UI:
+            with gr.Column(scale=1):
+                gr.Markdown("### 🔧 Debug Controls")
                 
-                def update_debug_flags(console_debug, ui_debug):
-                    global DEBUG, SHOW_DEBUG_UI
-                    DEBUG = console_debug
-                    SHOW_DEBUG_UI = ui_debug
-                    return f"Debug flags updated: Console={console_debug}, UI={ui_debug}"
-                
-                update_btn = gr.Button("Update Debug Settings")
-                debug_status = gr.Textbox(label="Status", interactive=False)
-                
-                update_btn.click(
-                    fn=update_debug_flags,
-                    inputs=[debug_enabled, show_debug_ui],
-                    outputs=[debug_status]
-                )
-            
-            with gr.Group():
-                gr.Markdown("**Test Components:**")
-                test_query = gr.Textbox(
-                    label="Test Query", 
-                    placeholder="Enter a test question...",
-                    lines=2
-                )
-                
-                def test_retrieval_only(query):
-                    if not query:
-                        return "Please enter a test query"
+                with gr.Group():
+                    gr.Markdown("**Environment Variables:**")
+                    debug_enabled = gr.Checkbox(
+                        label="Enable Console Debug Logs", 
+                        value=DEBUG,
+                        info="Shows detailed logs in server console"
+                    )
+                    show_debug_ui = gr.Checkbox(
+                        label="Show Debug Info in Chat", 
+                        value=SHOW_DEBUG_UI,
+                        info="Shows debug information in chat responses"
+                    )
                     
-                    try:
-                        docs, context, debug_info = detailed_retrieval_debug(query)
-                        
-                        result = f"**Retrieval Test Results:**\n\n"
-                        result += f"• Documents found: {len(docs)}\n"
-                        result += f"• Context length: {len(context)} chars\n"
-                        result += f"• Embedding dims: {debug_info.get('query_embedding_length', 'N/A')}\n\n"
-                        
-                        if docs:
-                            result += "**Retrieved Documents:**\n"
-                            for i, doc in enumerate(docs[:3]):  # Show first 3
-                                result += f"{i+1}. {doc.metadata.get('source', 'Unknown')}\n"
-                                result += f"   {doc.page_content[:100]}...\n\n"
-                        
-                        if 'retrieval_error' in debug_info:
-                            result += f"**Error:** {debug_info['retrieval_error']}\n"
-                        
-                        return result
-                    except Exception as e:
-                        return f"Error testing retrieval: {str(e)}"
-                
-                def test_llm_only(query):
-                    if not query:
-                        return "Please enter a test query"
+                    def update_debug_flags(console_debug, ui_debug):
+                        global DEBUG, SHOW_DEBUG_UI
+                        DEBUG = console_debug
+                        SHOW_DEBUG_UI = ui_debug
+                        return f"Debug flags updated: Console={console_debug}, UI={ui_debug}"
                     
-                    try:
-                        # Simple test prompt
-                        test_prompt = f"<s>[INST] {query} [/INST]"
-                        response, debug_info = test_llm_directly(test_prompt)
-                        
-                        result = f"**LLM Test Results:**\n\n"
-                        result += f"• Response length: {debug_info.get('llm_response_length', 0)} chars\n"
-                        result += f"• Response preview: {debug_info.get('llm_response_preview', 'No response')}\n\n"
-                        
-                        if 'llm_error' in debug_info:
-                            result += f"**Error:** {debug_info['llm_error']}\n"
-                        elif response:
-                            result += f"**Full Response:**\n{response}\n"
-                        
-                        return result
-                    except Exception as e:
-                        return f"Error testing LLM: {str(e)}"
+                    update_btn = gr.Button("Update Debug Settings")
+                    debug_status = gr.Textbox(label="Status", interactive=False)
+                    
+                    update_btn.click(
+                        fn=update_debug_flags,
+                        inputs=[debug_enabled, show_debug_ui],
+                        outputs=[debug_status]
+                    )
                 
-                test_retrieval_btn = gr.Button("Test Retrieval Only")
-                test_llm_btn = gr.Button("Test LLM Only")
-                test_results = gr.Textbox(
-                    label="Test Results", 
-                    lines=10, 
-                    interactive=False
-                )
+                with gr.Group():
+                    gr.Markdown("**Test Components:**")
+                    test_query = gr.Textbox(
+                        label="Test Query", 
+                        placeholder="Enter a test question...",
+                        lines=2
+                    )
+                    
+                    def test_retrieval_only(query):
+                        if not query:
+                            return "Please enter a test query"
+                        
+                        try:
+                            docs, context, debug_info = detailed_retrieval_debug(query)
+                            
+                            result = f"**Retrieval Test Results:**\n\n"
+                            result += f"• Documents found: {len(docs)}\n"
+                            result += f"• Context length: {len(context)} chars\n"
+                            result += f"• Embedding dims: {debug_info.get('query_embedding_length', 'N/A')}\n\n"
+                            
+                            if docs:
+                                result += "**Retrieved Documents:**\n"
+                                for i, doc in enumerate(docs[:3]):  # Show first 3
+                                    result += f"{i+1}. {doc.metadata.get('source', 'Unknown')}\n"
+                                    result += f"   {doc.page_content[:100]}...\n\n"
+                            
+                            if 'retrieval_error' in debug_info:
+                                result += f"**Error:** {debug_info['retrieval_error']}\n"
+                            
+                            return result
+                        except Exception as e:
+                            return f"Error testing retrieval: {str(e)}"
+                    
+                    def test_llm_only(query):
+                        if not query:
+                            return "Please enter a test query"
+                        
+                        try:
+                            # Simple test prompt
+                            test_prompt = f"<s>[INST] {query} [/INST]"
+                            response, debug_info = test_llm_directly(test_prompt)
+                            
+                            result = f"**LLM Test Results:**\n\n"
+                            result += f"• Response length: {debug_info.get('llm_response_length', 0)} chars\n"
+                            result += f"• Response preview: {debug_info.get('llm_response_preview', 'No response')}\n\n"
+                            
+                            if 'llm_error' in debug_info:
+                                result += f"**Error:** {debug_info['llm_error']}\n"
+                            elif response:
+                                result += f"**Full Response:**\n{response}\n"
+                            
+                            return result
+                        except Exception as e:
+                            return f"Error testing LLM: {str(e)}"
+                    
+                    test_retrieval_btn = gr.Button("Test Retrieval Only")
+                    test_llm_btn = gr.Button("Test LLM Only")
+                    test_results = gr.Textbox(
+                        label="Test Results", 
+                        lines=10, 
+                        interactive=False
+                    )
+                    
+                    test_retrieval_btn.click(
+                        fn=test_retrieval_only,
+                        inputs=[test_query],
+                        outputs=[test_results]
+                    )
+                    
+                    test_llm_btn.click(
+                        fn=test_llm_only,
+                        inputs=[test_query],
+                        outputs=[test_results]
+                    )
                 
-                test_retrieval_btn.click(
-                    fn=test_retrieval_only,
-                    inputs=[test_query],
-                    outputs=[test_results]
-                )
+                with gr.Group():
+                    gr.Markdown("**System Info:**")
+                    system_info = gr.HTML(f"""
+                    <small>
+                    <b>Model:</b> {MODEL_NAME}<br>
+                    <b>Max Tokens:</b> {MAX_NEW_TOKENS}<br>
+                    <b>Temperature:</b> {TEMPERATURE}<br>
+                    <b>DB Collection:</b> {DB_COLLECTION_NAME}<br>
+                    <b>Endpoint:</b> {INFERENCE_SERVER_URL[:50]}...<br>
+                    <b>Bearer Token:</b> {'✓ Set' if BEARER_TOKEN else '✗ Missing'}
+                    </small>
+                    """)
                 
-                test_llm_btn.click(
-                    fn=test_llm_only,
-                    inputs=[test_query],
-                    outputs=[test_results]
-                )
-            
-            with gr.Group():
-                gr.Markdown("**System Info:**")
-                system_info = gr.HTML(f"""
-                <small>
-                <b>Model:</b> {MODEL_NAME}<br>
-                <b>Max Tokens:</b> {MAX_NEW_TOKENS}<br>
-                <b>Temperature:</b> {TEMPERATURE}<br>
-                <b>DB Collection:</b> {DB_COLLECTION_NAME}<br>
-                <b>Endpoint:</b> {INFERENCE_SERVER_URL[:50]}...<br>
-                <b>Bearer Token:</b> {'✓ Set' if BEARER_TOKEN else '✗ Missing'}
-                </small>
-                """)
-            
-            with gr.Group():
-                gr.Markdown("**Troubleshooting Steps:**")
-                troubleshooting = gr.HTML("""
-                <small>
-                <ol>
-                <li><b>Check Bearer Token:</b> Ensure BEARER_TOKEN is valid</li>
-                <li><b>Test LLM:</b> Use "Test LLM Only" button</li>
-                <li><b>Test Retrieval:</b> Use "Test Retrieval Only" button</li>
-                <li><b>Check Logs:</b> Enable console debug logs</li>
-                <li><b>Try Lower Threshold:</b> Reduce similarity threshold</li>
-                <li><b>Check Model:</b> Verify model name and endpoint</li>
-                </ol>
-                </small>
-                """)
+                with gr.Group():
+                    gr.Markdown("**Troubleshooting Steps:**")
+                    troubleshooting = gr.HTML("""
+                    <small>
+                    <ol>
+                    <li><b>Check Bearer Token:</b> Ensure BEARER_TOKEN is valid</li>
+                    <li><b>Test LLM:</b> Use "Test LLM Only" button</li>
+                    <li><b>Test Retrieval:</b> Use "Test Retrieval Only" button</li>
+                    <li><b>Check Logs:</b> Enable console debug logs</li>
+                    <li><b>Try Lower Threshold:</b> Reduce similarity threshold</li>
+                    <li><b>Check Model:</b> Verify model name and endpoint</li>
+                    </ol>
+                    </small>
+                    """)
 
 if __name__ == "__main__":
     demo.queue().launch(

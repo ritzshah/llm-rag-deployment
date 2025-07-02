@@ -76,7 +76,7 @@ spec:
             - name: BEARER_TOKEN
               value: 65fc80b0d55be557b1365687ddb771d6 # notsecret
             - name: ENABLE_DEBUG_UI
-              value: 'False'            
+              value: 'False'        
           securityContext:
             capabilities:
               drop:

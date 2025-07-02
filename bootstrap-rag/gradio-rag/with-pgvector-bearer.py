@@ -39,6 +39,9 @@ BEARER_TOKEN = os.getenv('BEARER_TOKEN')
 DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg://vectordb:vectordb@localhost:5432/vectordb')
 DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME', 'langchain_pg_collection')
 
+# Add debug flag
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
 # Validate required environment variables
 if not DB_CONNECTION_STRING:
     raise ValueError("DB_CONNECTION_STRING environment variable is required")
@@ -85,9 +88,14 @@ Question: {question} [/INST]
     
     prompt = general_template.format(question=question)
     try:
+        if DEBUG:
+            print(f"DEBUG: Calling general question with prompt length: {len(prompt)}")
         response = llm._call(prompt)
+        if DEBUG:
+            print(f"DEBUG: General question response length: {len(response) if response else 0}")
         return response
     except Exception as e:
+        print(f"ERROR in answer_general_question: {str(e)}")
         return f"I apologize, but I encountered an error while trying to answer your question: {str(e)}"
 
 def stream(input_text) -> Generator:
@@ -97,31 +105,58 @@ def stream(input_text) -> Generator:
     # Create a function to call - this will run in a thread
     def task():
         try:
+            if DEBUG:
+                print(f"DEBUG: Processing query: {input_text}")
+            
             resp = qa_chain({"query": input_text})
+            
+            if DEBUG:
+                print(f"DEBUG: QA chain response keys: {resp.keys() if resp else 'None'}")
+                if 'result' in resp:
+                    print(f"DEBUG: Result length: {len(resp['result']) if resp['result'] else 0}")
+                    print(f"DEBUG: Result preview: {resp['result'][:200] if resp['result'] else 'Empty result'}")
+                if 'source_documents' in resp:
+                    print(f"DEBUG: Found {len(resp['source_documents'])} source documents")
             
             # First, put the actual answer from the LLM
             if 'result' in resp and resp['result']:
                 # Split the response into tokens for streaming effect
-                answer = resp['result']
-                words = answer.split()
-                for word in words:
-                    q.put(word + " ")
-                    time.sleep(0.05)  # Small delay for streaming effect
+                answer = resp['result'].strip()  # Remove any leading/trailing whitespace
+                if answer:  # Only proceed if we have actual content
+                    words = answer.split()
+                    for word in words:
+                        q.put(word + " ")
+                        time.sleep(0.05)  # Small delay for streaming effect
+                else:
+                    if DEBUG:
+                        print("DEBUG: Result field exists but is empty after stripping")
+                    q.put("I found relevant information but couldn't generate a response. ")
+            else:
+                if DEBUG:
+                    print("DEBUG: No result field or result is empty")
+                q.put("I found relevant sources but couldn't generate a detailed response. ")
             
             # Then add sources if available
-            sources = remove_source_duplicates(resp['source_documents'])
-            if len(sources) != 0:
-                q.put("\n\n*Sources:* \n")
-                for source in sources:
-                    q.put("* " + str(source) + "\n")
+            if 'source_documents' in resp and resp['source_documents']:
+                sources = remove_source_duplicates(resp['source_documents'])
+                if len(sources) != 0:
+                    q.put("\n\n*Sources:* \n")
+                    for source in sources:
+                        q.put("* " + str(source) + "\n")
+                else:
+                    q.put("\n\n*Note: No specific sources found for this query.*\n")
             else:
                 q.put("\n\n*Note: No specific sources found for this query.*\n")
                 
         except Exception as e:
+            if DEBUG:
+                print(f"DEBUG: Exception in task: {str(e)}")
             error_msg = str(e)
             if "No relevant docs were retrieved" in error_msg:
                 # If no docs retrieved, try to answer without RAG context
                 try:
+                    if DEBUG:
+                        print("DEBUG: Attempting general question fallback")
                     general_response = answer_general_question(input_text)
                     if general_response:
                         words = general_response.split()
@@ -130,6 +165,8 @@ def stream(input_text) -> Generator:
                             time.sleep(0.05)
                     q.put("\n\n*Note: I couldn't find specific documentation for this query, so I answered based on my general knowledge.*\n")
                 except Exception as inner_e:
+                    if DEBUG:
+                        print(f"DEBUG: Exception in general question fallback: {str(inner_e)}")
                     q.put(f"\nError generating response: {str(inner_e)}\n")
             else:
                 q.put(f"\nError: {error_msg}\n")
@@ -220,15 +257,51 @@ class CustomEndpointLLM(BaseLLM):
             data['stop'] = stop
             
         try:
-            response = requests.post(self.endpoint_url, headers=headers, json=data, timeout=30)
+            if DEBUG:
+                print(f"DEBUG: Making LLM request to {self.endpoint_url}")
+                print(f"DEBUG: Request data keys: {data.keys()}")
+                print(f"DEBUG: Prompt length: {len(prompt)}")
+                
+            response = requests.post(self.endpoint_url, headers=headers, json=data, timeout=60)  # Increase timeout
+            
+            if DEBUG:
+                print(f"DEBUG: Response status code: {response.status_code}")
+                print(f"DEBUG: Response headers: {dict(response.headers)}")
+            
             response.raise_for_status()
             
             result = response.json()
+            
+            if DEBUG:
+                print(f"DEBUG: Response JSON keys: {result.keys() if result else 'None'}")
+            
             if 'choices' in result and len(result['choices']) > 0:
-                return result['choices'][0]['text']
-            return ""
+                generated_text = result['choices'][0].get('text', '')
+                if DEBUG:
+                    print(f"DEBUG: Generated text length: {len(generated_text)}")
+                    print(f"DEBUG: Generated text preview: {generated_text[:200] if generated_text else 'Empty'}")
+                return generated_text
+            else:
+                if DEBUG:
+                    print("DEBUG: No choices in response or empty choices")
+                    print(f"DEBUG: Full response: {result}")
+                return ""
+        except requests.exceptions.RequestException as e:
+            error_msg = f"Request error calling LLM: {str(e)}"
+            if DEBUG:
+                print(f"DEBUG: {error_msg}")
+            return error_msg
+        except json.JSONDecodeError as e:
+            error_msg = f"JSON decode error: {str(e)}"
+            if DEBUG:
+                print(f"DEBUG: {error_msg}")
+                print(f"DEBUG: Response text: {response.text[:500] if response else 'No response'}")
+            return error_msg
         except Exception as e:
-            return f"Error calling LLM: {str(e)}"
+            error_msg = f"Unexpected error calling LLM: {str(e)}"
+            if DEBUG:
+                print(f"DEBUG: {error_msg}")
+            return error_msg
 
     @property
     def _llm_type(self) -> str:
@@ -253,7 +326,7 @@ class CustomEndpointLLM(BaseLLM):
             data['stop'] = stop
             
         try:
-            response = requests.post(self.endpoint_url, headers=headers, json=data, stream=True, timeout=30)
+            response = requests.post(self.endpoint_url, headers=headers, json=data, stream=True, timeout=60)
             response.raise_for_status()
             
             for line in response.iter_lines():
@@ -312,7 +385,7 @@ qa_chain = RetrievalQA.from_chain_type(
     llm,
     retriever=store.as_retriever(
         search_type="similarity_score_threshold",
-        search_kwargs={"k": 4, "score_threshold": 0.7}  # Higher threshold to filter out irrelevant results
+        search_kwargs={"k": 4, "score_threshold": 0.5}  # Higher threshold to filter out irrelevant results
     ),
     chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
     return_source_documents=True

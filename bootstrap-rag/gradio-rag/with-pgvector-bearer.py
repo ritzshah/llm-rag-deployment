@@ -312,7 +312,7 @@ qa_chain = RetrievalQA.from_chain_type(
     llm,
     retriever=store.as_retriever(
         search_type="similarity_score_threshold",
-        search_kwargs={"k": 4, "score_threshold": 0.3}  # Higher threshold to filter out irrelevant results
+        search_kwargs={"k": 4, "score_threshold": 0.7}  # Higher threshold to filter out irrelevant results
     ),
     chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
     return_source_documents=True

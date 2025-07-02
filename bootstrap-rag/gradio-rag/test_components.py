@@ -14,10 +14,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuration
-BEARER_TOKEN = os.getenv('BEARER_TOKEN')
-INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL')
+INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL', 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions')
 MODEL_NAME = os.getenv('MODEL_NAME', 'granite-8b-code-instruct-128k')
-DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING')
+MAX_NEW_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))
+TOP_K = int(os.getenv('TOP_K', 10))
+TOP_P = float(os.getenv('TOP_P', 0.95))
+TYPICAL_P = float(os.getenv('TYPICAL_P', 0.95))
+TEMPERATURE = float(os.getenv('TEMPERATURE', 0.01))
+REPETITION_PENALTY = float(os.getenv('REPETITION_PENALTY', 1.03))
+
+# Add Bearer Token parameter
+BEARER_TOKEN = os.getenv('BEARER_TOKEN', '65fc80b0d55be557b1365687ddb771d6')
+
+DB_CONNECTION_STRING = os.getenv('DB_CONNECTION_STRING', 'postgresql+psycopg://vectordb:vectordb@localhost:5432/vectordb')
 DB_COLLECTION_NAME = os.getenv('DB_COLLECTION_NAME', 'langchain_pg_collection')
 
 def test_environment():
@@ -62,7 +71,7 @@ def test_llm_endpoint():
     
     data = {
         'model': MODEL_NAME,
-        'prompt': 'What is OpenShift? Please provide a brief answer.',
+        'prompt': 'What is OpenShift AI Self managed latest release? Please provide a brief answer.',
         'max_tokens': 100,
         'temperature': 0.1,
         'stream': False

@@ -45,7 +45,7 @@ The following table lists the configurable parameters and their default values:
 | `app.enableDebugUI` | Enable debug UI | `false` |
 | `llm.inferenceServerUrl` | LLM inference server URL | `https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions` |
 | `llm.modelName` | LLM model name | `granite-8b-code-instruct-128k` |
-| `llm.bearerToken` | Bearer token for LLM API | `65fc80b0d55be557b1365687ddb771d6` |
+| `llm.bearerToken` | Bearer token for LLM API | `CHANGEME` |
 | `database.connectionString` | Database connection string | `postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb` |
 | `database.collectionName` | Database collection name | `documents_test` |
 | `service.type` | Kubernetes service type | `ClusterIP` |

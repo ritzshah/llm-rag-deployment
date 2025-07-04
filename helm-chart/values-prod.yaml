@@ -75,7 +75,7 @@ strategy:
 
 # Production database
 database:
-  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb_prod"
+  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb_prod" #notsecret
   collectionName: "documents_prod"
 
 # Note: In production, consider using external secrets for sensitive data

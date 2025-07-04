@@ -31,7 +31,7 @@ llm:
 
 # Database Configuration
 database:
-  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb"
+  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb" #notsecret
   collectionName: "documents_test"
 
 # Service configuration

@@ -54,7 +54,7 @@ probes:
 
 # Development database (could point to a dev instance)
 database:
-  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb_dev"
+  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb_dev" #notsecret
   collectionName: "documents_dev"
 
 # Development namespace

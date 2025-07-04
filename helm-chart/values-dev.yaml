@@ -1,0 +1,63 @@
+# Development environment values
+# Lower resource requirements and debug features enabled
+
+replicaCount: 1
+
+image:
+  repository: quay.io/rshah/llm-rag-deployment-maas
+  pullPolicy: Always
+  tag: "dev"
+
+# Enable debug features for development
+app:
+  title: "Talk with your documentation - DEV"
+  enableDebugUI: true
+
+# Development resource limits
+resources:
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+# Relaxed probes for development
+probes:
+  readiness:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 10
+    periodSeconds: 60
+    successThreshold: 1
+    failureThreshold: 5
+  liveness:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 15
+    periodSeconds: 180
+    successThreshold: 1
+    failureThreshold: 5
+  startup:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 5
+    periodSeconds: 60
+    successThreshold: 1
+    failureThreshold: 10
+
+# Development database (could point to a dev instance)
+database:
+  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb_dev"
+  collectionName: "documents_dev"
+
+# Development namespace
+namespace:
+  name: ic-shared-llm-dev
+  create: true 

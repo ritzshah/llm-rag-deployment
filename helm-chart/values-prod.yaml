@@ -1,0 +1,88 @@
+# Production environment values
+# High availability, security, and performance optimizations
+
+replicaCount: 3
+
+image:
+  repository: quay.io/rshah/llm-rag-deployment-maas
+  pullPolicy: Always
+  tag: "v1.0.0"  # Use specific version in production
+
+# Production app settings
+app:
+  title: "Talk with your documentation"
+  enableDebugUI: false
+
+# Production resource allocation
+resources:
+  limits:
+    cpu: "4"
+    memory: 4Gi
+  requests:
+    cpu: "2"
+    memory: 2Gi
+
+# Anti-affinity for high availability
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - gradio
+        topologyKey: kubernetes.io/hostname
+
+# Stricter probes for production
+probes:
+  readiness:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 3
+    periodSeconds: 15
+    successThreshold: 1
+    failureThreshold: 2
+  liveness:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 5
+    periodSeconds: 60
+    successThreshold: 1
+    failureThreshold: 2
+  startup:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 1
+    periodSeconds: 15
+    successThreshold: 1
+    failureThreshold: 20
+
+# Production deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+# Production database
+database:
+  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb_prod"
+  collectionName: "documents_prod"
+
+# Note: In production, consider using external secrets for sensitive data
+# llm:
+#   bearerToken: ""  # Should be provided via external secret
+
+# Production namespace
+namespace:
+  name: ic-shared-llm-prod
+  create: false 

@@ -11,9 +11,9 @@ resources:
 - fix-odf-config.yaml
 # wave 1
 - pvc.yaml
-- deployment.yaml
-- service.yaml
-- route.yaml
+#- deployment.yaml
+#- service.yaml
+#- route.yaml
 - deployment-flant5.yaml
 - service-flant5.yaml
 # wave 2

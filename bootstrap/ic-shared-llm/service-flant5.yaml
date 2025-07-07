@@ -1,10 +1,10 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: llm-flant5
+  name: llm
   namespace: ic-shared-llm
   labels:
-    app: llm-flant5
+    app: llm
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
@@ -20,4 +20,4 @@ spec:
   ipFamilyPolicy: SingleStack
   sessionAffinity: None
   selector:
-    app: llm-flant5
+    app: llm

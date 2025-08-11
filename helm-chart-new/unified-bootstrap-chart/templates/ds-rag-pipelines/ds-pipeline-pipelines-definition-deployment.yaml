@@ -1,0 +1,221 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ds-pipeline-pipelines-definition
+    component: data-science-pipelines
+    dspa: pipelines-definition
+  name: ds-pipeline-pipelines-definition
+  namespace: ic-shared-rag-llm
+  uid: 6cc1e8fc-241c-4f33-b322-bc662aed4a86
+  ownerReferences:
+  - apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DataSciencePipelinesApplication
+    name: pipelines-definition
+    uid: 0efbdb68-d928-425c-a2f2-93e5e1d7a293
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ds-pipeline-pipelines-definition
+      component: data-science-pipelines
+      dspa: pipelines-definition
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ds-pipeline-pipelines-definition
+        component: data-science-pipelines
+        dspa: pipelines-definition
+    spec:
+      containers:
+      - env:
+        - name: POD_NAMESPACE
+          value: ic-shared-rag-llm
+        - name: DBCONFIG_USER
+          value: mlpipeline
+        - name: DBCONFIG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: ds-pipeline-db-pipelines-definition
+        - name: DBCONFIG_DBNAME
+          value: mlpipeline
+        - name: DBCONFIG_HOST
+          value: mariadb-pipelines-definition.ic-shared-rag-llm.svc.cluster.local
+        - name: DBCONFIG_PORT
+          value: "3306"
+        - name: ARTIFACT_BUCKET
+          value: pipeline
+        - name: ARTIFACT_ENDPOINT
+          value: http://minio.ic-shared-rag-minio.svc:9000
+        - name: ARTIFACT_SCRIPT
+          valueFrom:
+            configMapKeyRef:
+              key: artifact_script
+              name: ds-pipeline-artifact-script-pipelines-definition
+        - name: ARTIFACT_IMAGE
+          value: registry.redhat.io/rhods/odh-ml-pipelines-artifact-manager-rhel8@sha256:9dea806674f96a79d35e6e6bce65764987c2d7000352827d0ab89cd0eef95440
+        - name: ARCHIVE_LOGS
+          value: "false"
+        - name: TRACK_ARTIFACTS
+          value: "true"
+        - name: STRIP_EOF
+          value: "true"
+        - name: PIPELINE_RUNTIME
+          value: tekton
+        - name: DEFAULTPIPELINERUNNERSERVICEACCOUNT
+          value: pipeline-runner-pipelines-definition
+        - name: INJECT_DEFAULT_SCRIPT
+          value: "true"
+        - name: APPLY_TEKTON_CUSTOM_RESOURCE
+          value: "true"
+        - name: TERMINATE_STATUS
+          value: Cancelled
+        - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+          value: "true"
+        - name: DBCONFIG_CONMAXLIFETIMESEC
+          value: "120"
+        - name: ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST
+          value: ds-pipeline-visualizationserver
+        - name: ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT
+          value: "8888"
+        - name: OBJECTSTORECONFIG_BUCKETNAME
+          value: pipeline
+        - name: OBJECTSTORECONFIG_ACCESSKEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: mlpipeline-minio-artifact
+        - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: mlpipeline-minio-artifact
+        - name: OBJECTSTORECONFIG_SECURE
+          value: "false"
+        - name: MINIO_SERVICE_SERVICE_HOST
+          value: minio.ic-shared-rag-minio.svc:9000
+        - name: MINIO_SERVICE_SERVICE_PORT
+        - name: CACHE_IMAGE
+          value: registry.redhat.io/rhods/odh-ml-pipelines-cache-rhel8@sha256:9abb14dbaac0997ce8230c347f16b330174b7a09708b4e6e27005cb77f7d0576
+        - name: MOVERESULTS_IMAGE
+          value: registry.access.redhat.com/ubi8/ubi-micro@sha256:396baed3d689157d96aa7d8988fdfea7eb36684c8335eb391cf1952573e689c1
+        image: registry.redhat.io/rhods/odh-ml-pipelines-api-server-rhel8@sha256:e1a5ceff2354b5ea787838143338848727a0dba4240fe8ed84350128603399e9
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - '-'
+            - http://localhost:8888/apis/v1beta1/healthz
+          failureThreshold: 3
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
+        name: ds-pipeline-api-server
+        ports:
+        - containerPort: 8888
+          name: http
+          protocol: TCP
+        - containerPort: 8887
+          name: grpc
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - '-'
+            - http://localhost:8888/apis/v1beta1/healthz
+          failureThreshold: 3
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 250m
+            memory: 500Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      - args:
+        - --https-address=:8443
+        - --provider=openshift
+        - --openshift-service-account=ds-pipeline-pipelines-definition
+        - --upstream=http://localhost:8888
+        - --tls-cert=/etc/tls/private/tls.crt
+        - --tls-key=/etc/tls/private/tls.key
+        - --cookie-secret=SECRET
+        - '--openshift-delegate-urls={"/": {"group":"route.openshift.io","resource":"routes","verb":"get","name":"ds-pipeline-pipelines-definition","namespace":"ic-shared-rag-llm"}}'
+        - --openshift-sar={"namespace":"ic-shared-rag-llm","resource":"routes","resourceName":"ds-pipeline-pipelines-definition","verb":"get","resourceAPIGroup":"route.openshift.io"}
+        - --skip-auth-regex='(^/metrics|^/apis/v1beta1/healthz)'
+        image: registry.redhat.io/openshift4/ose-oauth-proxy@sha256:ab112105ac37352a2a4916a39d6736f5db6ab4c29bad4467de8d613e80e9bb33
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /oauth/healthz
+            port: oauth
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: oauth-proxy
+        ports:
+        - containerPort: 8443
+          name: oauth
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /oauth/healthz
+            port: oauth
+            scheme: HTTPS
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/tls/private
+          name: proxy-tls
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: ds-pipeline-pipelines-definition
+      serviceAccountName: ds-pipeline-pipelines-definition
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: proxy-tls
+        secret:
+          defaultMode: 420
+          secretName: ds-pipelines-proxy-tls-pipelines-definition

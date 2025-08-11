@@ -1,0 +1,131 @@
+# Default values for bootstrap-rag-chart
+# This configures the LLM RAG Bootstrap RAG-specific components
+
+# Global settings
+global:
+  repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+  targetRevision: update-token-v1
+  cluster: in-cluster
+
+# ApplicationSet configuration for ArgoCD
+applicationSet:
+  enabled: true
+  name: bootstrap-rag
+  namespace: openshift-gitops
+  labels:
+    component: bootstrap-rag
+
+# Components to deploy
+components:
+  - name: shared-rag-minio-app
+    path: bootstrap-rag/shared-rag-minio
+    enabled: true
+  - name: shared-rag-database-app
+    path: bootstrap-rag/shared-rag-database
+    enabled: true
+  - name: shared-rag-llm-app
+    path: bootstrap-rag/shared-rag-llm
+    enabled: true
+  - name: gradio-rag-app
+    path: bootstrap-rag/gradio-rag
+    enabled: true
+  - name: pgvector-rag-deployment-app
+    path: bootstrap-rag/pgvector-rag-deployment
+    enabled: true
+  - name: ds-rag-pipeline
+    path: bootstrap-rag/ds-rag-pipelines
+    enabled: true
+  # Optional workbench - disabled by default
+  - name: workbench
+    path: bootstrap-rag/notebook
+    enabled: false
+
+# Additional RAG-specific components
+ragComponents:
+  rhoaiConfiguration:
+    enabled: true
+    path: bootstrap-rag/rhoai-rag-configuration
+  secretCreate:
+    enabled: true
+    path: bootstrap-rag/secret-create
+  odfS3:
+    enabled: true
+    path: bootstrap-rag/odf-s3
+  modelServer:
+    enabled: true
+    path: bootstrap-rag/model-server
+  workbenchImage:
+    enabled: true
+    path: bootstrap-rag/workbench-image
+
+# Gradio RAG UI Configuration
+gradio:
+  enabled: true
+  image:
+    repository: quay.io/rshah/llm-rag-deployment-maas
+    tag: latest
+    pullPolicy: IfNotPresent
+  
+  replicas: 1
+  
+  resources:
+    limits:
+      cpu: "2"
+      memory: 2Gi
+    requests:
+      cpu: "1"
+      memory: 1Gi
+  
+  # Application configuration for RAG
+  config:
+    appTitle: "Talk with your documentation"
+    bearerToken: "65fc80b0d55be557b1365687ddb771d6"  #notsecret
+    inferenceServerUrl: "https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions"
+    modelName: "granite-8b-code-instruct-128k"
+    dbConnectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb"
+    dbCollectionName: "documents_test"
+    maxNewTokens: "512"
+    
+  # Advanced model parameters
+  modelParams:
+    topK: "10"
+    topP: "0.95"
+    typicalP: "0.95"
+    temperature: "0.01"
+    repetitionPenalty: "1.03"
+    
+  # Debug settings
+  debug:
+    enableDebugUI: "False"
+  
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 7860
+    targetPort: 7860
+    
+  # Health checks
+  probes:
+    readiness:
+      timeoutSeconds: 5
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+    liveness:
+      timeoutSeconds: 8
+      periodSeconds: 100
+      successThreshold: 1
+      failureThreshold: 3
+    startup:
+      timeoutSeconds: 1
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 24
+
+# ArgoCD sync policy
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+  syncOptions:
+    - RespectIgnoreDifferences=true

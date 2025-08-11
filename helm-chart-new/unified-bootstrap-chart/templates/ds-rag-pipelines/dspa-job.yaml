@@ -1,0 +1,93 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: a-dspa-config-job
+  namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"  
+spec:
+  template:
+    spec: 
+      serviceAccountName: dspa-service-account    
+      containers:
+        - name: dspa-config-container
+          image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Extracting AWS_S3_ENDPOINT from secret..."
+              HOST=$(oc get secret aws-shared-rag-connection -n ic-shared-rag-llm -o jsonpath="{.data.AWS_S3_ENDPOINT}" | base64 --decode)
+              AccessKey1=$(oc get secret aws-shared-rag-connection -n ic-shared-rag-llm -o jsonpath="{.data.AWS_ACCESS_KEY_ID}" | base64 --decode)
+              SecretKey1=$(oc get secret aws-shared-rag-connection -n ic-shared-rag-llm -o jsonpath="{.data.AWS_SECRET_ACCESS_KEY}" | base64 --decode)
+              echo "AWS_S3_ENDPOINT: $HOST"
+              if [ -z "$HOST" ]; then
+                echo "Error: AWS_S3_ENDPOINT is empty!"
+                exit 1
+              fi
+              cat <<EOF > /dspa/dspa.yaml
+              apiVersion: datasciencepipelinesapplications.opendatahub.io/v1
+              kind: DataSciencePipelinesApplication
+              metadata:
+                name: dspa
+                namespace: ic-shared-rag-llm
+                annotations:
+                  argocd.argoproj.io/sync-wave: "3"
+              spec:
+                apiServer:
+                  artifactSignedURLExpirySeconds: 60
+                  caBundleFileMountPath: ''
+                  caBundleFileName: ''
+                  deploy: true
+                  enableOauth: true
+                  enableSamplePipeline: false
+                database:
+                  disableHealthCheck: false
+                  mariaDB:
+                    deploy: true
+                    pipelineDBName: mlpipeline
+                    pvcSize: 10Gi
+                    username: mlpipeline
+                dspVersion: v2
+                objectStorage:
+                  disableHealthCheck: false
+                  enableExternalRoute: false
+                  externalStorage:
+                    basePath: ''
+                    bucket: pipeline-artifacts
+                    host: $HOST
+                    port: ''
+                    region: us
+                    s3CredentialsSecret:
+                      accessKey: AWS_ACCESS_KEY_ID
+                      secretKey: AWS_SECRET_ACCESS_KEY
+                      secretName: aws-shared-rag-connection
+                    scheme: https
+                persistenceAgent:
+                  deploy: true
+                  numWorkers: 2
+                podToPodTLS: true
+                scheduledWorkflow:
+                  cronScheduleTimezone: UTC
+                  deploy: true
+              EOF
+              echo "Generated dspa.yaml:"
+              cat /dspa/dspa.yaml
+              echo "Applying DSPA configuration..."
+              oc apply -f /dspa/dspa.yaml
+          volumeMounts:
+            - name: dspa-config
+              mountPath: /dspa
+      restartPolicy: Never
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"      
+      volumes:
+        - name: dspa-config
+          emptyDir: {}
+  backoffLimit: 1

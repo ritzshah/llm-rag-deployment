@@ -1,0 +1,114 @@
+{{- if .Values.gradio.enabled }}
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: gradio-llm-rag-pgvector
+  namespace: ic-shared-llm
+  labels:
+    app: gradio
+    {{- include "bootstrap-chart.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  replicas: {{ .Values.gradio.replicas }}
+  selector:
+    matchLabels:
+      app: gradio
+  template:
+    metadata:
+      labels:
+        app: gradio
+    spec:
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      affinity: {}
+      terminationGracePeriodSeconds: 120
+      securityContext: {}
+      containers:
+        - resources:
+            limits:
+              cpu: {{ .Values.gradio.resources.limits.cpu }}
+              memory: {{ .Values.gradio.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.gradio.resources.requests.cpu }}
+              memory: {{ .Values.gradio.resources.requests.memory }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            timeoutSeconds: {{ .Values.gradio.probes.readiness.timeoutSeconds }}
+            periodSeconds: {{ .Values.gradio.probes.readiness.periodSeconds }}
+            successThreshold: {{ .Values.gradio.probes.readiness.successThreshold }}
+            failureThreshold: {{ .Values.gradio.probes.readiness.failureThreshold }}
+          terminationMessagePath: /dev/termination-log
+          name: server
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            timeoutSeconds: {{ .Values.gradio.probes.liveness.timeoutSeconds }}
+            periodSeconds: {{ .Values.gradio.probes.liveness.periodSeconds }}
+            successThreshold: {{ .Values.gradio.probes.liveness.successThreshold }}
+            failureThreshold: {{ .Values.gradio.probes.liveness.failureThreshold }}
+          env:
+            - name: APP_TITLE
+              value: {{ .Values.gradio.config.appTitle | quote }}
+            - name: INFERENCE_SERVER_URL
+              value: {{ .Values.gradio.config.inferenceServerUrl | quote }}
+            - name: MODEL_NAME
+              value: {{ .Values.gradio.config.modelName | quote }}
+            - name: DB_CONNECTION_STRING
+              value: {{ .Values.gradio.config.dbConnectionString | quote }}
+            - name: DB_COLLECTION_NAME
+              value: {{ .Values.gradio.config.dbCollectionName | quote }}
+            - name: MAX_NEW_TOKENS
+              value: {{ .Values.gradio.config.maxNewTokens | quote }}
+            - name: TOP_K
+              value: {{ .Values.gradio.modelParams.topK | quote }}
+            - name: TOP_P
+              value: {{ .Values.gradio.modelParams.topP | quote }}
+            - name: TYPICAL_P
+              value: {{ .Values.gradio.modelParams.typicalP | quote }}
+            - name: TEMPERATURE
+              value: {{ .Values.gradio.modelParams.temperature | quote }}
+            - name: REPETITION_PENALTY
+              value: {{ .Values.gradio.modelParams.repetitionPenalty | quote }}
+            - name: BEARER_TOKEN
+              value: {{ .Values.gradio.config.bearerToken | quote }}
+            - name: ENABLE_DEBUG_UI
+              value: {{ .Values.gradio.debug.enableDebugUI | quote }}          
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+            - name: http
+              containerPort: {{ .Values.gradio.service.targetPort }}
+              protocol: TCP
+          imagePullPolicy: {{ .Values.gradio.image.pullPolicy }}
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            timeoutSeconds: {{ .Values.gradio.probes.startup.timeoutSeconds }}
+            periodSeconds: {{ .Values.gradio.probes.startup.periodSeconds }}
+            successThreshold: {{ .Values.gradio.probes.startup.successThreshold }}
+            failureThreshold: {{ .Values.gradio.probes.startup.failureThreshold }}
+          terminationMessagePolicy: File
+          image: '{{ .Values.gradio.image.repository }}:{{ .Values.gradio.image.tag }}'
+      dnsPolicy: ClusterFirst
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 1
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+{{- end }}

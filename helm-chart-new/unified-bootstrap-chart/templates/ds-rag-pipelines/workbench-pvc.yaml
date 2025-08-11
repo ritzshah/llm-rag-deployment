@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ic-shared-llm-rag-workbench
+  namespace: ic-shared-rag-llm
+  labels:
+    app: ic-shared-llm-rag-workbench
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: ocs-storagecluster-cephfs
+  volumeMode: Filesystem

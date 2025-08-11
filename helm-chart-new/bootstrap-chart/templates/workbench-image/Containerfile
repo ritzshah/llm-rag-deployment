@@ -1,0 +1,24 @@
+FROM quay.io/modh/odh-generic-data-science-notebook:v2-2024a-20240829
+
+##########################
+# Deploy Python packages #
+##########################
+
+USER 1001
+
+WORKDIR /opt/app-root/bin
+
+# Copy packages list
+COPY --chown=1001:0 requirements.txt ./
+
+# Install packages and cleanup
+# (all commands are chained to minimize layer size)
+RUN echo "Installing packages" && \
+    # Install Python packages \
+    pip install --no-cache-dir --no-dependencies -r requirements.txt
+
+WORKDIR /opt/app-root/src
+
+ENTRYPOINT ["start-notebook.sh"]
+
+

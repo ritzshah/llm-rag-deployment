@@ -1,0 +1,43 @@
+{{- if .Values.bootstrapRag.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .Values.bootstrapRag.applicationSet.name }}
+  namespace: {{ .Values.bootstrapRag.applicationSet.namespace }}
+spec:
+  generators:
+  - list:
+      elements:
+      {{- range .Values.bootstrapRag.components }}
+      {{- if .enabled }}
+      - cluster: {{ $.Values.global.cluster }}
+        name: {{ .name }}
+        repoURL: {{ $.Values.global.repoURL }}
+        targetRevision: {{ $.Values.global.targetRevision }}
+        path: {{ .path }}
+      {{- end }}
+      {{- end }}
+  template:
+    metadata:
+      name: '{{`{{name}}`}}'
+      namespace: {{ .Values.bootstrapRag.applicationSet.namespace }}
+      labels:
+        component: {{ .Values.bootstrapRag.applicationSet.labels.component }}
+        purpose: '{{`{{name}}`}}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{`{{repoURL}}`}}'
+        targetRevision: '{{`{{targetRevision}}`}}'
+        path: '{{`{{path}}`}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+      syncPolicy:
+        automated:
+          prune: {{ .Values.syncPolicy.automated.prune }}
+          selfHeal: {{ .Values.syncPolicy.automated.selfHeal }}
+        syncOptions:
+        {{- range .Values.syncPolicy.syncOptions }}
+        - {{ . }}
+        {{- end }}
+{{- end }}

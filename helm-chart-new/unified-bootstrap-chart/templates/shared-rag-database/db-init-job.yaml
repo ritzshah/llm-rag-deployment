@@ -1,7 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: db-init-job
+  name: db-init-job-shared-rag
+  namespace: ic-shared-rag-llm
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
@@ -47,5 +48,5 @@ spec:
       volumes:
       - name: sql-script-volume
         configMap:
-          name: sql-script-configmap
+          name: sql-script-configmap-shared-rag
   backoffLimit: 4

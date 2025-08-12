@@ -2,7 +2,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: create-buckets
+  name: create-buckets-ic-shared
+  namespace: ic-shared-minio
   annotations:
     argocd.argoproj.io/sync-wave: "3"
     argocd.argoproj.io/hook: Sync

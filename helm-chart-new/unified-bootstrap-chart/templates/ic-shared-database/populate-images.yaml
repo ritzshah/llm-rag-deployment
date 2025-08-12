@@ -2,7 +2,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: populate-images
+  name: populate-images-ic-shared
+  namespace: ic-shared-database
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:

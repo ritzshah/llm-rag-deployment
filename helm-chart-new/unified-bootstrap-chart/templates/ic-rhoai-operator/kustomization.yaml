@@ -3,10 +3,10 @@ kind: Kustomization
 
 resources:
   # wave 0
-  - namespace.yaml
+  #- namespace.yaml
   # wave 1
-  - rbac-presync-monitoring.yaml
-  - subscription-authorino.yaml
+  #- rbac-presync-monitoring.yaml
+  #- subscription-authorino.yaml
   # wave 2
-  - operator-group.yaml
-  - subscription.yaml
+  #- operator-group.yaml
+  #- subscription.yaml

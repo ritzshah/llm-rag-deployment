@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: create-data-connection
+  name: create-data-connection-img-det
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:

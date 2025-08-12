@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: create-data-connection
+  name: create-data-connection-shared-rag
   # generateName: create-dc-
   annotations:
     argocd.argoproj.io/sync-wave: "2"

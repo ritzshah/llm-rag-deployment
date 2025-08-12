@@ -7,105 +7,116 @@ global:
   targetRevision: update-token-v1
   cluster: in-cluster
 
-# Bootstrap ApplicationSet configuration for ArgoCD
-bootstrap:
+# Unified ApplicationSet configuration for ArgoCD
+applicationSet:
   enabled: true
-  applicationSet:
-    name: bootstrap
-    namespace: openshift-gitops
-    labels:
-      component: bootstrap
+  name: unified-bootstrap
+  namespace: openshift-gitops
+  labels:
+    component: unified-bootstrap
 
-  # Bootstrap components to deploy
-  components:
-    - name: ic-rhoai-operator
-      path: bootstrap/ic-rhoai-operator
-      enabled: true
-    - name: ic-rhoai-installation
-      path: bootstrap/ic-rhoai-installation
-      enabled: true
-    - name: ic-rhoai-configuration
-      path: bootstrap/ic-rhoai-configuration
-      enabled: true
-    - name: ic-shared-minio-app
-      path: bootstrap/ic-shared-minio
-      enabled: true
-    - name: ic-shared-database-app
-      path: bootstrap/ic-shared-database
-      enabled: true
-    - name: ic-shared-milvus
-      path: bootstrap/ic-shared-milvus
-      enabled: true
-    - name: ic-shared-llm-app
-      path: bootstrap/ic-shared-llm
-      enabled: true
-    - name: pg-vector-deployment
-      path: bootstrap/pgvector-deployment
-      enabled: true
-    - name: gradio
-      path: bootstrap/gradio
-      enabled: true
-    - name: ic-shared-img-det
-      path: bootstrap/ic-shared-img-det
-      enabled: true
-    - name: ic-user-projects
-      path: bootstrap/ic-user-projects
-      enabled: true
-    - name: ic-shared-app
-      path: bootstrap/ic-shared-app
-      enabled: true
+# All components to deploy (both bootstrap and bootstrap-rag)
+components:
+  # Bootstrap components
+  - name: ic-rhoai-operator
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-rhoai-operator
+    enabled: true
+    category: bootstrap
+  - name: ic-rhoai-installation
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-rhoai-installation
+    enabled: true
+    category: bootstrap
+  - name: ic-rhoai-configuration
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-rhoai-configuration
+    enabled: true
+    category: bootstrap
+  - name: ic-shared-minio-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-shared-minio
+    enabled: true
+    category: bootstrap
+  - name: ic-shared-database-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-shared-database
+    enabled: true
+    category: bootstrap
+  - name: ic-shared-milvus
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-shared-milvus
+    enabled: true
+    category: bootstrap
+  - name: ic-shared-llm-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-shared-llm
+    enabled: true
+    category: bootstrap
+  - name: pg-vector-deployment
+    path: helm-chart-new/unified-bootstrap-chart/templates/pgvector-deployment
+    enabled: true
+    category: bootstrap
+  - name: gradio
+    path: helm-chart-new/unified-bootstrap-chart/templates/gradio
+    enabled: true
+    category: bootstrap
+  - name: ic-shared-img-det
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-shared-img-det
+    enabled: true
+    category: bootstrap
+  - name: ic-user-projects
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-user-projects
+    enabled: true
+    category: bootstrap
+  - name: ic-shared-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/ic-shared-app
+    enabled: true
+    category: bootstrap
 
-# Bootstrap RAG ApplicationSet configuration for ArgoCD
-bootstrapRag:
-  enabled: true
-  applicationSet:
-    name: bootstrap-rag
-    namespace: openshift-gitops
-    labels:
-      component: bootstrap-rag
-
-  # Bootstrap RAG components to deploy
-  components:
-    - name: shared-rag-minio-app
-      path: bootstrap-rag/shared-rag-minio
-      enabled: true
-    - name: shared-rag-database-app
-      path: bootstrap-rag/shared-rag-database
-      enabled: true
-    - name: shared-rag-llm-app
-      path: bootstrap-rag/shared-rag-llm
-      enabled: true
-    - name: gradio-rag-app
-      path: bootstrap-rag/gradio-rag
-      enabled: true
-    - name: pgvector-rag-deployment-app
-      path: bootstrap-rag/pgvector-rag-deployment
-      enabled: true
-    - name: ds-rag-pipeline
-      path: bootstrap-rag/ds-rag-pipelines
-      enabled: true
-    # Optional workbench - disabled by default
-    - name: workbench
-      path: bootstrap-rag/notebook
-      enabled: false
-
-  # Additional RAG-specific components
-  ragComponents:
-    rhoaiConfiguration:
-      enabled: true
-      path: bootstrap-rag/rhoai-rag-configuration
-    secretCreate:
-      enabled: true
-      path: bootstrap-rag/secret-create
-    odfS3:
-      enabled: true
-      path: bootstrap-rag/odf-s3
-    modelServer:
-      enabled: true
-      path: bootstrap-rag/model-server
-    workbenchImage:
-      enabled: true
-      path: bootstrap-rag/workbench-image
+  # Bootstrap RAG components
+  - name: shared-rag-minio-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/shared-rag-minio
+    enabled: true
+    category: bootstrap-rag
+  - name: shared-rag-database-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/shared-rag-database
+    enabled: true
+    category: bootstrap-rag
+  - name: shared-rag-llm-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/shared-rag-llm
+    enabled: true
+    category: bootstrap-rag
+  - name: gradio-rag-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/gradio-rag
+    enabled: true
+    category: bootstrap-rag
+  - name: pgvector-rag-deployment-app
+    path: helm-chart-new/unified-bootstrap-chart/templates/pgvector-rag-deployment
+    enabled: true
+    category: bootstrap-rag
+  - name: ds-rag-pipeline
+    path: helm-chart-new/unified-bootstrap-chart/templates/ds-rag-pipelines
+    enabled: true
+    category: bootstrap-rag
+  - name: rhoai-rag-configuration
+    path: helm-chart-new/unified-bootstrap-chart/templates/rhoai-rag-configuration
+    enabled: true
+    category: bootstrap-rag
+  - name: secret-create
+    path: helm-chart-new/unified-bootstrap-chart/templates/secret-create
+    enabled: true
+    category: bootstrap-rag
+  - name: odf-s3
+    path: helm-chart-new/unified-bootstrap-chart/templates/odf-s3
+    enabled: true
+    category: bootstrap-rag
+  - name: model-server
+    path: helm-chart-new/unified-bootstrap-chart/templates/model-server
+    enabled: true
+    category: bootstrap-rag
+  - name: workbench-image
+    path: helm-chart-new/unified-bootstrap-chart/templates/workbench-image
+    enabled: true
+    category: bootstrap-rag
+  # Optional workbench - disabled by default
+  - name: workbench
+    path: helm-chart-new/unified-bootstrap-chart/templates/notebook
+    enabled: false
+    category: bootstrap-rag
 
 # Gradio UI Configuration (shared between bootstrap and bootstrap-rag)
 gradio:

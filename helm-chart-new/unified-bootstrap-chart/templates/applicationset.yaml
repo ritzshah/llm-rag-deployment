@@ -1,29 +1,32 @@
-{{- if .Values.bootstrap.enabled }}
+{{- if .Values.applicationSet.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: {{ .Values.bootstrap.applicationSet.name }}
-  namespace: {{ .Values.bootstrap.applicationSet.namespace }}
+  name: {{ .Values.applicationSet.name }}
+  namespace: {{ .Values.applicationSet.namespace }}
 spec:
   generators:
     - list:
         elements:
-        {{- range .Values.bootstrap.components }}
+        {{- range .Values.components }}
         {{- if .enabled }}
           - cluster: {{ $.Values.global.cluster }}
             name: {{ .name }}
             repoURL: {{ $.Values.global.repoURL }}
             targetRevision: {{ $.Values.global.targetRevision }}
             path: {{ .path }}
+            category: {{ .category }}
         {{- end }}
         {{- end }}
   template:
     metadata:
       name: "{{`{{name}}`}}"
-      namespace: {{ .Values.bootstrap.applicationSet.namespace }}
+      namespace: {{ .Values.applicationSet.namespace }}
       labels:
-        component: {{ .Values.bootstrap.applicationSet.labels.component }}
+        component: {{ .Values.applicationSet.labels.component }}
+        category: "{{`{{category}}`}}"
         purpose: "{{`{{name}}`}}"
+        managed-by: {{ .Release.Name }}
     spec:
       project: default
       source:

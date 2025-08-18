@@ -17,10 +17,6 @@
 
 # In[1]:
 
-
-get_ipython().system('pip install pgvector pypdf psycopg langchain langchain-community beautifulsoup4 sentence-transformers')
-
-
 # ### Auto-fetch latest OpenShift AI version
 
 # In[2]:

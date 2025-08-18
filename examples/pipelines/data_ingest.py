@@ -17,8 +17,8 @@
 
 # In[1]:
 
-
-get_ipython().system('pip install pgvector pypdf psycopg langchain langchain-community beautifulsoup4 sentence-transformers')
+# Dependencies are managed via requirements.txt
+# Install with: pip install -r requirements.txt
 
 
 # ### Auto-fetch latest OpenShift AI version

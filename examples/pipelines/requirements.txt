@@ -1,8 +1,9 @@
-langchain
+langchain>=0.1.0
 langchain-community
 beautifulsoup4
 text_generation
-sentence_transformers
+sentence_transformers>=2.2.2
+huggingface_hub>=0.16.4
 pgvector
 pypdf
-psycopg
+psycopg[binary]

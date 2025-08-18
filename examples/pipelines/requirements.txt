@@ -1,8 +1,8 @@
-langchain==0.0.340
+langchain
 langchain-community
 beautifulsoup4
-text_generation==0.6.1
-sentence_transformers==2.2.2
+text_generation
+sentence_transformers
 pgvector
 pypdf
 psycopg

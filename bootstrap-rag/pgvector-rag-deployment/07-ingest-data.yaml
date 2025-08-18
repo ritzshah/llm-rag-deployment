@@ -16,7 +16,7 @@ spec:
       serviceAccountName: postgres-service-account
       containers:
       - name: data-ingest
-        image: python:3.9  # Using Python base image
+        image: python:3.11  # Using Python base image
         command: ["/bin/sh", "-c"]
         args:
           - |

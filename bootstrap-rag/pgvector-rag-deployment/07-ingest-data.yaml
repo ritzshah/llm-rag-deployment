@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
-    executed: "false"  # Flag to indicate whether the job has been executed
+    executed: "false"  # Flag to indicate whether the job has been executed or not
 spec:
   template:
     metadata:

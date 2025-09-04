@@ -118,7 +118,6 @@ print(f"Using Red Hat OpenShift AI Self-Managed version: {product_version}")
 
 # In[3]:
 
-
 CONNECTION_STRING = "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb"
 COLLECTION_NAME = "documents_test"
 

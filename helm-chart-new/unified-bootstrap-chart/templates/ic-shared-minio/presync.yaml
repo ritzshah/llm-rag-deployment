@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: check-default-storageclass-minio
-  namespace: redhat-ods-operator
+  namespace: ic-shared-minio
   annotations:
     argocd.argoproj.io/hook: PreSync
 spec:

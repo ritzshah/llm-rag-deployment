@@ -1,0 +1,127 @@
+# Default values for gradio-llm-rag
+# This is a YAML-formatted file.
+# Declare variables to be substituted into your templates.
+
+replicaCount: 1
+
+image:
+  repository: quay.io/rshah/llm-rag-deployment-maas
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Application configuration
+app:
+  title: "Talk with your documentation"
+  enableDebugUI: false
+
+# LLM Configuration
+llm:
+  inferenceServerUrl: "https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions"
+  modelName: "granite-8b-code-instruct-128k"
+  bearerToken: "65fc80b0d55be557b1365687ddb771d6"  #notsecret
+  maxNewTokens: 512
+  topK: 10
+  topP: 0.95
+  typicalP: 0.95
+  temperature: 0.01
+  repetitionPenalty: 1.03
+
+# Database Configuration
+database:
+  connectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb" #notsecret
+  collectionName: "documents_test"
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 7860
+  targetPort: http
+  clusterIP: None
+
+# Route configuration (OpenShift)
+route:
+  enabled: true
+  host: ""  # Leave empty for auto-generated host
+  tls:
+    termination: edge
+  wildcardPolicy: None
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: "2"
+    memory: 2Gi
+  requests:
+    cpu: "1"
+    memory: 1Gi
+
+# Probes configuration
+probes:
+  readiness:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 5
+    periodSeconds: 30
+    successThreshold: 1
+    failureThreshold: 3
+  liveness:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 8
+    periodSeconds: 100
+    successThreshold: 1
+    failureThreshold: 3
+  startup:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    timeoutSeconds: 1
+    periodSeconds: 30
+    successThreshold: 1
+    failureThreshold: 24
+
+# Security Context
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  seccompProfile:
+    type: RuntimeDefault
+
+podSecurityContext: {}
+
+# Node selector, affinity, and tolerations
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 25%
+    maxSurge: 1
+
+# Miscellaneous
+terminationGracePeriodSeconds: 120
+revisionHistoryLimit: 10
+progressDeadlineSeconds: 600
+
+# ArgoCD annotations
+argocd:
+  syncWave: "1"
+
+# Namespace
+namespace:
+  name: ic-shared-llm
+  create: false 

@@ -1,20 +1,26 @@
-import os
+from llm_usage import infer_with_template
 import requests
 import json
+import time
 
-max_response_time = 0.5
+max_response_time = 3
 
 def send_request(endpoint):
     response = requests.get(endpoint)
     return response
 
-def test_responsetime(endpoint):
-    response = send_request(endpoint)
-
-    if response.status_code==200:
-        response_time = response.elapsed.total_seconds()
-    else:
-        raise Exception(f"Response status code is {response.status_code}")
+def test_responsetime():
+    TEMPLATE = """<|system|>
+Answer below in less than 10 words:
+<|user|>
+### QUESTION:
+{silly_question}
+### ANSWER:
+<|assistant|>"""
+    
+    start = time.perf_counter()
+    response = infer_with_template("Who saw a saw saw a salsa?", TEMPLATE, max_tokens=20)
+    response_time = time.perf_counter() - start
 
     if response_time>max_response_time:
         raise Exception(f"Response took {response_time} which is greater than {max_response_time}")
@@ -27,5 +33,4 @@ def test_responsetime(endpoint):
         }, f)
 
 if __name__ == '__main__':
-    health_endpoint = "http://llm.ic-shared-llm.svc.cluster.local:3000" + "/health"
-    test_responsetime(health_endpoint)
+    test_responsetime()

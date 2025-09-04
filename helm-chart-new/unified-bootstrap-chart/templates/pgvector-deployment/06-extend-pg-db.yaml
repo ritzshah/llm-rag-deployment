@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-extension-job
+  namespace: ic-shared-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    metadata:
+      name: postgres-extension-pod
+    spec:
+      serviceAccountName: postgres-service-account
+      containers:
+      - name: postgres-client
+        image: quay.io/openshift/origin-cli:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            podname=$(oc get pods -l app=postgresql -o jsonpath='{.items[0].metadata.name}')
+            echo $podname
+            oc rsh -c postgresql $podname psql -d vectordb -c 'CREATE EXTENSION vector;'
+      restartPolicy: Never

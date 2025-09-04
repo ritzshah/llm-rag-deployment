@@ -5,6 +5,8 @@ metadata:
   namespace: ic-shared-llm
   labels:
     app: gradio
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   replicas: 1
   selector:
@@ -12,7 +14,6 @@ spec:
       app: gradio
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: gradio
     spec:
@@ -31,7 +32,7 @@ spec:
               memory: 1Gi
           readinessProbe:
             httpGet:
-              path: /queue/status
+              path: /
               port: http
               scheme: HTTP
             timeoutSeconds: 5
@@ -42,7 +43,7 @@ spec:
           name: server
           livenessProbe:
             httpGet:
-              path: /queue/status
+              path: /
               port: http
               scheme: HTTP
             timeoutSeconds: 8
@@ -53,7 +54,9 @@ spec:
             - name: APP_TITLE
               value: 'Talk with your documentation'
             - name: INFERENCE_SERVER_URL
-              value: 'http://llm.ic-shared-llm.svc.cluster.local:3000/'
+              value: 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions'  
+            - name: MODEL_NAME
+              value: granite-8b-code-instruct-128k
             - name: DB_CONNECTION_STRING
               value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb' # notsecret
             - name: DB_COLLECTION_NAME
@@ -70,6 +73,10 @@ spec:
               value: '0.01'
             - name: REPETITION_PENALTY
               value: '1.03'
+            - name: BEARER_TOKEN
+              value: 65fc80b0d55be557b1365687ddb771d6 # notsecret
+            - name: ENABLE_DEBUG_UI
+              value: 'False'          
           securityContext:
             capabilities:
               drop:
@@ -85,7 +92,7 @@ spec:
           imagePullPolicy: IfNotPresent
           startupProbe:
             httpGet:
-              path: /queue/status
+              path: /
               port: http
               scheme: HTTP
             timeoutSeconds: 1
@@ -93,7 +100,7 @@ spec:
             successThreshold: 1
             failureThreshold: 24
           terminationMessagePolicy: File
-          image: 'quay.io/rh-aiservices-bu/gradio-hftgi-rag-pgvector:latest'
+          image: 'quay.io/rshah/llm-rag-deployment-maas:latest'
       dnsPolicy: ClusterFirst
   strategy:
     type: RollingUpdate

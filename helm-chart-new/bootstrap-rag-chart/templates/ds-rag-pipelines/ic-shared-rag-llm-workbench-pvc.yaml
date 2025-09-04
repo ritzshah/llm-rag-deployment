@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    openshift.io/description: ""
+    openshift.io/display-name: ic-shared-rag-llm-workbench-pvc
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: ic-shared-rag-llm-workbench-pvc
+  namespace: ic-shared-rag-llm
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: ocs-storagecluster-cephfs
+  volumeMode: Filesystem
+status:
+  phase: Bound
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 50Gi

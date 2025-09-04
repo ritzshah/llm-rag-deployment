@@ -1,0 +1,174 @@
+components:
+  comp-run-a-file:
+    executorLabel: exec-run-a-file
+  comp-run-a-file-2:
+    executorLabel: exec-run-a-file-2
+  comp-run-a-file-3:
+    executorLabel: exec-run-a-file-3
+  comp-run-a-file-4:
+    executorLabel: exec-run-a-file-4
+deploymentSpec:
+  executors:
+    exec-run-a-file:
+      container:
+        args:
+        - |
+          sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+          sh -c "[[ -e '/opt/app-root/bin/utils/bootstrapper.py' ]] && (echo 'bootstrapper.py file already exists'; cp '/opt/app-root/bin/utils/bootstrapper.py' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py' --output bootstrapper.py)"
+          sh -c "[[ -e '/opt/app-root/bin/utils/requirements-elyra.txt' ]] && (echo 'requirements-elyra.txt file already exists'; cp '/opt/app-root/bin/utils/requirements-elyra.txt' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt' --output requirements-elyra.txt)"
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check_pipeline' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'Langchain-PgVector-Ingest.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Ingest.ipynb' "
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: "True"
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+    exec-run-a-file-2:
+      container:
+        args:
+        - |
+          sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+          sh -c "[[ -e '/opt/app-root/bin/utils/bootstrapper.py' ]] && (echo 'bootstrapper.py file already exists'; cp '/opt/app-root/bin/utils/bootstrapper.py' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py' --output bootstrapper.py)"
+          sh -c "[[ -e '/opt/app-root/bin/utils/requirements-elyra.txt' ]] && (echo 'requirements-elyra.txt file already exists'; cp '/opt/app-root/bin/utils/requirements-elyra.txt' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt' --output requirements-elyra.txt)"
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check_pipeline' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'Langchain-PgVector-Query.tar.gz' --file 'llm-rag-deployment/examples/pipelines/Langchain-PgVector-Query.ipynb' "
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: "True"
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+    exec-run-a-file-3:
+      container:
+        args:
+        - |
+          sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+          sh -c "[[ -e '/opt/app-root/bin/utils/bootstrapper.py' ]] && (echo 'bootstrapper.py file already exists'; cp '/opt/app-root/bin/utils/bootstrapper.py' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py' --output bootstrapper.py)"
+          sh -c "[[ -e '/opt/app-root/bin/utils/requirements-elyra.txt' ]] && (echo 'requirements-elyra.txt file already exists'; cp '/opt/app-root/bin/utils/requirements-elyra.txt' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt' --output requirements-elyra.txt)"
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check_pipeline' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'test_responsetime.tar.gz' --file 'llm-rag-deployment/examples/pipelines/test_responsetime.py' --outputs 'responsetime_result.json' "
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: "True"
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+    exec-run-a-file-4:
+      container:
+        args:
+        - |
+          sh -c "mkdir -p ./jupyter-work-dir && cd ./jupyter-work-dir"
+          sh -c "[[ -e '/opt/app-root/bin/utils/bootstrapper.py' ]] && (echo 'bootstrapper.py file already exists'; cp '/opt/app-root/bin/utils/bootstrapper.py' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/elyra/kfp/bootstrapper.py' --output bootstrapper.py)"
+          sh -c "[[ -e '/opt/app-root/bin/utils/requirements-elyra.txt' ]] && (echo 'requirements-elyra.txt file already exists'; cp '/opt/app-root/bin/utils/requirements-elyra.txt' .) || (echo 'Downloading https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt'; curl --fail -H 'Cache-Control: no-cache' -L 'https://raw.githubusercontent.com/opendatahub-io/elyra/v4.1.1/etc/generic/requirements-elyra.txt' --output requirements-elyra.txt)"
+          sh -c "python3 -m pip install  packaging && python3 -m pip freeze > requirements-current.txt && python3 bootstrapper.py --pipeline-name 'data_ingestion_response_check_pipeline' --cos-endpoint 'http://minio.ic-shared-rag-minio.svc.cluster.local:9000' --cos-bucket 'pipeline' --cos-directory 'pipeline-code' --cos-dependencies-archive 'summarize_results.tar.gz' --file 'llm-rag-deployment/examples/pipelines/summarize_results.py' --inputs 'responsetime_result.json' --outputs 'results.json' "
+        command:
+        - sh
+        - -c
+        env:
+        - name: ELYRA_RUNTIME_ENV
+          value: kfp
+        - name: ELYRA_ENABLE_PIPELINE_INFO
+          value: "True"
+        - name: ELYRA_WRITABLE_CONTAINER_DIR
+          value: /tmp
+        - name: ELYRA_RUN_NAME
+          value: '{{workflow.uid}}'
+        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+pipelineInfo:
+  name: data-ingestion-response-check-pipeline
+root:
+  dag:
+    tasks:
+      run-a-file:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file
+        taskInfo:
+          name: Langchain-PgVector-Ingest
+      run-a-file-2:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file-2
+        dependentTasks:
+        - run-a-file
+        taskInfo:
+          name: Langchain-PgVector-Query
+      run-a-file-3:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file-3
+        dependentTasks:
+        - run-a-file-2
+        taskInfo:
+          name: test_responsetime
+      run-a-file-4:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-run-a-file-4
+        dependentTasks:
+        - run-a-file-3
+        taskInfo:
+          name: summarize_results
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.5.0
+
+---
+platforms:
+  kubernetes:
+    deploymentSpec:
+      executors:
+        exec-run-a-file:
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: dashboard-dspa-secret
+        exec-run-a-file-2:
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: dashboard-dspa-secret
+        exec-run-a-file-3:
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: dashboard-dspa-secret
+        exec-run-a-file-4:
+          secretAsEnv:
+          - keyToEnv:
+            - envVar: AWS_ACCESS_KEY_ID
+              secretKey: AWS_ACCESS_KEY_ID
+            - envVar: AWS_SECRET_ACCESS_KEY
+              secretKey: AWS_SECRET_ACCESS_KEY
+            secretName: dashboard-dspa-secret

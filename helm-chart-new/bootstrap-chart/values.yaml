@@ -1,0 +1,134 @@
+# Default values for bootstrap-chart
+# This configures the LLM RAG Bootstrap components
+
+# Global settings
+global:
+  repoURL: https://github.com/ritzshah/llm-rag-deployment.git
+  targetRevision: update-token-v1
+  cluster: in-cluster
+
+# ApplicationSet configuration for ArgoCD
+applicationSet:
+  enabled: true
+  name: bootstrap
+  namespace: openshift-gitops
+  labels:
+    component: bootstrap
+
+# Components to deploy
+components:
+  - name: ic-rhoai-operator
+    path: bootstrap/ic-rhoai-operator
+    enabled: true
+  - name: ic-rhoai-installation
+    path: bootstrap/ic-rhoai-installation
+    enabled: true
+  - name: ic-rhoai-configuration
+    path: bootstrap/ic-rhoai-configuration
+    enabled: true
+  - name: ic-shared-minio-app
+    path: bootstrap/ic-shared-minio
+    enabled: true
+  - name: ic-shared-database-app
+    path: bootstrap/ic-shared-database
+    enabled: true
+  - name: ic-shared-milvus
+    path: bootstrap/ic-shared-milvus
+    enabled: true
+  - name: ic-shared-llm-app
+    path: bootstrap/ic-shared-llm
+    enabled: true
+  - name: pg-vector-deployment
+    path: bootstrap/pgvector-deployment
+    enabled: true
+  - name: gradio
+    path: bootstrap/gradio
+    enabled: true
+  - name: ic-shared-img-det
+    path: bootstrap/ic-shared-img-det
+    enabled: true
+  - name: ic-user-projects
+    path: bootstrap/ic-user-projects
+    enabled: true
+  - name: ic-shared-app
+    path: bootstrap/ic-shared-app
+    enabled: true
+
+# Gradio UI Configuration
+gradio:
+  enabled: true
+  image:
+    repository: quay.io/rshah/llm-rag-deployment-maas
+    tag: latest
+    pullPolicy: IfNotPresent
+  
+  replicas: 1
+  
+  resources:
+    limits:
+      cpu: "2"
+      memory: 2Gi
+    requests:
+      cpu: "1"
+      memory: 1Gi
+  
+  # Application configuration
+  config:
+    appTitle: "Talk with your documentation"
+    bearerToken: "65fc80b0d55be557b1365687ddb771d6"  #notsecret
+    inferenceServerUrl: "https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions"
+    modelName: "granite-8b-code-instruct-128k"
+    dbConnectionString: "postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb"
+    dbCollectionName: "documents_test"
+    maxNewTokens: "512"
+    
+  # Advanced model parameters
+  modelParams:
+    topK: "10"
+    topP: "0.95"
+    typicalP: "0.95"
+    temperature: "0.01"
+    repetitionPenalty: "1.03"
+    
+  # Debug settings
+  debug:
+    enableDebugUI: "False"
+  
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 7860
+    targetPort: 7860
+    
+  # Health checks
+  probes:
+    readiness:
+      timeoutSeconds: 5
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+    liveness:
+      timeoutSeconds: 8
+      periodSeconds: 100
+      successThreshold: 1
+      failureThreshold: 3
+    startup:
+      timeoutSeconds: 1
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 24
+
+# ArgoCD sync policy
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+  syncOptions:
+    - RespectIgnoreDifferences=true
+    - Retry=true
+  retry:
+    limit: 50
+    backoff:
+      duration: 15s
+      factor: 2
+      maxDuration: 5m

@@ -18,10 +18,12 @@ from langchain.vectorstores.pgvector import PGVector
 load_dotenv()
 
 # Parameters
+# curl -X POST http://granite-7b-instruct-predictor.ic-shared-llm.svc.cluster.local:8080/v1/completions -H "Content-Type: application/json" -d '{"model": "granite-7b-instruct", "prompt": "Hello world!", "max_tokens": 128}'
 
 APP_TITLE = os.getenv('APP_TITLE', 'Talk with your documentation')
 
 INFERENCE_SERVER_URL = os.getenv('INFERENCE_SERVER_URL')
+MODEL_NAME = os.getenv('MODEL_NAME')
 MAX_NEW_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))
 TOP_K = int(os.getenv('TOP_K', 10))
 TOP_P = float(os.getenv('TOP_P', 0.95))
@@ -101,6 +103,7 @@ store = PGVector(
 # LLM
 llm = HuggingFaceTextGenInference(
     inference_server_url=INFERENCE_SERVER_URL,
+    model_name=MODEL_NAME,
     max_new_tokens=MAX_NEW_TOKENS,
     top_k=TOP_K,
     top_p=TOP_P,
@@ -118,4 +121,47 @@ You are a helpful, respectful and honest assistant named HatBot answering questi
 You will be given a question you need to answer, and a context to provide you with information. You must answer the question based as much as possible on this context.
 Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
 
-If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false informati
+If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+<</SYS>>
+
+Question: {question}
+Context: {context} [/INST]
+"""
+QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
+
+qa_chain = RetrievalQA.from_chain_type(
+    llm,
+    retriever=store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": 4, "score_threshold": 0.2 }),
+    chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
+    return_source_documents=True
+    )
+
+# Gradio implementation
+def ask_llm(message, history):
+    for next_token, content in stream(message):
+        yield(content)
+
+with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
+    chatbot = gr.Chatbot(
+        show_label=False,
+        avatar_images=(None,'assets/robot-head.svg'),
+        render=False
+        )
+    gr.ChatInterface(
+        ask_llm,
+        chatbot=chatbot,
+        clear_btn=None,
+        retry_btn=None,
+        undo_btn=None,
+        stop_btn=None,
+        description=APP_TITLE
+        )
+
+if __name__ == "__main__":
+    demo.queue().launch(
+        server_name='0.0.0.0',
+        share=False,
+        favicon_path='./assets/robot-head.ico'
+        )

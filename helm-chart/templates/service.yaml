@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gradio-llm-rag.fullname" . }}-service
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "gradio-llm-rag.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "{{ .Values.argocd.syncWave }}"
+spec:
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.clusterIP }}
+  clusterIP: {{ .Values.service.clusterIP }}
+  {{- end }}
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    {{- include "gradio-llm-rag.selectorLabels" . | nindent 4 }} 

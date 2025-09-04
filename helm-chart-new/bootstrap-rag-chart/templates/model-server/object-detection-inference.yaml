@@ -1,0 +1,22 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: object-detection-yolov5-model
+    serving.kserve.io/deploymentMode: ModelMesh
+    argocd.argoproj.io/sync-wave: "2"
+  labels:
+    name: object-detection-yolov5-model
+    opendatahub.io/dashboard: "true"
+  name: object-detection-yolov5-model
+  namespace: object-detection-yolov5
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: onnx
+        version: "1"
+      runtime: object-detection-model-server
+      storage:
+        key: minio-connection
+        path: yolov5

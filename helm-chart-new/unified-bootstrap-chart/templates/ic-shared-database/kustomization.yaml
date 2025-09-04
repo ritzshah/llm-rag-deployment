@@ -2,20 +2,27 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+#namespace: ic-shared-db
+# replaced by transformer
+
 commonLabels:
-  component: ic-shared-database
+  component: ic-shared-db
 
 resources:
-  - db-init-job.yaml
-  - deployment.yaml
-  - populate-images.yaml
+  # presync
   - presync.yaml
+  # wave 0
+  - namespace.yaml
+  # wave 1
   - pvc.yaml
-  - rbac-presync-monitoring.yaml
-  - secret-minio.yaml
   - secret.yaml
+  - secret-minio.yaml
+  - deployment.yaml
   - service.yaml
   - sql-script-configmap.yaml
+  # wave 2
+  - db-init-job.yaml
+  - populate-images.yaml
 
 transformers:
   - namespace-transformer.yaml

@@ -2,11 +2,10 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: check-inferenceservice-configmap
+  namespace: redhat-ods-operator
   annotations:
     argocd.argoproj.io/hook: PreSync
-    argocd.argoproj.io/sync-wave: "2"
 spec:
-  activeDeadlineSeconds: 600
   template:
     spec:
       restartPolicy: Never
@@ -17,25 +16,18 @@ spec:
             - /bin/sh
             - -c
             - |
-              set -e
-              echo "Waiting for inferenceservice-config ConfigMap to be created..."
-              until oc get configmap inferenceservice-config -n redhat-ods-applications -o name | grep -q '^configmap/'; do
-                echo "Waiting for inferenceservice-config ConfigMap..."
-                sleep 10
+              while true; do
+              echo "Checking default InferenceService ConfigMap..."
+              # Fetch current storageInitializer config
+              config=$(oc get configmap inferenceservice-config -n redhat-ods-applications -o jsonpath='{.data.storageInitializer}')
+
+              # Check if "enableModelcar" is already enabled
+              if echo "$config" | grep '"enableModelcar": true'; then
+                echo "ModelCar enabled!"
+                exit 0
+              else
+                echo "ModelCar not enabled yet."
+              fi
+              sleep 5
               done
-              echo "Checking for ModelCar enablement in ConfigMap..."
-              timeout=60
-              counter=0
-              while [ $counter -lt $timeout ]; do
-                config=$(oc get configmap inferenceservice-config -n redhat-ods-applications -o jsonpath='{.data.storageInitializer}' 2>/dev/null || echo "")
-                if echo "$config" | grep -q '"enableModelcar": true'; then
-                  echo "ModelCar enabled!"
-                  exit 0
-                fi
-                echo "ModelCar not enabled yet, waiting..."
-                sleep 10
-                counter=$((counter + 10))
-              done
-              echo "Timeout waiting for ModelCar to be enabled"
-              exit 1
       serviceAccountName: presync-monitoring-sa

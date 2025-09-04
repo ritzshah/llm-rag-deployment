@@ -2,8 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: create-minio-root-user-ic-shared
-  namespace: ic-shared-minio
+  name: create-minio-root-user
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:

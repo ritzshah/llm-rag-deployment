@@ -3,17 +3,19 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 commonLabels:
-  component: rhoai-rag-configuration
+  component: ic-rhoai-configuration
 
 resources:
-  - accelerator-profile.yaml
-  - ceph-rbd-set-default.yaml
-  - gp3-remove-default.yaml
-  - images-puller.yaml
-  - odhdashboardconfig.yaml
-  - rbac-presync-monitoring.yaml
-  - workbench-imagestream.yaml
-  - workbench-vscode-is.yaml
+# wave 0
+- gp3-remove-default.yaml
+- ceph-rbd-set-default.yaml
+# wave 1
+- workbench-imagestream.yaml
+- workbench-vscode-is.yaml
+- odhdashboardconfig.yaml
+- accelerator-profile.yaml
+# wave 2
+- images-puller.yaml
 
-transformers:
-  - namespace-transformer.yaml
+
+  

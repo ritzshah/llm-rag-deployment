@@ -2,8 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: populate-images-shared-rag
-  namespace: ic-shared-rag-llm
+  name: populate-images
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:

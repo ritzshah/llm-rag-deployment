@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio
-  namespace: ic-shared-minio
   labels:
     app: minio
   annotations:

@@ -3,18 +3,27 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 commonLabels:
-  component: ic-shared-img-det
+  component: model
+
+#namespace: ic-shared-img-det
+# replaced by transformer
 
 resources:
-  - add-model-job.yaml
-  - create-data-connection.yaml
-  - model.yaml
-  - pinger.yaml
+  # presync
   - presync.yaml
+  # wave 0
   - project.yaml
-  - rbac-presync-monitoring.yaml
-  - runtime.yaml
+  # wave 1
   - setup-serviceaccount.yaml
+  # wave 2
+  - create-data-connection.yaml
+  # wave 3
+  - add-model-job.yaml
+  - runtime.yaml
+  # wave 4
+  - model.yaml
+  # pinger is not ready yet
+  # - pinger.yaml
 
 transformers:
-  - namespace-transformer.yaml
+ - namespace-transformer.yaml

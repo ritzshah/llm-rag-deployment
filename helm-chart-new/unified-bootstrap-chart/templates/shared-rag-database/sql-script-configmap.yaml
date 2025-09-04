@@ -1,8 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: sql-script-configmap-shared-rag
-  namespace: ic-shared-rag-llm
+  name: sql-script-configmap
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 data:

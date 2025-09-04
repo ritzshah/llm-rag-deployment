@@ -2,11 +2,10 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: check-default-storageclass-db
+  namespace: redhat-ods-operator
   annotations:
     argocd.argoproj.io/hook: PreSync
-    argocd.argoproj.io/sync-wave: "2"
 spec:
-  activeDeadlineSeconds: 300
   template:
     spec:
       restartPolicy: Never
@@ -17,25 +16,15 @@ spec:
             - /bin/sh
             - -c
             - |
-              set -e
-              echo "Waiting for StorageClass ocs-storagecluster-ceph-rbd to be created..."
-              until oc get StorageClass ocs-storagecluster-ceph-rbd -o name | grep -q '^storageclass/'; do
-                echo "Waiting for StorageClass..."
-                sleep 10
+              while true; do
+              echo "Checking default StorageClass..."
+              SC=$(oc get StorageClass ocs-storagecluster-ceph-rbd -o jsonpath='{.metadata.annotations.storageclass\.kubernetes\.io/is-default-class}')
+              if [ "$SC" = "true" ]; then
+                echo "Storage class is ready."
+                exit 0
+              else
+                echo "Storage class is not ready yet."
+              fi
+              sleep 5
               done
-              echo "Checking if StorageClass is set as default..."
-              timeout=30
-              counter=0
-              while [ $counter -lt $timeout ]; do
-                SC=$(oc get StorageClass ocs-storagecluster-ceph-rbd -o jsonpath='{.metadata.annotations.storageclass\.kubernetes\.io/is-default-class}' 2>/dev/null || echo "")
-                if [ "$SC" = "true" ]; then
-                  echo "Storage class is ready and set as default."
-                  exit 0
-                fi
-                echo "Storage class not set as default yet, waiting..."
-                sleep 10
-                counter=$((counter + 10))
-              done
-              echo "Timeout waiting for StorageClass to be set as default"
-              exit 1
       serviceAccountName: presync-monitoring-sa

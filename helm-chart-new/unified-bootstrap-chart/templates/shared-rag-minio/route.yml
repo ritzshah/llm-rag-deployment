@@ -3,7 +3,6 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: minio-console
-  namespace: ic-shared-rag-minio
   labels:
     app: minio
   annotations:
@@ -24,7 +23,6 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: minio-s3
-  namespace: ic-shared-rag-minio
   labels:
     app: minio
   annotations:

@@ -80,7 +80,7 @@ spec:
             - name: MILVUS_USERNAME
               value: root
             - name: MILVUS_PASSWORD
-              value: Milvus
+              value: Milvus #notsecret
             - name: SCORE_THRESHOLD
               value: '0.90'
             - name: MILVUS_COLLECTION

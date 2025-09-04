@@ -1,10 +1,6 @@
 apiVersion: builtin
 kind: NamespaceTransformer
 metadata:
-  name: namespace-transformer
+  name: notImportantHere
   namespace: ic-shared-minio
-setRoleBindingSubjects: none
-unsetOnly: false
-fieldSpecs:
-- path: metadata/namespace
-  create: true
+unsetOnly: true

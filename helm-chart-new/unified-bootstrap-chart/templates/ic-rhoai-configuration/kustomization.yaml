@@ -6,16 +6,17 @@ commonLabels:
   component: ic-rhoai-configuration
 
 resources:
-  - accelerator-profile.yaml
-  - ceph-rbd-set-default.yaml
-  - gp3-remove-default.yaml
-  - job-enable-modelcar.yaml
-  - odf-config-nvidia.yaml
-  - odhdashboardconfig.yaml
+  # presync
   - presync.yaml
+  # wave 0
+  - gp3-remove-default.yaml
+  - ceph-rbd-set-default.yaml
+  - odf-config-nvidia.yaml
+  - namespace-notebooks.yaml
+  # wave 1
   - rbac-job-enable-modelcar.yaml
-  - rbac-presync-monitoring.yaml
   - workbench-imagestream.yaml
-
-transformers:
-  - namespace-transformer.yaml
+  - odhdashboardconfig.yaml
+  - accelerator-profile.yaml
+  # wave 2
+  - job-enable-modelcar.yaml

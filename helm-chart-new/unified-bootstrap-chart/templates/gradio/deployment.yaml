@@ -1,4 +1,3 @@
-{{- if .Values.gradio.enabled }}
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -6,11 +5,10 @@ metadata:
   namespace: ic-shared-llm
   labels:
     app: gradio
-    {{- include "bootstrap-chart.labels" . | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
-  replicas: {{ .Values.gradio.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       app: gradio
@@ -27,20 +25,20 @@ spec:
       containers:
         - resources:
             limits:
-              cpu: {{ .Values.gradio.resources.limits.cpu }}
-              memory: {{ .Values.gradio.resources.limits.memory }}
+              cpu: '2'
+              memory: 2Gi
             requests:
-              cpu: {{ .Values.gradio.resources.requests.cpu }}
-              memory: {{ .Values.gradio.resources.requests.memory }}
+              cpu: '1'
+              memory: 1Gi
           readinessProbe:
             httpGet:
               path: /
               port: http
               scheme: HTTP
-            timeoutSeconds: {{ .Values.gradio.probes.readiness.timeoutSeconds }}
-            periodSeconds: {{ .Values.gradio.probes.readiness.periodSeconds }}
-            successThreshold: {{ .Values.gradio.probes.readiness.successThreshold }}
-            failureThreshold: {{ .Values.gradio.probes.readiness.failureThreshold }}
+            timeoutSeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
           terminationMessagePath: /dev/termination-log
           name: server
           livenessProbe:
@@ -48,37 +46,37 @@ spec:
               path: /
               port: http
               scheme: HTTP
-            timeoutSeconds: {{ .Values.gradio.probes.liveness.timeoutSeconds }}
-            periodSeconds: {{ .Values.gradio.probes.liveness.periodSeconds }}
-            successThreshold: {{ .Values.gradio.probes.liveness.successThreshold }}
-            failureThreshold: {{ .Values.gradio.probes.liveness.failureThreshold }}
+            timeoutSeconds: 8
+            periodSeconds: 100
+            successThreshold: 1
+            failureThreshold: 3
           env:
             - name: APP_TITLE
-              value: {{ .Values.gradio.config.appTitle | quote }}
+              value: 'Talk with your documentation'
             - name: INFERENCE_SERVER_URL
-              value: {{ .Values.gradio.config.inferenceServerUrl | quote }}
+              value: 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions'  
             - name: MODEL_NAME
-              value: {{ .Values.gradio.config.modelName | quote }}
+              value: granite-8b-code-instruct-128k
             - name: DB_CONNECTION_STRING
-              value: {{ .Values.gradio.config.dbConnectionString | quote }}
+              value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb' # notsecret
             - name: DB_COLLECTION_NAME
-              value: {{ .Values.gradio.config.dbCollectionName | quote }}
+              value: 'documents_test'
             - name: MAX_NEW_TOKENS
-              value: {{ .Values.gradio.config.maxNewTokens | quote }}
+              value: '512'
             - name: TOP_K
-              value: {{ .Values.gradio.modelParams.topK | quote }}
+              value: '10'
             - name: TOP_P
-              value: {{ .Values.gradio.modelParams.topP | quote }}
+              value: '0.95'
             - name: TYPICAL_P
-              value: {{ .Values.gradio.modelParams.typicalP | quote }}
+              value: '0.95'
             - name: TEMPERATURE
-              value: {{ .Values.gradio.modelParams.temperature | quote }}
+              value: '0.01'
             - name: REPETITION_PENALTY
-              value: {{ .Values.gradio.modelParams.repetitionPenalty | quote }}
+              value: '1.03'
             - name: BEARER_TOKEN
-              value: {{ .Values.gradio.config.bearerToken | quote }}
+              value: 65fc80b0d55be557b1365687ddb771d6 # notsecret
             - name: ENABLE_DEBUG_UI
-              value: {{ .Values.gradio.debug.enableDebugUI | quote }}          
+              value: 'False'          
           securityContext:
             capabilities:
               drop:
@@ -89,20 +87,20 @@ spec:
               type: RuntimeDefault
           ports:
             - name: http
-              containerPort: {{ .Values.gradio.service.targetPort }}
+              containerPort: 7860
               protocol: TCP
-          imagePullPolicy: {{ .Values.gradio.image.pullPolicy }}
+          imagePullPolicy: IfNotPresent
           startupProbe:
             httpGet:
               path: /
               port: http
               scheme: HTTP
-            timeoutSeconds: {{ .Values.gradio.probes.startup.timeoutSeconds }}
-            periodSeconds: {{ .Values.gradio.probes.startup.periodSeconds }}
-            successThreshold: {{ .Values.gradio.probes.startup.successThreshold }}
-            failureThreshold: {{ .Values.gradio.probes.startup.failureThreshold }}
+            timeoutSeconds: 1
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 24
           terminationMessagePolicy: File
-          image: '{{ .Values.gradio.image.repository }}:{{ .Values.gradio.image.tag }}'
+          image: 'quay.io/rshah/llm-rag-deployment-maas:latest'
       dnsPolicy: ClusterFirst
   strategy:
     type: RollingUpdate
@@ -111,4 +109,3 @@ spec:
       maxSurge: 1
   revisionHistoryLimit: 10
   progressDeadlineSeconds: 600
-{{- end }}

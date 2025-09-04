@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: presync-monitoring-sa
+  namespace: object-detection-yolov5
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: presync-monitoring-cluster-role-binding-object-detection-yolov5-odf-s3
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+subjects:
+- kind: ServiceAccount
+  name: presync-monitoring-sa
+  namespace: object-detection-yolov5
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: presync-monitoring-cluster-role

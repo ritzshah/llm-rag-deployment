@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: presync-monitoring-sa
+  namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: presync-monitoring-cluster-role-binding-ic-shared-rag-llm-pgvector-rag-deployment
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+subjects:
+- kind: ServiceAccount
+  name: presync-monitoring-sa
+  namespace: ic-shared-rag-llm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: presync-monitoring-cluster-role

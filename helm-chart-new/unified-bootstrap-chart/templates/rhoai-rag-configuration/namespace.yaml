@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: redhat-ods-applications
+  labels:
+    app: redhat-ods-applications
+    argocd.argoproj.io/managed-by: openshift-gitops
+  annotations:
+    openshift.io/display-name: "Red Hat OpenShift Data Science Applications"
+    argocd.argoproj.io/sync-wave: "0"

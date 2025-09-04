@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: object-detection-yolov5
+  labels:
+    app: object-detection-yolov5
+    argocd.argoproj.io/managed-by: openshift-gitops
+  annotations:
+    openshift.io/display-name: "Object Detection YOLOv5"
+    argocd.argoproj.io/sync-wave: "0"

@@ -1,13 +1,14 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: presync-monitoring-rolebinding
-  namespace: redhat-ods-operator
+  name: presync-monitoring-cluster-rolebinding
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 subjects:
 - kind: ServiceAccount
   name: presync-monitoring-sa
   namespace: redhat-ods-operator
 roleRef:
   kind: ClusterRole
-  name: system:monitoring
+  name: presync-monitoring-cluster-role
   apiGroup: rbac.authorization.k8s.io

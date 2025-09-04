@@ -102,6 +102,9 @@ kustomization.yaml.bak
 # Pipeline definition files
 *.pipeline
 
+# JSON configuration files (not Kubernetes manifests)
+*.json
+
 # All files in specific directories that contain non-K8s resources
 */images/
 */assets/

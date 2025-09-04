@@ -1,0 +1,122 @@
+# Exclude all non-YAML files from Helm processing
+
+# Binary files
+*.tar.gz
+*.zip
+*.jar
+*.war
+
+# Images
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.ico
+*.svg
+
+# Python files
+*.py
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+
+# Application files
+Containerfile
+Dockerfile
+Pipfile
+Pipfile.lock
+requirements*.txt
+*.lock
+
+# Shell scripts
+*.sh
+*.bash
+*.zsh
+*.fish
+
+# Documentation
+README.md
+*.md
+*.txt
+*.rst
+
+# License files
+LICENSE*
+COPYING*
+*LICENSE*
+*COPYING*
+
+# Configuration files (non-Kubernetes)
+*.properties
+*.conf
+*.ini
+*.env
+*.repo
+*.repo-*
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Version control
+.git/
+.gitignore
+
+# System files
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
+*/*/*/.DS_Store
+Thumbs.db
+
+# Node.js files
+node_modules/
+package.json
+package-lock.json
+*.js
+*.ts
+
+# Kustomize build output
+kustomization.yaml.bak
+
+# Backup files
+*.bak
+*.backup
+
+# Patch files
+*.patch
+*.diff
+
+# All files in specific directories that contain non-K8s resources
+*/images/
+*/assets/
+*/scripts/
+*/docs/
+images/
+assets/
+scripts/
+docs/
+
+# Files containing OpenShift go-template syntax (incompatible with Helm)
+templates/ic-user-projects/create-projects-and-resources.bash
+templates/ic-user-projects/create-projects-and-resources-job.yaml
+templates/ic-user-projects/tools/check-and-recreate-projects.sh
+templates/ic-user-projects/tools/create-single-user-project.sh
+templates/ic-shared-minio/create-data-connection.yaml
+templates/ic-shared-img-det/create-data-connection.yaml
+templates/shared-rag-minio/create-data-connection.yml
+templates/ds-rag-pipelines/storage-creds-minio-path-job.yaml
+templates/ds-rag-pipelines/workbench-for-llm.yaml
+templates/applicationset/applicationset-bootstrap.yaml

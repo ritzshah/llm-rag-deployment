@@ -105,6 +105,9 @@ kustomization.yaml.bak
 # JSON configuration files (not Kubernetes manifests)
 *.json
 
+# Jupyter notebooks
+*.ipynb
+
 # All files in specific directories that contain non-K8s resources
 */images/
 */assets/

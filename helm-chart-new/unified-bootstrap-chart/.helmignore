@@ -99,6 +99,9 @@ kustomization.yaml.bak
 *.patch
 *.diff
 
+# Pipeline definition files
+*.pipeline
+
 # All files in specific directories that contain non-K8s resources
 */images/
 */assets/

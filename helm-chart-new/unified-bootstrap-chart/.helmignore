@@ -92,10 +92,14 @@ package-lock.json
 kustomization.yaml.bak
 
 # Kustomize configuration files (not Kubernetes manifests)
-kustomization.yaml
-kustomization.yml
-namespace-transformer.yaml
-namespace-transformer.yml
+templates/*/kustomization.yaml
+templates/*/kustomization.yml
+templates/*/*/kustomization.yaml
+templates/*/*/kustomization.yml
+templates/*/namespace-transformer.yaml
+templates/*/namespace-transformer.yml
+templates/ds-rag-pipelines/old-kustomization.yaml
+templates/ic-shared-llm/vllm-kustomization.yaml
 
 # Backup files
 *.bak

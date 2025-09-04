@@ -5,14 +5,14 @@ metadata:
   name: presync-monitoring-sa
   namespace: ic-shared-minio
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "1"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: presync-monitoring-cluster-role-binding-ic-shared-minio
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "1"
 subjects:
 - kind: ServiceAccount
   name: presync-monitoring-sa

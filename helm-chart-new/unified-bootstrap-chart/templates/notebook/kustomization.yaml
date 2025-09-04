@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: notebook
+
+resources:
+  - ic-shared-rag-llm-workbench-pvc.yaml
+  - notebook.yaml
+  - rbac-presync-monitoring.yaml
+  - role-binding.yaml
+  - role.yaml
+
+transformers:
+  - namespace-transformer.yaml

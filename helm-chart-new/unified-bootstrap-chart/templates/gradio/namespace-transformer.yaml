@@ -1,0 +1,10 @@
+apiVersion: builtin
+kind: NamespaceTransformer
+metadata:
+  name: namespace-transformer
+  namespace: ic-shared-llm
+setRoleBindingSubjects: none
+unsetOnly: false
+fieldSpecs:
+- path: metadata/namespace
+  create: true

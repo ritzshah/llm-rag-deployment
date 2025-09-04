@@ -1,0 +1,14 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: ic-rhoai-installation
+
+resources:
+  - dsci.yaml
+  - presync.yaml
+  - rbac-presync-monitoring.yaml
+
+transformers:
+  - namespace-transformer.yaml

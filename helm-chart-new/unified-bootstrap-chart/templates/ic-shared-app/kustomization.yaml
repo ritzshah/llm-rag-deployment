@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: ic-shared-app
+
+resources:
+  - deployment-app.yaml
+  - presync-database.yaml
+  - presync-minio.yaml
+  - rbac-presync-monitoring.yaml
+  - route-app.yaml
+  - secret-db.yaml
+  - secret-minio.yaml
+  - service-app.yaml
+
+transformers:
+  - namespace-transformer.yaml

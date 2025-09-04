@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: ic-shared-milvus
+
+resources:
+  - milvus-backup-config.yaml
+  - milvus-backup-deployment.yaml
+  - milvus-backup-service.yaml
+  - milvus-config.yaml
+  - milvus-deployment.yaml
+  - milvus-pvc.yaml
+  - milvus-services.yaml
+  - presync.yaml
+  - rbac-presync-monitoring.yaml
+  - restore-collection.yaml
+
+transformers:
+  - namespace-transformer.yaml

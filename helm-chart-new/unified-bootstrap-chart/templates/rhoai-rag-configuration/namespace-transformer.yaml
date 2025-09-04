@@ -1,0 +1,10 @@
+apiVersion: builtin
+kind: NamespaceTransformer
+metadata:
+  name: namespace-transformer
+  namespace: redhat-ods-applications
+setRoleBindingSubjects: none
+unsetOnly: false
+fieldSpecs:
+- path: metadata/namespace
+  create: true

@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  component: odf-s3
+
+resources:
+  - objec-bucket-claim-data.yaml
+  - object-bucket-claim-data.yaml
+  - object-bucket-claim-models.yaml
+  - object-bucket-claim-pipelines.yaml
+  - rbac-presync-monitoring.yaml
+
+transformers:
+  - namespace-transformer.yaml

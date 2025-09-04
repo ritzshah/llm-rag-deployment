@@ -1,3 +1,4 @@
+# ServiceAccounts for ic-shared-app presync jobs that run in different namespaces
 ---
 apiVersion: v1
 kind: ServiceAccount

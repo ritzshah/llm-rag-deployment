@@ -5,6 +5,7 @@ metadata:
   namespace: ic-shared-db
   annotations:
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   activeDeadlineSeconds: 300
   template:

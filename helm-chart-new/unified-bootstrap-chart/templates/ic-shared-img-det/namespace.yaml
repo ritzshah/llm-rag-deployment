@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ic-shared-img-det
+  labels:
+    app: ic-shared-img-det
+    argocd.argoproj.io/managed-by: openshift-gitops
+  annotations:
+    openshift.io/display-name: "Image Detection Service"
+    argocd.argoproj.io/sync-wave: "0"

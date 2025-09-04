@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: check-rhoai-status-img-det
-  namespace: redhat-ods-operator
+  namespace: ic-shared-img-det
   annotations:
     argocd.argoproj.io/hook: PreSync
 spec:

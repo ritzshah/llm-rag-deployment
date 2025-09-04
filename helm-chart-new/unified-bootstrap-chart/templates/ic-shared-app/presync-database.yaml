@@ -6,6 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/hook: PreSync
 spec:
+  activeDeadlineSeconds: 600
   template:
     spec:
       restartPolicy: Never
@@ -16,15 +17,12 @@ spec:
             - /bin/sh
             - -c
             - |
-              while true; do
-              echo "Checking Pod status.phase..."
-              POD_PHASE=$(oc get pod -n ic-shared-db -l app=ic-shared-db -o jsonpath='{.items[0].status.phase}')
-              if [ "$POD_PHASE" = "Running" ]; then
-                echo "Pod is in Running phase."
-                exit 0
-              else
-                echo "Pod is in $POD_PHASE phase."
-              fi
-              sleep 5
+              set -e
+              echo "Waiting for database pod to be created..."
+              until oc get pod -n ic-shared-db -l app=ic-shared-db -o name | grep -q '^pod/'; do
+                echo "Waiting for database pod..."
+                sleep 5
               done
+              echo "Waiting for database pod Ready condition..."
+              oc wait pod -n ic-shared-db -l app=ic-shared-db --for=condition=Ready --timeout=600s
       serviceAccountName: presync-monitoring-sa

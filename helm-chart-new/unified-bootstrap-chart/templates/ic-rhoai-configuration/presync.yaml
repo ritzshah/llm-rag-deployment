@@ -6,6 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/hook: PreSync
 spec:
+  activeDeadlineSeconds: 1800
   template:
     spec:
       restartPolicy: Never
@@ -16,17 +17,18 @@ spec:
             - /bin/sh
             - -c
             - |
-              while true; do
-              echo "Checking DSC and DSCi status..."
-              DSC_PHASE=$(oc get DataScienceCluster -o jsonpath='{.items[0].status.phase}')
-              DSCI_PHASE=$(oc get DSCInitialization -o jsonpath='{.items[0].status.phase}')
-              if [[ "$DSC_PHASE" = "Ready" && "$DSCI_PHASE" = "Ready" ]]; then
-                echo "DSCi and DSC are ready."
-                exit 0
-              else
-                echo "DSC is in $DSC_PHASE phase."
-                echo "DSCi is in $DSCI_PHASE phase."
-              fi
-              sleep 5
+              set -e
+              echo "Waiting for DataScienceCluster and DSCInitialization to be created..."
+              until oc get DataScienceCluster -o name | grep -q '^datasciencecluster/'; do
+                echo "Waiting for DataScienceCluster..."
+                sleep 10
               done
+              until oc get DSCInitialization -o name | grep -q '^dscinitialization/'; do
+                echo "Waiting for DSCInitialization..."
+                sleep 10
+              done
+              echo "Waiting for DataScienceCluster and DSCInitialization to be Ready..."
+              oc wait DataScienceCluster --all --for=condition=Ready --timeout=1800s
+              oc wait DSCInitialization --all --for=condition=Ready --timeout=1800s
+              echo "DSCi and DSC are ready."
       serviceAccountName: presync-monitoring-sa

@@ -91,6 +91,12 @@ package-lock.json
 # Kustomize build output
 kustomization.yaml.bak
 
+# Kustomize configuration files (not Kubernetes manifests)
+kustomization.yaml
+kustomization.yml
+namespace-transformer.yaml
+namespace-transformer.yml
+
 # Backup files
 *.bak
 *.backup

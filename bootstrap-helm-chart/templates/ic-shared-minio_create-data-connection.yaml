@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: create-data-connection
+  name: create-data-connection-minio
   # generateName: create-dc-
   annotations:
     argocd.argoproj.io/sync-wave: "2"
@@ -15,7 +15,7 @@ spec:
       serviceAccount: minio-manage
       serviceAccountName: minio-manage
       containers:
-      - name: create-data-connection
+      - name: create-data-connection-minio
         image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash"]

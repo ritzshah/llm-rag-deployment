@@ -1,0 +1,25 @@
+{{- if .Values.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+  name: check-minio-ready-users
+  namespace: redhat-ods-operator
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - -c
+        - "while true; do\necho \"Checking Pod status.phase...\"\nPOD_PHASE=$(oc get\
+          \ pod -n ic-shared-minio -l app=minio -o jsonpath='{.items[0].status.phase}')\n\
+          if [ \"$POD_PHASE\" = \"Running\" ]; then\n  echo \"Pod is in Running phase.\"\
+          \n  exit 0\nelse\n  echo \"Pod is in $POD_PHASE phase.\"\nfi\nsleep 5\n\
+          done\n"
+        image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+        name: phase-check
+      restartPolicy: Never
+      serviceAccountName: presync-monitoring-sa
+{{- end }}

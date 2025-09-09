@@ -1,6 +1,0 @@
-apiVersion: builtin
-kind: NamespaceTransformer
-metadata:
-  name: notImportantHere
-  namespace: ic-shared-llm
-unsetOnly: true

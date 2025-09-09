@@ -1,0 +1,26 @@
+{{- if .Values.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+  name: check-rhoai-status-users
+  namespace: redhat-ods-operator
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - -c
+        - "while true; do\necho \"Checking DSC and DSCi status...\"\nDSC_PHASE=$(oc\
+          \ get DataScienceCluster -o jsonpath='{.items[0].status.phase}')\nDSCI_PHASE=$(oc\
+          \ get DSCInitialization -o jsonpath='{.items[0].status.phase}')\nif [[ \"\
+          $DSC_PHASE\" = \"Ready\" && \"$DSCI_PHASE\" = \"Ready\" ]]; then\n  echo\
+          \ \"DSCi and DSC are ready.\"\n  exit 0\nelse\n  echo \"DSC is in $DSC_PHASE\
+          \ phase.\"\n  echo \"DSCi is in $DSCI_PHASE phase.\"\nfi\nsleep 5\ndone\n"
+        image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+        name: phase-check
+      restartPolicy: Never
+      serviceAccountName: presync-monitoring-sa
+{{- end }}

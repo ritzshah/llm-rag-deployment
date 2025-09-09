@@ -27,8 +27,8 @@ spec:
             echo -n '.'
             sleep 1
           done; echo
-          id=$(oc get secret -n ic-shared-minio minio-root-user -ogo-template='{{.data.MINIO_ROOT_USER|base64decode}}')
-          secret=$(oc get secret -n ic-shared-minio minio-root-user -ogo-template='{{.data.MINIO_ROOT_PASSWORD|base64decode}}')
+          id=$(oc get secret -n ic-shared-minio minio-root-user -ogo-template='{{`{{.data.MINIO_ROOT_USER|base64decode}}`}}')
+          secret=$(oc get secret -n ic-shared-minio minio-root-user -ogo-template='{{`{{.data.MINIO_ROOT_PASSWORD|base64decode}}`}}')
           echo "Minio Console : https://$(oc get route -n ic-shared-minio minio-console -ojsonpath='{.status.ingress[0].host}')/ "
           echo "Minio user: ${id}"
           echo "Minio pass: ${secret}"

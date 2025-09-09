@@ -1,16 +1,30 @@
 #!/bin/bash
+# Get user count
 user_count=$(oc get namespaces | grep showroom | wc -l)
 
-MINIO_ROOT_USER=$(oc get secret minio-root-user -n ic-shared-minio -o template --template '{{.data.MINIO_ROOT_USER|base64decode}}')
-MINIO_ROOT_PASSWORD=$(oc get secret minio-root-user -n ic-shared-minio -o template --template '{{.data.MINIO_ROOT_PASSWORD|base64decode}}')
+echo -n 'Waiting for minio-root-user secret'
+while [ -z "\$(oc get secret -n ic-shared-minio minio-root-user -oname 2>/dev/null)" ]; do
+  echo -n .
+  sleep 5
+done; echo
+
+echo -n 'Waiting for rhods-dashboard route'
+while [ -z "\$(oc get route -n redhat-ods-applications rhods-dashboard -oname 2>/dev/null)" ]; do
+  echo -n .
+  sleep 5
+done; echo
+
+# Get needed variables
+MINIO_ROOT_USER=$(oc get secret minio-root-user -n ic-shared-minio -o template --template '{{`{{.data.MINIO_ROOT_USER|base64decode}}`}}')
+MINIO_ROOT_PASSWORD=$(oc get secret minio-root-user -n ic-shared-minio -o template --template '{{`{{.data.MINIO_ROOT_PASSWORD|base64decode}}`}}')
 MINIO_HOST=https://$(oc get route minio-s3 -n ic-shared-minio -o template --template '{{.spec.host}}')
+MINIO_ROUTE=$(oc get route minio-s3 -n ic-shared-minio -o template --template '{{.spec.host}}')
 DASHBOARD_ROUTE=https://$(oc get route rhods-dashboard -n redhat-ods-applications -o jsonpath='{.spec.host}')
 
 # Define some variables
 WORKBENCH_NAME="my-workbench"
 WORKBENCH_IMAGE="ic-workbench:1.2"
-PIPELINE_ENGINE="Tekton"
-projects_without_running_pods=()
+PIPELINE_ENGINE="Argo"
 BRANCH_NAME="main-rhoai-2.13"
 
 for i in $(seq 1 $user_count);
@@ -19,37 +33,6 @@ do
 # Construct dynamic variables
 USER_NAME="user$i"
 USER_PROJECT="user$i"
-
-if [ -z "$(oc get pods -n $USER_PROJECT -l app=$WORKBENCH_NAME -o custom-columns=STATUS:.status.phase --no-headers | grep Running)" ]; then
-    echo "$USER_PROJECT workbench is not running."
-    projects_without_running_pods+=("$USER_PROJECT")
-fi
-
-done
-
-while true; do
-  read -p "Do you want to recreate the above users? (y/n) " yn
-    case $yn in
-      [Yy]* ) break;;
-      [Nn]* ) exit;;
-      * ) echo "Please answer yes or no.";;
-    esac
-done
-
-
-for USER_PROJECT in "${projects_without_running_pods[@]}"; 
-do
-
-# Assume username and user project is the same
-USER_NAME=$USER_PROJECT
-
-echo "Deleting user $USER_PROJECT..."
-oc delete project $USER_PROJECT
-echo "Waiting for project $USER_PROJECT to be deleted..."
-while oc get project "$USER_PROJECT" &> /dev/null; do
-  echo -n '.'
-  sleep 5
-done
 
 echo "Generating and apply resources for $USER_NAME..."
 
@@ -132,7 +115,7 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: ds-pipeline-user-access-pipelines-definition
+  name: ds-pipeline-user-access-dspa
 EOF
 
 # Create Data Science Connections
@@ -150,12 +133,6 @@ spec:
       - args:
         - -ec
         - |-
-          echo -n "Waiting for minio-root-user to exist"
-          while [ -z "\$(oc get secret -n ic-shared-minio minio-root-user -oname 2>/dev/null)" ]; do
-            echo -n '.'
-            sleep 1
-          done; echo
-
           echo "Minio user: $MINIO_ROOT_USER"
           echo "Minio pass: $MINIO_ROOT_PASSWORD"
           echo "Internal service url: http://minio.ic-shared-minio.svc.cluster.local:9000/"
@@ -220,14 +197,14 @@ spec:
   objectStorage:
     externalStorage:
       bucket: $USER_NAME
-      host: minio.ic-shared-minio.svc.cluster.local:9000
+      host: $MINIO_ROUTE
       port: ''
       s3CredentialsSecret:
         accessKey: AWS_ACCESS_KEY_ID
         secretKey: AWS_SECRET_ACCESS_KEY
         secretName: aws-connection-shared-minio---pipelines
-      scheme: http
-      secure: false
+      scheme: https
+      secure: true
   persistenceAgent:
     deploy: true
     numWorkers: 2
@@ -251,13 +228,13 @@ spec:
       - args:
         - -ec
         - |-
-          echo -n 'Waiting for ds-pipeline-pipelines-definition route'
-          while ! oc get route ds-pipeline-pipelines-definition 2>/dev/null; do
+          echo -n 'Waiting for ds-pipeline-dspa route'
+          while ! oc get route ds-pipeline-dspa 2>/dev/null; do
             echo -n .
             sleep 5
           done; echo
 
-          PIPELINE_ROUTE=https://\$(oc get route ds-pipeline-pipelines-definition -o jsonpath='{.spec.host}')
+          PIPELINE_ROUTE=https://\$(oc get route ds-pipeline-dspa -o jsonpath='{.spec.host}')
 
           cat << EOF | oc apply -f-
           apiVersion: v1
@@ -269,7 +246,7 @@ spec:
             odh_dsp.json: '{"display_name": "Data Science Pipeline", "metadata": {"tags": [],
               "display_name": "Data Science Pipeline", "engine": "$PIPELINE_ENGINE", "auth_type": "KUBERNETES_SERVICE_ACCOUNT_TOKEN",
               "api_endpoint": "\$PIPELINE_ROUTE",
-              "public_api_endpoint": "$DASHBOARD_ROUTE/pipelineRuns/$USER_PROJECT/pipelineRun/view/",
+              "public_api_endpoint": "$DASHBOARD_ROUTE/experiments/$USER_PROJECT",
               "cos_auth_type": "KUBERNETES_SECRET", "cos_secret": "aws-connection-shared-minio---pipelines",
               "cos_endpoint": "$MINIO_HOST", "cos_bucket": "$USER_NAME",
               "cos_username": "$MINIO_ROOT_USER", "cos_password": "$MINIO_ROOT_PASSWORD",
@@ -513,7 +490,7 @@ spec:
           echo "Workbench pod is running in $USER_PROJECT namespace"
       containers:
       - name: git-clone
-        image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:1.2
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash"]
         args:
@@ -522,5 +499,7 @@ spec:
           pod_name=\$(oc get pods --selector=app=$WORKBENCH_NAME -o jsonpath='{.items[0].metadata.name}') && oc exec \$pod_name -- git clone https://github.com/rh-aiservices-bu/parasol-insurance && cd parasol-insurance && git checkout $BRANCH_NAME
       restartPolicy: Never
 EOF
+
+sleep 20
 
 done

@@ -44,17 +44,17 @@ spec:
 #        path: bootstrap-rag/notebook
   template:
     metadata:
-      name: '{{name}}'
+      name: '{{`{{name}}`}}'
       namespace: openshift-gitops
       labels:
         component: bootstrap-rag
-        purpose: '{{name}}'
+        purpose: '{{`{{name}}`}}'
     spec:
       project: default
       source:
-        repoURL: '{{repoURL}}'
-        targetRevision: '{{targetRevision}}'
-        path: '{{path}}'
+        repoURL: '{{`{{repoURL}}`}}'
+        targetRevision: '{{`{{targetRevision}}`}}'
+        path: '{{`{{path}}`}}'
       destination:
         server: 'https://kubernetes.default.svc'
       syncPolicy:

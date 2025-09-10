@@ -18,7 +18,7 @@ gradioImage:
   tag: latest
 gradioRagEnv:
   APP_TITLE: Talk with your documentation
-  BEARER_TOKEN: 65fc80b0d55be557b1365687ddb771d6 #notsecret
+  BEARER_TOKEN: secret
   DB_COLLECTION_NAME: documents_test
   DB_CONNECTION_STRING: postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb
   ENABLE_DEBUG_UI: 'False'

@@ -4,7 +4,7 @@ metadata:
   name: check-rhoai-status-users
   namespace: redhat-ods-operator
   annotations:
-    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "15"
 spec:
   template:
     spec:

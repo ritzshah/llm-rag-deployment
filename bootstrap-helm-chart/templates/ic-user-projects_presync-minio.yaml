@@ -4,7 +4,7 @@ metadata:
   name: check-minio-ready-users
   namespace: redhat-ods-operator
   annotations:
-    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   template:
     spec:

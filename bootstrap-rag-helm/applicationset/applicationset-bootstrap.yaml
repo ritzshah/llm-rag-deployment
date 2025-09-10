@@ -11,50 +11,50 @@ spec:
         name: shared-rag-minio-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap-rag-helm/shared-rag-minio
+        path: bootstrap-rag/shared-rag-minio
       - cluster: in-cluster
         name: shared-rag-database-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap-rag-helm/shared-rag-database
+        path: bootstrap-rag/shared-rag-database
       - cluster: in-cluster
         name: shared-rag-llm-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap-rag-helm/shared-rag-llm
+        path: bootstrap-rag/shared-rag-llm
       - cluster: in-cluster
         name: gradio-rag-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap-rag-helm/gradio-rag
+        path: bootstrap-rag/gradio-rag
       - cluster: in-cluster
         name: pgvector-rag-deployment-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap-rag-helm/pgvector-rag-deployment
+        path: bootstrap-rag/pgvector-rag-deployment
       - cluster: in-cluster
         name: ds-rag-pipeline
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap-rag-helm/ds-rag-pipelines
+        path: bootstrap-rag/ds-rag-pipelines
 #      - cluster: in-cluster
 #        name: workbench
 #        repoURL: https://github.com/ritzshah/llm-rag-deployment.git
 #        targetRevision: update-token-v1
-#        path: bootstrap-rag-helm/notebook
+#        path: bootstrap-rag/notebook
   template:
     metadata:
-      name: '{{`{{name}}`}}'
+      name: '{{name}}'
       namespace: openshift-gitops
       labels:
         component: bootstrap-rag
-        purpose: '{{`{{name}}`}}'
+        purpose: '{{name}}'
     spec:
       project: default
       source:
-        repoURL: '{{`{{repoURL}}`}}'
-        targetRevision: '{{`{{targetRevision}}`}}'
-        path: '{{`{{path}}`}}'
+        repoURL: '{{repoURL}}'
+        targetRevision: '{{targetRevision}}'
+        path: '{{path}}'
       destination:
         server: 'https://kubernetes.default.svc'
       syncPolicy:

@@ -1,0 +1,13 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: testdbsecret
+  namespace: ic-shared-rag-llm
+  labels:
+    app: mariadb-sample
+    component: data-science-pipelines
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+stringData:
+  password: "testingpassword"
+type: Opaque

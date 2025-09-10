@@ -11,62 +11,62 @@ spec:
         name: ic-rhoai-operator-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-rhoai-operator
+        path: bootstrap-helm/ic-rhoai-operator
       - cluster: in-cluster
         name: ic-rhoai-installation-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-rhoai-installation
+        path: bootstrap-helm/ic-rhoai-installation
       - cluster: in-cluster
         name: ic-rhoai-configuration-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-rhoai-configuration
+        path: bootstrap-helm/ic-rhoai-configuration
       - cluster: in-cluster
         name: ic-shared-minio-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-shared-minio
+        path: bootstrap-helm/ic-shared-minio
       - cluster: in-cluster
         name: ic-shared-database-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-shared-database
+        path: bootstrap-helm/ic-shared-database
       - cluster: in-cluster
         name: ic-shared-milvus-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-shared-milvus
+        path: bootstrap-helm/ic-shared-milvus
       - cluster: in-cluster
         name: ic-shared-llm-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-shared-llm
+        path: bootstrap-helm/ic-shared-llm
       - cluster: in-cluster
         name: ic-shared-app-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-shared-app
+        path: bootstrap-helm/ic-shared-app
       - cluster: in-cluster
         name: ic-shared-img-det-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-shared-img-det
+        path: bootstrap-helm/ic-shared-img-det
       - cluster: in-cluster
         name: ic-user-projects-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/ic-user-projects
+        path: bootstrap-helm/ic-user-projects
       - cluster: in-cluster
         name: gradio-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/gradio
+        path: bootstrap-helm/gradio
       - cluster: in-cluster
         name: pgvector-deployment-app
         repoURL: https://github.com/ritzshah/llm-rag-deployment.git
         targetRevision: update-token-v1
-        path: bootstrap/pgvector-deployment
+        path: bootstrap-helm/pgvector-deployment
   template:
     metadata:
       name: '{{`{{name}}`}}'

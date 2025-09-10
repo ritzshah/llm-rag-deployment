@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-shared-rag-connection
+  namespace: ic-shared-rag-llm
+  labels:
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/managed: 'true'
+  annotations:
+    opendatahub.io/connection-type: s3
+    openshift.io/display-name: S3 Data Connection
+    argocd.argoproj.io/sync-wave: "1"
+data:
+  AWS_ACCESS_KEY_ID: bWluaW8=
+  AWS_DEFAULT_REGION: dXM=
+  AWS_S3_BUCKET: cGlwZWxpbmUtYXJ0aWZhY3Rz
+  AWS_S3_ENDPOINT: aHR0cDovL21pbmlvLmljLXNoYXJlZC1yYWctbWluaW8uc3ZjLmNsdXN0ZXIubG9jYWw6OTAwMAo=
+  AWS_SECRET_ACCESS_KEY: bWluaW8xMjM=
+  # The following keys are needed while https://github.com/kubeflow/pipelines/issues/9689 is open
+  accesskey: bWluaW8=
+  secretkey: bWluaW8xMjM=
+type: Opaque

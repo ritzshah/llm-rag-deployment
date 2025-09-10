@@ -5,6 +5,7 @@ metadata:
   namespace: redhat-ods-operator
   annotations:
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
   template:
     spec:

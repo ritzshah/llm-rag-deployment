@@ -51,7 +51,7 @@ spec:
         - name: REPETITION_PENALTY
           value: '{{ .Values.gradioEnv.REPETITION_PENALTY }}'
         - name: BEARER_TOKEN
-          value: '{{ .Values.gradioEnv.BEARER_TOKEN }}'
+          value: '{{ .Values.gradioEnv.granite_bearerToken }}'
         - name: ENABLE_DEBUG_UI
           value: '{{ .Values.gradioEnv.ENABLE_DEBUG_UI }}'
         image: '{{ .Values.gradioImage.repository }}:{{ .Values.gradioImage.tag }}'

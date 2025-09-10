@@ -18,12 +18,17 @@ spec:
             - |
               while true; do
               echo "Checking Pod status.phase..."
-              POD_PHASE=$(oc get pod -n redhat-ods-operator -l name=rhods-operator -o jsonpath='{.items[0].status.phase}')
-              if [ "$POD_PHASE" = "Running" ]; then
-                echo "Pod is in Running phase."
-                exit 0
+              POD_COUNT=$(oc get pod -n redhat-ods-operator -l name=rhods-operator --no-headers 2>/dev/null | wc -l)
+              if [ "$POD_COUNT" -eq 0 ]; then
+                echo "No pods found, waiting..."
               else
-                echo "Pod is in $POD_PHASE phase."
+                POD_PHASE=$(oc get pod -n redhat-ods-operator -l name=rhods-operator -o jsonpath='{.items[0].status.phase}' 2>/dev/null || echo "Unknown")
+                if [ "$POD_PHASE" = "Running" ]; then
+                  echo "Pod is in Running phase."
+                  exit 0
+                else
+                  echo "Pod is in $POD_PHASE phase."
+                fi
               fi
               sleep 5
               done

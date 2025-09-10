@@ -18,14 +18,20 @@ spec:
             - |
               while true; do
               echo "Checking DSC and DSCi status..."
-              DSC_PHASE=$(oc get DataScienceCluster -o jsonpath='{.items[0].status.phase}')
-              DSCI_PHASE=$(oc get DSCInitialization -o jsonpath='{.items[0].status.phase}')
-              if [[ "$DSC_PHASE" = "Ready" && "$DSCI_PHASE" = "Ready" ]]; then
-                echo "DSCi and DSC are ready."
-                exit 0
+              DSC_COUNT=$(oc get DataScienceCluster --no-headers 2>/dev/null | wc -l)
+              DSCI_COUNT=$(oc get DSCInitialization --no-headers 2>/dev/null | wc -l)
+              if [ "$DSC_COUNT" -eq 0 ] || [ "$DSCI_COUNT" -eq 0 ]; then
+                echo "DataScienceCluster or DSCInitialization not found, waiting..."
               else
-                echo "DSC is in $DSC_PHASE phase."
-                echo "DSCi is in $DSCI_PHASE phase."
+                DSC_PHASE=$(oc get DataScienceCluster -o jsonpath='{.items[0].status.phase}' 2>/dev/null || echo "Unknown")
+                DSCI_PHASE=$(oc get DSCInitialization -o jsonpath='{.items[0].status.phase}' 2>/dev/null || echo "Unknown")
+                if [[ "$DSC_PHASE" = "Ready" && "$DSCI_PHASE" = "Ready" ]]; then
+                  echo "DSCi and DSC are ready."
+                  exit 0
+                else
+                  echo "DSC is in $DSC_PHASE phase."
+                  echo "DSCi is in $DSCI_PHASE phase."
+                fi
               fi
               sleep 5
               done

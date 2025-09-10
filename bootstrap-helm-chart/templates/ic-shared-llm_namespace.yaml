@@ -4,6 +4,7 @@ metadata:
   annotations:
     openshift.io/display-name: "Shared LLM"
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
     argocd.argoproj.io/sync-wave: "-2"
   labels:
     app: ic-shared-llm

@@ -9,4 +9,5 @@ metadata:
   annotations:
     openshift.io/display-name: "Milvus"
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
     argocd.argoproj.io/sync-wave: "-2"

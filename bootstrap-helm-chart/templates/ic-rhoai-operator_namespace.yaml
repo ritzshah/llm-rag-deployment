@@ -4,6 +4,7 @@ metadata:
   annotations:
     openshift.io/display-name: "OpenShift AI Operator"
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
     argocd.argoproj.io/sync-wave: "-2"
   labels:
     openshift.io/cluster-monitoring: "true"

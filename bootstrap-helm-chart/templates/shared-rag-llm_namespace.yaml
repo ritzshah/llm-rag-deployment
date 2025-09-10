@@ -10,4 +10,5 @@ metadata:
   annotations:
     openshift.io/display-name: "Shared LLM with RAG"
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
     argocd.argoproj.io/sync-wave: "-2"

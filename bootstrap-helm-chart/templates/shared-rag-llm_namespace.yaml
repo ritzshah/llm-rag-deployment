@@ -9,4 +9,5 @@ metadata:
     opendatahub.io/dashboard: 'true'    
   annotations:
     openshift.io/display-name: "Shared LLM with RAG"
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "-2"

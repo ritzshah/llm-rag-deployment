@@ -6,7 +6,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
   labels:
     app: gradio
-  name: gradio-llm-rag-pgvector
+  name: gradio-llm-pgvector
   namespace: ic-shared-llm
 spec:
   progressDeadlineSeconds: 600

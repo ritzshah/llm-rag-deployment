@@ -8,4 +8,4 @@ metadata:
     argocd.argoproj.io/managed-by: openshift-gitops
   annotations:
     openshift.io/display-name: "Milvus"
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "-1"

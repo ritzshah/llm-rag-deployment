@@ -8,7 +8,7 @@ metadata:
   namespace: ic-shared-llm
 spec:
   progressDeadlineSeconds: 600
-  replicas: '{{ .Values.gradioReplicaCount }}'
+  replicas: {{ .Values.gradioReplicaCount }}
   revisionHistoryLimit: 10
   selector:
     matchLabels:

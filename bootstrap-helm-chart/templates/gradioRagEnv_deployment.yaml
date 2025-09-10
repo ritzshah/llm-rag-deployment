@@ -8,7 +8,7 @@ metadata:
   namespace: ic-shared-rag-llm
 spec:
   progressDeadlineSeconds: 600
-  replicas: '{{ .Values.gradioRagReplicaCount }}'
+  replicas: {{ .Values.gradioRagReplicaCount }}
   revisionHistoryLimit: 10
   selector:
     matchLabels:

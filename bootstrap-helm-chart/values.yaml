@@ -1,7 +1,7 @@
 enabled: true
 gradioEnv:
   APP_TITLE: Talk with your documentation
-  granite_bearerToken: secret
+  BEARER_TOKEN: secret
   DB_COLLECTION_NAME: documents_test
   DB_CONNECTION_STRING: postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb
   ENABLE_DEBUG_UI: 'False'
@@ -18,7 +18,7 @@ gradioImage:
   tag: latest
 gradioRagEnv:
   APP_TITLE: Talk with your documentation
-  granite_bearerToken: secret
+  BEARER_TOKEN: secret
   DB_COLLECTION_NAME: documents_test
   DB_CONNECTION_STRING: postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb
   ENABLE_DEBUG_UI: 'False'

@@ -8,7 +8,7 @@ commonLabels:
 resources:
 # wave 0
 #- gp3-remove-default.yaml
-#- ceph-rbd-set-default.yaml
+- ceph-rbd-set-default.yaml
 # wave 1
 - workbench-imagestream.yaml
 - workbench-vscode-is.yaml

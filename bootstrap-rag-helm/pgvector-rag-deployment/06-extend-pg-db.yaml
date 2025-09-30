@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-extension-job
+  namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    metadata:
+      name: postgres-extension-pod
+    spec:
+      serviceAccountName: postgres-service-account
+      containers:
+      - name: postgres-client
+        image: quay.io/openshift/origin-cli:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            while true; do
+              echo "Checking for PostgreSQL pods..."
+              POD_COUNT=$(oc get pods -l app=postgresql --no-headers 2>/dev/null | wc -l)
+              if [ "$POD_COUNT" -eq 0 ]; then
+                echo "No PostgreSQL pods found, waiting..."
+                sleep 5
+                continue
+              fi
+              
+              podname=$(oc get pods -l app=postgresql -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+              if [ -n "$podname" ]; then
+                echo "Found PostgreSQL pod: $podname"
+                echo "Creating vector extension..."
+                oc rsh -c postgresql $podname psql -d vectordb -c 'CREATE EXTENSION vector;' && break
+              else
+                echo "Failed to get pod name, retrying..."
+                sleep 5
+              fi
+            done
+      restartPolicy: Never

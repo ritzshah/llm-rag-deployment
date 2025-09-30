@@ -1,0 +1,4 @@
+apiVersion: v2
+description: Deploy bootstrap and bootstrap-rag components
+name: bootstrap-helm-chart
+version: 0.1.0

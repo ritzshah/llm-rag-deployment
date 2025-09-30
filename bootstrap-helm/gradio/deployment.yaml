@@ -1,0 +1,111 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: gradio-llm-rag-pgvector
+  namespace: ic-shared-llm
+  labels:
+    app: gradio
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gradio
+  template:
+    metadata:
+      labels:
+        app: gradio
+    spec:
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      affinity: {}
+      terminationGracePeriodSeconds: 120
+      securityContext: {}
+      containers:
+        - resources:
+            limits:
+              cpu: '2'
+              memory: 2Gi
+            requests:
+              cpu: '1'
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: server
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 8
+            periodSeconds: 100
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: APP_TITLE
+              value: 'Talk with your documentation'
+            - name: INFERENCE_SERVER_URL
+              value: 'https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions'  
+            - name: MODEL_NAME
+              value: granite-8b-code-instruct-128k
+            - name: DB_CONNECTION_STRING
+              value: 'postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb' # notsecret
+            - name: DB_COLLECTION_NAME
+              value: 'documents_test'
+            - name: MAX_NEW_TOKENS
+              value: '512'
+            - name: TOP_K
+              value: '10'
+            - name: TOP_P
+              value: '0.95'
+            - name: TYPICAL_P
+              value: '0.95'
+            - name: TEMPERATURE
+              value: '0.01'
+            - name: REPETITION_PENALTY
+              value: '1.03'
+            - name: BEARER_TOKEN
+              value: 65fc80b0d55be557b1365687ddb771d6 # notsecret
+            - name: ENABLE_DEBUG_UI
+              value: 'False'          
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+            - name: http
+              containerPort: 7860
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 1
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 24
+          terminationMessagePolicy: File
+          image: 'quay.io/rshah/llm-rag-deployment-maas:latest'
+      dnsPolicy: ClusterFirst
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 1
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

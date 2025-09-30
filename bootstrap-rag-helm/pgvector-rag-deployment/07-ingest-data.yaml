@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-ingest-rag-job
+  namespace: ic-shared-rag-llm
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    executed: "false"  # Flag to indicate whether the job has been executed or not
+spec:
+  template:
+    metadata:
+      name: data-ingest-rag-pod
+    spec:
+      serviceAccountName: postgres-service-account
+      containers:
+      - name: data-ingest
+        image: python:3.11  # Using Python base image
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+              mkdir /app 
+              curl -o /app/data_ingest.py https://raw.githubusercontent.com/ritzshah/llm-rag-deployment/refs/heads/update-token-v1/examples/pipelines/data_ingest.py  # Download the Python file
+              curl -o /app/requirements.txt https://raw.githubusercontent.com/ritzshah/llm-rag-deployment/refs/heads/update-token-v1/examples/pipelines/requirements.txt  # Download the Python file
+              cd /app
+              pip install --upgrade pip
+              pip install -r requirements.txt  # Install required dependencies
+              python data_ingest.py  # Run the Python file
+      restartPolicy: Never

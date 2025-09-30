@@ -1,0 +1,113 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  labels:
+    app: gradio
+  name: gradio-llm-pgvector
+  namespace: ic-shared-llm
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.gradioReplicaCount }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: gradio
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: gradio
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: APP_TITLE
+          value: '{{ .Values.gradioEnv.APP_TITLE }}'
+        - name: INFERENCE_SERVER_URL
+          value: '{{ .Values.gradioEnv.INFERENCE_SERVER_URL }}'
+        - name: MODEL_NAME
+          value: '{{ .Values.gradioEnv.MODEL_NAME }}'
+        - name: DB_CONNECTION_STRING
+          value: '{{ .Values.gradioEnv.DB_CONNECTION_STRING }}'
+        - name: DB_COLLECTION_NAME
+          value: '{{ .Values.gradioEnv.DB_COLLECTION_NAME }}'
+        - name: MAX_NEW_TOKENS
+          value: '{{ .Values.gradioEnv.MAX_NEW_TOKENS }}'
+        - name: TOP_K
+          value: '{{ .Values.gradioEnv.TOP_K }}'
+        - name: TOP_P
+          value: '{{ .Values.gradioEnv.TOP_P }}'
+        - name: TYPICAL_P
+          value: '{{ .Values.gradioEnv.TYPICAL_P }}'
+        - name: TEMPERATURE
+          value: '{{ .Values.gradioEnv.TEMPERATURE }}'
+        - name: REPETITION_PENALTY
+          value: '{{ .Values.gradioEnv.REPETITION_PENALTY }}'
+        - name: BEARER_TOKEN
+          value: '{{ .Values.gradioEnv.BEARER_TOKEN }}'
+        - name: ENABLE_DEBUG_UI
+          value: '{{ .Values.gradioEnv.ENABLE_DEBUG_UI }}'
+        image: '{{ .Values.gradioImage.repository }}:{{ .Values.gradioImage.tag }}'
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          periodSeconds: 100
+          successThreshold: 1
+          timeoutSeconds: 8
+        name: server
+        ports:
+        - containerPort: 7860
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: '2'
+            memory: 2Gi
+          requests:
+            cpu: '1'
+            memory: 1Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        startupProbe:
+          failureThreshold: 24
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 120
+{{- end }}

@@ -1,0 +1,37 @@
+enabled: true
+gradioEnv:
+  APP_TITLE: Talk with your documentation
+  BEARER_TOKEN: secret
+  DB_COLLECTION_NAME: documents_test
+  DB_CONNECTION_STRING: postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-llm.svc.cluster.local:5432/vectordb
+  ENABLE_DEBUG_UI: 'False'
+  INFERENCE_SERVER_URL: https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions
+  MAX_NEW_TOKENS: '512'
+  MODEL_NAME: granite-8b-code-instruct-128k
+  REPETITION_PENALTY: '1.03'
+  TEMPERATURE: '0.01'
+  TOP_K: '10'
+  TOP_P: '0.95'
+  TYPICAL_P: '0.95'
+gradioImage:
+  repository: quay.io/rshah/llm-rag-deployment-maas
+  tag: latest
+gradioRagEnv:
+  APP_TITLE: Talk with your documentation
+  BEARER_TOKEN: secret
+  DB_COLLECTION_NAME: documents_test
+  DB_CONNECTION_STRING: postgresql+psycopg://vectordb:vectordb@postgresql-service.ic-shared-rag-llm.svc.cluster.local:5432/vectordb
+  ENABLE_DEBUG_UI: 'False'
+  INFERENCE_SERVER_URL: https://granite-8b-code-instruct-maas-apicast-production.apps.llmaas.llmaas.redhatworkshops.io:443/v1/completions
+  MAX_NEW_TOKENS: '512'
+  MODEL_NAME: granite-8b-code-instruct-128k
+  REPETITION_PENALTY: '1.03'
+  TEMPERATURE: '0.01'
+  TOP_K: '10'
+  TOP_P: '0.95'
+  TYPICAL_P: '0.95'
+gradioRagImage:
+  repository: quay.io/rshah/llm-rag-deployment-maas
+  tag: latest
+gradioRagReplicaCount: 1
+gradioReplicaCount: 1

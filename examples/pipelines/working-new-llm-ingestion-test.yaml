@@ -29,7 +29,7 @@ deploymentSpec:
           value: /tmp
         - name: ELYRA_RUN_NAME
           value: '{{workflow.uid}}'
-        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+        image: quay.io/modh/runtime-images:runtime-minimal-ubi9-python-3.11-20250827
     exec-run-a-file-2:
       container:
         args:
@@ -50,7 +50,7 @@ deploymentSpec:
           value: /tmp
         - name: ELYRA_RUN_NAME
           value: '{{workflow.uid}}'
-        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+        image: quay.io/modh/runtime-images:runtime-minimal-ubi9-python-3.11-20250827
     exec-run-a-file-3:
       container:
         args:
@@ -71,7 +71,7 @@ deploymentSpec:
           value: /tmp
         - name: ELYRA_RUN_NAME
           value: '{{workflow.uid}}'
-        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+        image: quay.io/modh/runtime-images:runtime-minimal-ubi9-python-3.11-20250827
     exec-run-a-file-4:
       container:
         args:
@@ -92,7 +92,7 @@ deploymentSpec:
           value: /tmp
         - name: ELYRA_RUN_NAME
           value: '{{workflow.uid}}'
-        image: quay.io/modh/runtime-images@sha256:7dd23e58291cad7a0ab4a8e04bda06492f2c027eb33b226358380db58dcdd60b
+        image: quay.io/modh/runtime-images:runtime-minimal-ubi9-python-3.11-20250827
 pipelineInfo:
   name: data-ingestion-response-check-pipeline
 root:

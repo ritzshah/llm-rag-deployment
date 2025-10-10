@@ -275,7 +275,7 @@
             "kubernetes_pod_annotations": [],
             "kubernetes_secrets": [],
             "env_vars": [],
-            "runtime_image": "quay.io/modh/runtime-images:runtime-minimal-ubi9-python-3.11-20250827"
+            "runtime_image": "quay.io/modh/runtime-images:runtime-datascience-ubi9-python-3.11-20250827-3a59e5e"
           }
         }
       },

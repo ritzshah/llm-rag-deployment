@@ -18,7 +18,7 @@ spec:
             - |
               while true; do
               echo "Checking default StorageClass..."
-              SC=$(oc get StorageClass ocs-storagecluster-ceph-rbd -o jsonpath='{.metadata.annotations.storageclass\.kubernetes\.io/is-default-class}')
+              SC=$(oc get StorageClass ocs-external-storagecluster-ceph-rbd -o jsonpath='{.metadata.annotations.storageclass\.kubernetes\.io/is-default-class}')
               if [ "$SC" = "true" ]; then
                 echo "Storage class is ready."
                 exit 0

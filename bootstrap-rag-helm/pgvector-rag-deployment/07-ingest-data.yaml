@@ -16,15 +16,14 @@ spec:
       serviceAccountName: postgres-service-account
       containers:
       - name: data-ingest
-        image: python:3.11  # Using Python base image
+        image: python:3.11
         command: ["/bin/sh", "-c"]
         args:
           - |
-              mkdir /app 
-              curl -o /app/data_ingest.py https://raw.githubusercontent.com/rhpds/llm-rag-deployment/refs/heads/litemaas-update/examples/pipelines/data_ingest.py
-              curl -o /app/requirements.txt https://raw.githubusercontent.com/rhpds/llm-rag-deployment/refs/heads/litemaas-update/examples/pipelines/requirements.txt
-              cd /app
-              pip install --upgrade pip
-              pip install -r requirements.txt  # Install required dependencies
-              python data_ingest.py  # Run the Python file
+              mkdir -p /tmp/app
+              curl -o /tmp/app/data_ingest.py https://raw.githubusercontent.com/rhpds/llm-rag-deployment/refs/heads/litemaas-update/examples/pipelines/data_ingest.py
+              curl -o /tmp/app/requirements.txt https://raw.githubusercontent.com/rhpds/llm-rag-deployment/refs/heads/litemaas-update/examples/pipelines/requirements.txt
+              cd /tmp/app
+              pip install --user -r requirements.txt
+              python data_ingest.py
       restartPolicy: Never

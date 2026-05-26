@@ -7,21 +7,7 @@ spec:
   generators:
   - list:
       elements:
-      - cluster: in-cluster
-        name: ic-rhoai-operator-app
-        repoURL: https://github.com/rhpds/llm-rag-deployment.git
-        targetRevision: litemaas-update
-        path: bootstrap-helm/ic-rhoai-operator
-      - cluster: in-cluster
-        name: ic-rhoai-installation-app
-        repoURL: https://github.com/rhpds/llm-rag-deployment.git
-        targetRevision: litemaas-update
-        path: bootstrap-helm/ic-rhoai-installation
-      - cluster: in-cluster
-        name: ic-rhoai-configuration-app
-        repoURL: https://github.com/rhpds/llm-rag-deployment.git
-        targetRevision: litemaas-update
-        path: bootstrap-helm/ic-rhoai-configuration
+      # RHOAI operator/installation/configuration removed - handled by AgnosticV workload
       - cluster: in-cluster
         name: ic-shared-minio-app
         repoURL: https://github.com/rhpds/llm-rag-deployment.git
@@ -32,11 +18,7 @@ spec:
         repoURL: https://github.com/rhpds/llm-rag-deployment.git
         targetRevision: litemaas-update
         path: bootstrap-helm/ic-shared-database
-      - cluster: in-cluster
-        name: ic-shared-milvus-app
-        repoURL: https://github.com/rhpds/llm-rag-deployment.git
-        targetRevision: litemaas-update
-        path: bootstrap-helm/ic-shared-milvus
+      # Milvus removed - using PGVector for this demo
       - cluster: in-cluster
         name: ic-shared-llm-app
         repoURL: https://github.com/rhpds/llm-rag-deployment.git
@@ -47,16 +29,8 @@ spec:
         repoURL: https://github.com/rhpds/llm-rag-deployment.git
         targetRevision: litemaas-update
         path: bootstrap-helm/ic-shared-app
-      - cluster: in-cluster
-        name: ic-shared-img-det-app
-        repoURL: https://github.com/rhpds/llm-rag-deployment.git
-        targetRevision: litemaas-update
-        path: bootstrap-helm/ic-shared-img-det
-      - cluster: in-cluster
-        name: ic-user-projects-app
-        repoURL: https://github.com/rhpds/llm-rag-deployment.git
-        targetRevision: litemaas-update
-        path: bootstrap-helm/ic-user-projects
+      # Image detection removed - not needed for this demo
+      # User projects removed - handled by AgnosticV workload
       - cluster: in-cluster
         name: gradio-app
         repoURL: https://github.com/rhpds/llm-rag-deployment.git

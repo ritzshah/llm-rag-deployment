@@ -2,16 +2,16 @@
 # coding: utf-8
 
 # ## Creating an index and populating it with documents using PostgreSQL+pgvector
-# 
+#
 # Simple example on how to ingest PDF documents, then web pages content into a PostgreSQL+pgvector VectorStore.
-# 
+#
 # Requirements:
 # - A PostgreSQL cluster with the pgvector extension installed (https://github.com/pgvector/pgvector)
 # - A Database created in the cluster with the extension enabled (in this example, the database is named `vectordb`. Run the following command in the database as a superuser:
 # `CREATE EXTENSION vector;`
-# 
+#
 # Note: if your PostgreSQL is deployed on OpenShift, directly from inside the Pod (Terminal view on the Console, or using `oc rsh` to log into the Pod), you can run the command: `psql -d vectordb -c "CREATE EXTENSION vector;"`
-# 
+#
 
 # ### Needed packages
 
@@ -28,89 +28,58 @@
 
 import requests
 import re
+import os
 from bs4 import BeautifulSoup
 
-def get_latest_openshift_ai_version():
-    """
-    Fetch the latest Red Hat OpenShift AI Self-Managed version from the documentation page.
-    Returns the version string like "2.22", "3.1", etc.
-    """
-    try:
-        # First try the original URL, handle redirect if needed
-        url = "https://access.redhat.com/documentation/en-us/red_hat_openshift_ai_self-managed"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        
-        response = requests.get(url, headers=headers, allow_redirects=True)
-        
-        # If redirected, use the final URL
-        if response.history:
-            print(f"Redirected to: {response.url}")
-        
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Look for version patterns specifically for RHOAI versions
-            # More specific patterns to avoid false matches
-            version_patterns = [
-                r'/red_hat_openshift_ai_self-managed/(\d+\.\d+)/',  # In URLs like /red_hat_openshift_ai_self-managed/2.22/
-                r'red_hat_openshift_ai_self-managed/(\d+\.\d+)',   # In paths
-                r'rhoai[_-](\d+\.\d+)',  # "rhoai_2.22" or "rhoai-2.22"
-                r'version[_\s-]*(\d+\.\d+)',  # "version 2.22" or "version-2.22"
-            ]
-            
-            # Search in page text and URLs
-            page_text = soup.get_text()
-            versions_found = []
-            
-            # Search in URLs and links first (more reliable)
-            links = soup.find_all('a', href=True)
-            for link in links:
-                href = link['href']
-                for pattern in version_patterns:
-                    matches = re.findall(pattern, href, re.IGNORECASE)
-                    versions_found.extend(matches)
-            
-            # Also search in page text
-            for pattern in version_patterns:
-                matches = re.findall(pattern, page_text, re.IGNORECASE)
-                versions_found.extend(matches)
-            
-            # Filter versions to only include valid RHOAI versions (X.Y format where X >= 2)
-            valid_versions = []
-            for version in versions_found:
-                # Check if it's a valid RHOAI version format (X.Y where X is major version >= 2)
-                if re.match(r'^\d+\.\d{1,2}$', version):
-                    # Additional validation: major version should be >= 2, minor should be reasonable
-                    major, minor = version.split('.')
-                    if int(major) >= 2 and 0 <= int(minor) <= 99:
-                        # Filter out obviously wrong versions like 192.x
-                        if int(major) <= 10:  # Reasonable upper bound for major version
-                            valid_versions.append(version)
-            
-            # Remove duplicates and sort to get the latest
-            unique_versions = list(set(valid_versions))
-            if unique_versions:
-                # Sort versions (assuming format X.Y)
-                sorted_versions = sorted(unique_versions, key=lambda x: [int(i) for i in x.split('.')], reverse=True)
-                latest_version = sorted_versions[0]
-                print(f"Found valid versions: {sorted_versions}")
-                print(f"Using latest version: {latest_version}")
-                return latest_version
-            else:
-                print("No valid version found in the documentation page")
-                return "2.22"  # Fallback to a recent known version
-        else:
-            print(f"Failed to fetch documentation page. Status code: {response.status_code}")
-            return "2.22"  # Fallback
-            
-    except Exception as e:
-        print(f"Error fetching version: {e}")
-        return "2.22"  # Fallback to a recent known version
 
-# Get the latest version dynamically
-product_version = get_latest_openshift_ai_version()
+# Ordered list of versions to try — newest first. Add new versions here as they release.
+KNOWN_VERSIONS = ["3.2", "3.1", "3.0", "2.22", "2.21", "2.20", "2.19", "2.18", "2.17", "2.16"]
+
+PDF_BASE_URL = "https://access.redhat.com/documentation/en-us/red_hat_openshift_ai_self-managed"
+
+DOCUMENTS = [
+    "release_notes",
+    "introduction_to_red_hat_openshift_ai",
+    "getting_started_with_red_hat_openshift_ai_self-managed",
+]
+
+
+def pdf_url(version, doc):
+    return f"{PDF_BASE_URL}/{version}/pdf/{doc}/red_hat_openshift_ai_self-managed-{version}-{doc}-en-us.pdf"
+
+
+def html_url(version, doc):
+    return f"{PDF_BASE_URL}/{version}/html-single/{doc}/index"
+
+
+def check_pdf_available(version, doc):
+    """Check if a PDF is actually downloadable for a given version and document."""
+    url = pdf_url(version, doc)
+    try:
+        resp = requests.head(url, allow_redirects=True, timeout=15)
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def find_working_version():
+    """
+    Try known versions in order and return the first one where at least one PDF is available.
+    This avoids relying on scraping the docs landing page which can change structure.
+    """
+    for version in KNOWN_VERSIONS:
+        print(f"Checking version {version}...")
+        if check_pdf_available(version, DOCUMENTS[0]):
+            print(f"Version {version} has available PDFs")
+            return version
+        else:
+            print(f"Version {version} PDFs not available, trying next...")
+
+    print(f"No working version found, falling back to {KNOWN_VERSIONS[0]}")
+    return KNOWN_VERSIONS[0]
+
+
+product_version = find_working_version()
 print(f"Using Red Hat OpenShift AI Self-Managed version: {product_version}")
 
 
@@ -140,43 +109,51 @@ from langchain_community.vectorstores import PGVector
 # In[5]:
 
 
-documents = [
-    "release_notes",
-    "introduction_to_red_hat_openshift_ai",
-    "getting_started_with_red_hat_openshift_ai_self-managed",   
-]
-
-pdfs = [f"https://access.redhat.com/documentation/en-us/red_hat_openshift_ai_self-managed/{product_version}/pdf/{doc}/red_hat_openshift_ai_self-managed-{product_version}-{doc}-en-us.pdf" for doc in documents]
-pdfs_to_urls = {f"red_hat_openshift_ai_self-managed-{product_version}-{doc}-en-us": f"https://access.redhat.com/documentation/en-us/red_hat_openshift_ai_self-managed/{product_version}/html-single/{doc}/index" for doc in documents}
+pdfs = [pdf_url(product_version, doc) for doc in DOCUMENTS]
+pdfs_to_urls = {
+    f"red_hat_openshift_ai_self-managed-{product_version}-{doc}-en-us": html_url(product_version, doc)
+    for doc in DOCUMENTS
+}
 
 
 # In[6]:
 
 
-import os
+pdf_dir = f"rhoai-doc-{product_version}"
+os.makedirs(pdf_dir, exist_ok=True)
 
-os.makedirs(f"rhoai-doc-{product_version}", exist_ok=True)
-
+downloaded_count = 0
 for pdf in pdfs:
     try:
-        response = requests.get(pdf)
-    except:
-        print(f"Skipped {pdf}")
+        response = requests.get(pdf, timeout=60)
+    except Exception as e:
+        print(f"Skipped {pdf} - error: {e}")
         continue
-    if response.status_code!=200:
-        print(f"Skipped {pdf}")
-        continue  
-    with open(f"rhoai-doc-{product_version}/{pdf.split('/')[-1]}", 'wb') as f:
+    if response.status_code != 200:
+        print(f"Skipped {pdf} - status {response.status_code}")
+        continue
+    filename = pdf.split('/')[-1]
+    with open(f"{pdf_dir}/{filename}", 'wb') as f:
         f.write(response.content)
+    downloaded_count += 1
+    print(f"Downloaded {filename}")
+
+if downloaded_count == 0:
+    print("WARNING: No PDFs were downloaded. Will proceed with website content only.")
 
 
 # In[7]:
 
 
-pdf_folder_path = f"./rhoai-doc-{product_version}"
+pdf_folder_path = f"./{pdf_dir}"
+pdf_docs = []
 
-pdf_loader = PyPDFDirectoryLoader(pdf_folder_path)
-pdf_docs = pdf_loader.load()
+if downloaded_count > 0:
+    pdf_loader = PyPDFDirectoryLoader(pdf_folder_path)
+    pdf_docs = pdf_loader.load()
+    print(f"Loaded {len(pdf_docs)} pages from PDFs")
+else:
+    print("No PDFs to load, skipping PDF ingestion")
 
 
 # #### Inject metadata
@@ -187,7 +164,9 @@ pdf_docs = pdf_loader.load()
 from pathlib import Path
 
 for doc in pdf_docs:
-    doc.metadata["source"] = pdfs_to_urls[Path(doc.metadata["source"]).stem]
+    stem = Path(doc.metadata["source"]).stem
+    if stem in pdfs_to_urls:
+        doc.metadata["source"] = pdfs_to_urls[stem]
 
 
 # #### Load websites
@@ -213,8 +192,13 @@ websites = [
 # In[10]:
 
 
-website_loader = WebBaseLoader(websites)
-website_docs = website_loader.load()
+website_docs = []
+try:
+    website_loader = WebBaseLoader(websites)
+    website_docs = website_loader.load()
+    print(f"Loaded {len(website_docs)} website documents")
+except Exception as e:
+    print(f"WARNING: Failed to load some websites: {e}")
 
 
 # #### Merge both types of docs
@@ -223,6 +207,12 @@ website_docs = website_loader.load()
 
 
 docs = pdf_docs + website_docs
+
+if len(docs) == 0:
+    print("ERROR: No documents were loaded at all. Exiting.")
+    exit(1)
+
+print(f"Total documents to ingest: {len(docs)}")
 
 
 # #### Split documents into chunks with some overlap
@@ -233,7 +223,7 @@ docs = pdf_docs + website_docs
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024,
                                                chunk_overlap=40)
 all_splits = text_splitter.split_documents(docs)
-all_splits[0]
+print(f"Total chunks after splitting: {len(all_splits)}")
 
 
 # #### Cleanup documents as PostgreSQL won't accept the NUL character, '\x00', in TEXT fields.
@@ -257,23 +247,9 @@ db = PGVector.from_documents(
     embedding=embeddings,
     collection_name=COLLECTION_NAME,
     connection_string=CONNECTION_STRING,
-    #pre_delete_collection=True # This deletes existing collection and its data, use carefully!
 )
 
-
-# #### Alternatively, add new documents
-
-# In[15]:
-
-
-# embeddings = HuggingFaceEmbeddings()
-
-# db = PGVector(
-#     connection_string=CONNECTION_STRING,
-#     collection_name=COLLECTION_NAME,
-#     embedding_function=embeddings)
-
-# db.add_documents(all_splits)
+print("Successfully ingested documents into PGVector")
 
 
 # #### Test query
@@ -293,10 +269,3 @@ for doc, score in docs_with_score:
     print("Score: ", score)
     print(doc.page_content)
     print("-" * 80)
-
-
-# In[ ]:
-
-
-
-

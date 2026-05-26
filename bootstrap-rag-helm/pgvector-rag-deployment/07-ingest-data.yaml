@@ -17,6 +17,9 @@ spec:
       containers:
       - name: data-ingest
         image: python:3.11
+        env:
+        - name: HOME
+          value: /tmp
         command: ["/bin/sh", "-c"]
         args:
           - |

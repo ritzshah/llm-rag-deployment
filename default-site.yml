@@ -1,6 +1,6 @@
 site:
   title: "Parasol Insurance AI Workshop"
-  url: https://github.com/ritzshah/llm-rag-deployment
+  url: https://github.com/rhpds/llm-rag-deployment
   start_page: modules::index.adoc
 
 ui:
@@ -9,7 +9,7 @@ ui:
   supplemental_files: ./content/supplemental-ui
 
 content:
-  edit_url: 'https://github.com/ritzshah/llm-rag-deployment/edit/update-for-2.15/{path}'
+  edit_url: 'https://github.com/rhpds/llm-rag-deployment/edit/update-for-2.15/{path}'
   sources:
     - url: ./
       start_path: content

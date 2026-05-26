@@ -32,7 +32,7 @@ spec:
               if [ -n "$podname" ]; then
                 echo "Found PostgreSQL pod: $podname"
                 echo "Creating vector extension..."
-                oc rsh -c postgresql $podname psql -d vectordb -c 'CREATE EXTENSION vector;' && break
+                oc rsh -c postgresql $podname psql -d vectordb -c 'CREATE EXTENSION IF NOT EXISTS vector;' && break
               else
                 echo "Failed to get pod name, retrying..."
                 sleep 5

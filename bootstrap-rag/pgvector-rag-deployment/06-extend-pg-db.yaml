@@ -21,5 +21,5 @@ spec:
           - |
             podname=$(oc get pods -l app=postgresql -o jsonpath='{.items[0].metadata.name}')
             echo $podname
-            oc rsh -c postgresql $podname psql -d vectordb -c 'CREATE EXTENSION vector;'
+            oc rsh -c postgresql $podname psql -d vectordb -c 'CREATE EXTENSION IF NOT EXISTS vector;'
       restartPolicy: Never
